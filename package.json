@@ -24,6 +24,8 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "vue-sidebar-menu": "^4.8.1"
+        "jquery": "^3.6.0",
+        "vue-sidebar-menu": "^4.8.1",
+        "vuejs-datatable": "*"
     }
 }

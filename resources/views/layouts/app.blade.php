@@ -1,71 +1,7 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-	<head>
+				@include('layouts.header')
 
-		<!-- Meta data -->
-		<meta charset="UTF-8">
-		<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
-		<meta content="Azea - Admin Panel HTML template" name="description">
-		<meta content="Spruko Private Limited" name="author">
-		<meta name="keywords" content="admin, admin template, dashboard, admin dashboard, responsive, bootstrap, bootstrap 5, admin theme, admin themes, bootstrap admin template, scss, ui, crm, modern, flat">
+				@include('layouts.sidebar')
 
-		<!-- Title -->
-		<title>Azea - Admin Panel HTML template</title>
-
-		<!--Favicon -->
-		<link rel="icon" href="{{asset('public')}}/assets/images/brand/favicon.ico" type="image/x-icon"/>
-
-		<!--Bootstrap css -->
-		<link id="style" href="{{asset('public')}}/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-
-		<!-- Style css -->
-		<link href="{{asset('public')}}/assets/css/style.css" rel="stylesheet" />
-		<link href="{{asset('public')}}/assets/css/dark.css" rel="stylesheet" />
-		<link href="{{asset('public')}}/assets/css/skin-modes.css" rel="stylesheet" />
-
-		<!-- Animate css -->
-		<link href="{{asset('public')}}/assets/css/animated.css" rel="stylesheet" />
-
-		<!-- P-scroll bar css-->
-		<link href="{{asset('public')}}/assets/plugins/p-scrollbar/p-scrollbar.css" rel="stylesheet" />
-
-		<!---Icons css-->
-		<link href="{{asset('public')}}/assets/css/icons.css" rel="stylesheet" />
-
-		<!-- Simplebar css -->
-		<link rel="stylesheet" href="{{asset('public')}}/assets/plugins/simplebar/css/simplebar.css">
-
-		<!-- INTERNAL Morris Charts css -->
-		<link href="{{asset('public')}}/assets/plugins/morris/morris.css" rel="stylesheet" />
-
-		<!-- INTERNAL Select2 css -->
-		<link href="{{asset('public')}}/assets/plugins/select2/select2.min.css" rel="stylesheet" />
-
-		<!-- Data table css -->
-		<link href="{{asset('public')}}/assets/plugins/datatables/DataTables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
-		<link href="{{asset('public')}}/assets/plugins/datatables/Responsive/css/responsive.bootstrap4.min.css" rel="stylesheet" />
-
-	    <!-- Color Skin css -->
-		<link id="theme" href="{{asset('public')}}/assets/colors/color1.css" rel="stylesheet" type="text/css"/>
-	</head>
-
-	<body class="app sidebar-mini">
-<div id="app">
-		<!---Global-loader-->
-		<div id="global-loader" >
-			<img src="{{asset('public')}}/assets/images/svgs/loader.svg" alt="loader">
-		</div>
-		<!--- End Global-loader-->
-
-		<!-- Page -->
-		<div class="page">
-			<div class="page-main">
-
-				<!--aside open-->
-
-    	            <sidebar-component></sidebar-component>
-
-				<!--aside closed-->
 
 				<!-- App-Content -->
 				<div class="app-content main-content">
@@ -73,586 +9,120 @@
 
 						<!--app header-->
 						<div class="app-header header main-header1">
-                           <topbar-component></topbar-component>
+							<div class="container-fluid">
+								<div class="d-flex">
+
+									<div class="d-flex order-lg-2 ms-auto main-header-end">
+
+										<div class="navbar navbar-expand-lg navbar-collapse responsive-navbar p-0">
+											<div class="collapse navbar-collapse" id="navbarSupportedContent-4">
+												<div class="d-flex order-lg-2">
+
+													<div class="dropdown header-notify d-flex">
+														<a class="nav-link icon" data-bs-toggle="dropdown">
+															<svg xmlns="http://www.w3.org/2000/svg" class="header-icon" width="24" height="24" viewBox="0 0 24 24"><path d="M19 13.586V10c0-3.217-2.185-5.927-5.145-6.742C13.562 2.52 12.846 2 12 2s-1.562.52-1.855 1.258C7.185 4.074 5 6.783 5 10v3.586l-1.707 1.707A.996.996 0 0 0 3 16v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a.996.996 0 0 0-.293-.707L19 13.586zM19 17H5v-.586l1.707-1.707A.996.996 0 0 0 7 14v-4c0-2.757 2.243-5 5-5s5 2.243 5 5v4c0 .266.105.52.293.707L19 16.414V17zm-7 5a2.98 2.98 0 0 0 2.818-2H9.182A2.98 2.98 0 0 0 12 22z"/></svg><span class="pulse "></span>
+														</a>
+														<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow  animated">
+															<div class="dropdown-header">
+																<h6 class="mb-0">Notifications</h6>
+																<span class="badge fs-10 bg-secondary br-7 ms-auto">New</span>
+															</div>
+															<div class="notify-menu">
+																<a href="email-inbox.html" class="dropdown-item border-bottom d-flex ps-4">
+																	<div class="notifyimg  text-primary bg-primary-transparent border-primary"> <i class="fa fa-envelope"></i> </div>
+																	<div>
+																		<span class="fs-13">Message Sent.</span>
+																		<div class="small text-muted">3 hours ago</div>
+																	</div>
+																</a>
+																<a href="email-inbox.html" class="dropdown-item border-bottom d-flex ps-4">
+																	<div class="notifyimg  text-secondary bg-secondary-transparent border-secondary"> <i class="fa fa-shopping-cart"></i></div>
+																	<div>
+																		<span class="fs-13">Order Placed</span>
+																		<div class="small text-muted">5  hour ago</div>
+																	</div>
+																</a>
+																<a href="email-inbox.html" class="dropdown-item border-bottom d-flex ps-4">
+																	<div class="notifyimg  text-danger bg-danger-transparent border-danger"> <i class="fa fa-gift"></i> </div>
+																	<div>
+																		<span class="fs-13">Event Started</span>
+																		<div class="small text-muted">45 mintues ago</div>
+																	</div>
+																</a>
+																<a href="email-inbox.html" class="dropdown-item border-bottom d-flex ps-4 mb-2">
+																	<div class="notifyimg  text-success  bg-success-transparent border-success"> <i class="fa fa-windows"></i> </div>
+																	<div>
+																		<span class="fs-13">Your Admin lanuched</span>
+																		<div class="small text-muted">1 daya ago</div>
+																	</div>
+																</a>
+															</div>
+															<div class=" text-center p-2">
+																<a href="email-inbox.html" class="btn btn-primary btn-md fs-13 btn-block">View All</a>
+															</div>
+														</div>
+													</div>
+
+													<div class="dropdown profile-dropdown d-flex">
+														<a href="javascript:void(0);" class="nav-link pe-0 leading-none" data-bs-toggle="dropdown">
+															<span class="header-avatar1">
+																<img src="{{asset('public')}}/assets/images/users/2.jpg" alt="img" class="avatar avatar-md brround">
+															</span>
+														</a>
+														<div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow animated">
+															<div class="text-center">
+																<div class="text-center user pb-0 font-weight-bold">Patrenna</div>
+																<span class="text-center user-semi-title">Web Designer</span>
+																<div class="dropdown-divider"></div>
+															</div>
+															<a class="dropdown-item d-flex" href="profile-1.html">
+																<svg class="header-icon me-2" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM7.07 18.28c.43-.9 3.05-1.78 4.93-1.78s4.51.88 4.93 1.78C15.57 19.36 13.86 20 12 20s-3.57-.64-4.93-1.72zm11.29-1.45c-1.43-1.74-4.9-2.33-6.36-2.33s-4.93.59-6.36 2.33C4.62 15.49 4 13.82 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8c0 1.82-.62 3.49-1.64 4.83zM12 6c-1.94 0-3.5 1.56-3.5 3.5S10.06 13 12 13s3.5-1.56 3.5-3.5S13.94 6 12 6zm0 5c-.83 0-1.5-.67-1.5-1.5S11.17 8 12 8s1.5.67 1.5 1.5S12.83 11 12 11z"/></svg>
+																<div class="fs-13">Profile</div>
+															</a>
+															<a class="dropdown-item d-flex" href="search.html">
+																<svg class="header-icon me-2" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19.43 12.98c.04-.32.07-.64.07-.98 0-.34-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.09-.16-.26-.25-.44-.25-.06 0-.12.01-.17.03l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.06-.02-.12-.03-.18-.03-.17 0-.34.09-.43.25l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98 0 .33.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.09.16.26.25.44.25.06 0 .12-.01.17-.03l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.06.02.12.03.18.03.17 0 .34-.09.43-.25l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zm-1.98-1.71c.04.31.05.52.05.73 0 .21-.02.43-.05.73l-.14 1.13.89.7 1.08.84-.7 1.21-1.27-.51-1.04-.42-.9.68c-.43.32-.84.56-1.25.73l-1.06.43-.16 1.13-.2 1.35h-1.4l-.19-1.35-.16-1.13-1.06-.43c-.43-.18-.83-.41-1.23-.71l-.91-.7-1.06.43-1.27.51-.7-1.21 1.08-.84.89-.7-.14-1.13c-.03-.31-.05-.54-.05-.74s.02-.43.05-.73l.14-1.13-.89-.7-1.08-.84.7-1.21 1.27.51 1.04.42.9-.68c.43-.32.84-.56 1.25-.73l1.06-.43.16-1.13.2-1.35h1.39l.19 1.35.16 1.13 1.06.43c.43.18.83.41 1.23.71l.91.7 1.06-.43 1.27-.51.7 1.21-1.07.85-.89.7.14 1.13zM12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+																<div class="fs-13">Settings</div>
+															</a>
+															<a class="dropdown-item d-flex" href="chat.html">
+																<svg class="header-icon me-2" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 4h16v12H5.17L4 17.17V4m0-2c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2H4zm2 10h12v2H6v-2zm0-3h12v2H6V9zm0-3h12v2H6V6z"/></svg>
+																<div class="fs-13">Messages</div>
+															</a>
+															<a class="dropdown-item d-flex" href="login-1.html">
+																<svg class="header-icon me-2" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><rect fill="none" height="24" width="24"/></g><g><path d="M11,7L9.6,8.4l2.6,2.6H2v2h10.2l-2.6,2.6L11,17l5-5L11,7z M20,19h-8v2h8c1.1,0,2-0.9,2-2V5c0-1.1-0.9-2-2-2h-8v2h8V19z"/></g></svg>
+																<div class="fs-13">Sign Out</div>
+															</a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
 						</div>
 						<!--/app header-->
 
-						<!--Page header-->
-						<div class="page-header">
-							<div class="page-leftheader">
-								<h4 class="page-title mb-0 text-primary">Dashboard</h4>
-							</div>
-							<div class="page-rightheader">
-								<div class="btn-list">
-									<button class="btn btn-outline-primary"><i class="fe fe-download me-2"></i>
-										Import</button>
-									<a href="javascript:void(0);"  class="btn btn-primary btn-pill" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<i class="fa fa-calendar me-2 fs-14"></i> Search By Date</a>
-									<div class="dropdown-menu border-0">
-											<a class="dropdown-item" href="javascript:void(0);">Today</a>
-											<a class="dropdown-item" href="javascript:void(0);">Yesterday</a>
-											<a class="dropdown-item active" href="javascript:void(0);">Last 7 days</a>
-											<a class="dropdown-item" href="javascript:void(0);">Last 30 days</a>
-											<a class="dropdown-item" href="javascript:void(0);">Last Month</a>
-											<a class="dropdown-item" href="javascript:void(0);">Last 6 months</a>
-											<a class="dropdown-item" href="javascript:void(0);">Last year</a>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!--End Page header-->
-
-						<!-- Row-1 -->
-						<div class="row">
-							<div class="col-xl-3 col-lg-6 col-md-6 col-xm-12">
-								<div class="card overflow-hidden dash1-card border-0 dash1">
-									<div class="card-body">
-										<div class="row">
-											<div class="col-md-6 col-sm-6 col-6">
-												<div class="">
-													<span class="fs-14 font-weight-normal">Total Sales</span>
-													<h2 class="mb-2 number-font carn1 font-weight-bold">3,257</h2>
-													<span class=""><i class="fe fe-arrow-up-circle"></i> 76% <span class="ms-1 fs-11">Growth This Month</span>
-												</div>
-											</div>
-											<div class="col-md-6 col-sm-6 col-6 my-auto mx-auto">
-												<div class="mx-auto text-right">
-													<div id="spark1"></div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-xl-3 col-lg-6 col-md-6 col-xm-12">
-								<div class="card overflow-hidden dash1-card border-0 dash2">
-									<div class="card-body">
-										<div class="row">
-											<div class="col-md-6 col-sm-6 col-6">
-												<div class="">
-													<span class="fs-14">Total Stats</span>
-													<h2 class="mb-2 mt-1 number-font carn2 font-weight-bold">1,678</h2>
-													<span class=""><i class="fe fe-arrow-down-circle"></i> 15% <span class="ms-1 fs-11">Loss This Month</span>
-												</div>
-											</div>
-											<div class="col-md-6 col-sm-6 col-6 my-auto mx-auto">
-												<div class="mx-auto text-right">
-													<div id="spark2"></div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-xl-3 col-lg-6 col-md-6 col-xm-12">
-								<div class="card overflow-hidden dash1-card border-0 dash3">
-									<div class="card-body">
-										<div class="row">
-											<div class="col-md-6 col-sm-6 col-6">
-												<div class="">
-													<span class="fs-14">Total Income</span>
-													<h2 class="mb-2 mt-1 number-font carn2 font-weight-bold">$2,590</h2>
-													<span class=""><i class="fe fe-arrow-up-circle"></i> 62% <span class="ms-1 fs-11">From Last Month</span>
-												</div>
-											</div>
-											<div class="col-md-6 col-sm-6 col-6 my-auto mx-auto">
-												<div class="mx-auto text-right">
-													<div id="spark3"></div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-xl-3 col-lg-6 col-md-6 col-xm-12">
-								<div class="card overflow-hidden dash1-card border-0 dash4">
-									<div class="card-body">
-										<div class="row">
-											<div class="col-md-6 col-sm-6 col-6">
-												<div class="text-justify">
-													<span>Total Tax</span>
-													<h2 class="mb-2 mt-1 number-font carn2 font-weight-bold">$1,954</h2>
-													<span class=""><i class="fe fe-arrow-up-circle"></i> 53% <span class="ms-1 fs-11">From Last Month</span>
-												</div>
-											</div>
-											<div class="col-md-6 col-sm-6 col-6 my-auto mx-auto">
-												<div class="mx-auto text-right">
-													<div id="spark4"></div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- End Row-1 -->
-
-						<!-- Row-2 -->
-						<div class="row">
-							<div class="col-xl-8 col-lg-12 col-md-12 col-sm-12">
-								<div class="card">
-									<div class="card-header border-bottom-0">
-										<h3 class="card-title">Sales Activity</h3>
-									</div>
-									<div class="card-body pt-0">
-										<div class="chart-wrapper">
-											<div id="statistics"></div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-xl-4 col-lg-12 col-md-12 col-sm-12">
-								<div class="card">
-									<div class="card-header">
-										<h3 class="card-title">
-											Recent Activity
-										</h3>
-										<div class="card-options">
-											<a href="javascript:void(0);" class="btn btn-sm btn-primary">View All</a>
-										</div>
-									</div>
-									<div class="card-body p-0">
-										<ul class="recent-activity">
-											<li class="mb-5 mt-5">
-												<div>
-													<span class="activity-timeline bg-primary text-white">1</span>
-													<div class="activity-timeline-content">
-														<span class="font-weight-normal1 fs-13">New Products,</span><span class="text-muted fs-12 float-end">6:45pm</span>
-														<span class="activity-sub-content text-info fs-11">52% New products</span>
-														<p class="text-muted fs-12 mt-1">More than 200 new products are added</p>
-													</div>
-												</div>
-											</li>
-											<li class="mb-5">
-												<div>
-													<span class="activity-timeline bg-success text-white">2</span>
-													<div class="activity-timeline-content">
-														<span class="font-weight-normal1 fs-13">New Sale,</span><span class="text-muted fs-12 float-end">1day ago</span>
-														<span class="activity-sub-content text-danger fs-11">76% Profit earned.</span>
-														<p class="text-muted fs-12 mt-1">$2,546 income earned in today sale</p>
-													</div>
-												</div>
-											</li>
-											<li class="mb-5">
-												<div>
-													<span class="activity-timeline bg-warning text-white">3</span>
-													<div class="activity-timeline-content">
-														<span class="font-weight-normal1 fs-13">New Customers,</span><span class="text-muted fs-12 float-end">7.45pm</span>
-														<span class="activity-sub-content text-success fs-11">24% New customers</span>
-														<p class="text-muted fs-12 mt-1">1.3k new customers reached us this year</p>
-													</div>
-												</div>
-											</li>
-											<li class="mb-5">
-												<div>
-													<span class="activity-timeline bg-info text-white">4</span>
-													<div class="activity-timeline-content">
-														<span class="font-weight-normal1 fs-13">New Reviews,</span><span class="text-muted fs-12 float-end">1min ago</span>
-														<span class="activity-sub-content text-warning fs-11">96% Positive reviews.</span>
-														<p class="text-muted fs-12 mt-1">There are 500 plus new reviews</p>
-													</div>
-												</div>
-											</li>
-											<li class="mb-5">
-												<div>
-													<span class="activity-timeline bg-danger text-white">5</span>
-													<div class="activity-timeline-content">
-														<span class="font-weight-normal1 fs-13">Customer Visits,</span><span class="text-muted fs-12 float-end">today</span>
-														<span class="activity-sub-content text-secondary fs-11">33% target achieved.</span>
-														<p class="text-muted fs-12 mt-1">daily 20 plus new customers visits us</p>
-													</div>
-												</div>
-											</li>
-											<li class="mb-5 border-bottom-0">
-												<div>
-													<span class="activity-timeline bg-teal text-white">6</span>
-													<div class="activity-timeline-content">
-														<span class="font-weight-normal1 fs-13">Sale  Consistency,</span><span class="text-muted fs-12 float-end">3 days ago</span>
-														<span class="activity-sub-content text-teal fs-11">90% growth.</span>
-														<p class="text-muted fs-12 mt-1">More than 5 Sales happening every week</p>
-													</div>
-												</div>
-											</li>
-										</ul>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- End Row-2 -->
-
-						<!-- Row-3 -->
-						<div class="row row-deck">
-							<div class="col-md-12 col-sm-12 col-lg-12 col-xl-6">
-								<div class="card">
-									<div class="card-header">
-										<h3 class="card-title">
-											Top Products
-										</h3>
-										<div class="card-options">
-											<a href="javascript:void(0);" class="btn btn-sm btn-primary">View All</a>
-										</div>
-									</div>
-									<div class="card-body p-0">
-										<div class="table-responsive">
-											<table class="table table-hover card-table table-vcenter text-nowrap">
-												<thead class="border-bottom-0 pt-3 pb-3">
-													<tr>
-														<th class="text-center">s.no</th>
-														<th>Product Category</th>
-														<th>Product Name</th>
-														<th>Sale Value</th>
-														<th>Sale Info</th>
-														<th>Status</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td class="text-center">1</td>
-														<td><img class="avatat avatar-md brround me-2" src="{{asset('public')}}/assets/images/orders/7.jpg" alt="img">Books</td>
-														<td class="fs-13 text-success"><span class="dot-label bg-success me-2 w-2 h-2"></span>Book</td>
-														<td><span class="font-weight-normal1">$1234</span></td>
-														<td class="text-muted">3 days ago</td>
-														<td><span class="badge fs-11 bg-success-transparent text-success ms-2">Regular</span></td>
-													</tr>
-													<tr>
-														<td class="text-center">2</td>
-														<td><img class="avatat avatar-md brround me-2" src="{{asset('public')}}/assets/images/orders/5.jpg" alt="img">Sports</td>
-														<td class="fs-13 text-secondary"><span class="dot-label bg-secondary me-2 w-2 h-2"></span>Shoes</td>
-														<td><span class="font-weight-normal1">$5436</span></td>
-														<td class="text-muted">1hr ago</td>
-														<td><span class="badge fs-11 bg-secondary-transparent text-secondary ms-2">Top Seller</span></td>
-													</tr>
-													<tr>
-														<td class="text-center">3</td>
-														<td><img class="avatat avatar-md brround me-2" src="{{asset('public')}}/assets/images/orders/6.jpg" alt="img">Accesories</td>
-														<td class="fs-13 text-danger"><span class="dot-label bg-danger me-2 w-2 h-2"></span>Watch</td>
-														<td><span class="font-weight-normal1">$540</span></td>
-														<td class="text-muted">1 week ago</td>
-														<td><span class="badge fs-11 bg-danger-transparent text-danger ms-2">Irregular</span></td>
-													</tr>
-													<tr>
-														<td class="text-center">4</td>
-														<td><img class="avatat avatar-md brround me-2" src="{{asset('public')}}/assets/images/orders/4.jpg" alt="img">Watches</td>
-														<td class="fs-13 text-success"><span class="dot-label bg-success me-2 w-2 h-2"></span>Smart Watch</td>
-														<td><span class="font-weight-normal1">$1543</span></td>
-														<td class="text-muted">Today</td>
-														<td><span class="badge fs-11 bg-success-transparent text-success text-success ms-2">Regular</span></td>
-													</tr>
-													<tr>
-														<td class="text-center">5</td>
-														<td><img class="avatat avatar-md brround me-2" src="{{asset('public')}}/assets/images/orders/10.jpg" alt="img">speakers</td>
-														<td class="fs-13 text-info"><span class="dot-label bg-info me-2 w-2 h-2"></span>Head set</td>
-														<td><span class="font-weight-normal1">$6427</span></td>
-														<td class="text-muted">Today</td>
-														<td><span class="badge fs-11 bg-info-transparent text-info ms-2 mb-0">Top Pick</span></td>
-													</tr>
-												</tbody>
-											</table>
-									    </div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-12 col-sm-12 col-lg-6 col-xl-3">
-								<div class="card">
-									<div class="card-header">
-										<h3 class="card-title">
-											Recent transactions
-										</h3>
-										<div class="card-options">
-											<a href="javascript:void(0);" class="btn btn-sm btn-primary">View All</a>
-										</div>
-									</div>
-									<div class="card-body">
-										<div class="mb-3">
-											<div class="d-flex">
-												<div class="Recent-transactions-img brround bg-primary text-white font-weight-normal1">AL</div>
-												<div class="">
-													<a href="javascript:void(0);" class="font-weight-normal1 mb-1 fs-13">Alberto</a>
-													<p class="text-muted fs-11">2 hours ago</p>
-												</div>
-												<span class="text-success font-weight-normal fs-12 ms-auto">&plus;$543.98</span>
-											</div>
-										</div>
-										<div class="mb-3">
-											<div class="d-flex">
-												<div class="Recent-transactions-img brround bg-danger text-white font-weight-normal1">HE</div>
-												<div class="">
-													<a href="javascript:void(0);" class="font-weight-normal1 mb-1 fs-13">Herrouchi</a>
-													<p class="text-muted fs-11">6 hours ago</p>
-												</div>
-												<span class="text-success font-weight-normal fs-12 ms-auto">&plus;$534.87</span>
-											</div>
-										</div>
-										<div class="mb-3">
-											<div class="d-flex">
-												<div class="Recent-transactions-img brround bg-warning text-white font-weight-normal1 text-center">AK</div>
-												<div class="">
-													<a  href="javascript:void(0);" class="font-weight-normal1 mb-1 fs-13">Alexandra Kiso</a>
-													<p class="text-muted fs-11">2 days ago</p>
-												</div>
-												<span class="text-danger font-weight-normal fs-12 ms-auto">&minus;$132</span>
-											</div>
-									    </div>
-										<div class="mb-3">
-											<div class="d-flex">
-												<div class="Recent-transactions-img brround bg-teal text-white font-weight-normal1 text-center">KW</div>
-												<div class="">
-													<a href="javascript:void(0);" class="font-weight-normal1 mb-1 fs-13">kate william</a>
-													<p class="text-muted fs-11">1 hours ago</p>
-												</div>
-												<span class="text-success font-weight-normal fs-12 ms-auto">&plus;$153.45</span>
-											</div>
-										</div>
-										<div class="mb-3">
-											<div class="d-flex">
-												<div class="Recent-transactions-img brround bg-success text-white font-weight-normal1 text-center">JP</div>
-												<div class="">
-													<a href="javascript:void(0);" class="font-weight-normal1 mb-1 fs-13">Jean Powell</a>
-													<p class="text-muted fs-11">5 hours ago</p>
-												</div>
-												<span class="text-danger font-weight-normal fs-12 ms-auto">&minus;$324.78</span>
-											</div>
-										</div>
-										<div class="">
-											<div class="d-flex">
-												<div class="Recent-transactions-img brround bg-secondary text-white font-weight-normal1 text-center">HC</div>
-												<div class="">
-													<a href="javascript:void(0);" class="font-weight-normal1 mb-1 fs-13">Hakino Chen</a>
-													<p class="text-muted fs-11">21 hours ago</p>
-												</div>
-												<span class="text-danger font-weight-normal fs-12 ms-auto">&minus;$3277.78</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-12 col-md-12 col-lg-6 col-xl-3">
-								<div class="card">
-									<div class="card-header">
-										<h3 class="card-title">Revenue Of This Month</h3>
-									</div>
-									<div class="card-body">
-										<div class="mb-6">
-											<div class="d-flex align-items-center justify-content-between">
-												<span class="text-muted fs-13 mb-1">Monthly Profit</span>
-											</div>
-											<div class="d-flex justify-content-between mb-1">
-												<span class="fs-16 font-weight-normal1">$25,854</span>
-												<span class="text-muted fs-12"><i class="mdi mdi-arrow-up-thick text-success"></i> 40% increase</span>
-											</div>
-											<div class="progress progress-sm">
-												<div class="progress-bar bg-primary progress-bar-striped progress-bar-animated" style="width: 50%"></div>
-											</div>
-										</div>
-										<div class="mb-6">
-											<div class="d-flex align-items-center justify-content-between">
-												<span class="text-muted fs-13 mb-1">Monthly Orders</span>
-											</div>
-											<div class="d-flex justify-content-between mb-1">
-												<span class="fs-16 font-weight-normal1">8,654</span>
-												<span class="text-muted fs-12"><i class="mdi mdi-arrow-up-thick text-success"></i> 62% increase</span>
-											</div>
-											<div class="progress progress-sm">
-												<div class="progress-bar bg-danger progress-bar-striped progress-bar-animated" style="width: 80%"></div>
-											</div>
-										</div>
-										<div class="mb-6">
-											<div class="d-flex align-items-center justify-content-between">
-												<span class="text-muted fs-13 mb-1">Monthly Revenue</span>
-											</div>
-											<div class="d-flex justify-content-between mb-1">
-												<span class="fs-16 font-weight-normal1">$98,654</span>
-												<span class="text-muted  fs-12"><i class="mdi mdi-arrow-up-thick text-success"></i> 38% increase</span>
-											</div>
-											<div class="progress progress-sm">
-												<div class="progress-bar bg-success progress-bar-striped progress-bar-animated" style="width: 60%"></div>
-											</div>
-										</div>
-										<div>
-											<div class="d-flex align-items-center justify-content-between">
-												<span class="text-muted fs-13 mb-1">Monthly Expenses</span>
-											</div>
-											<div class="d-flex justify-content-between mb-1">
-												<span class="fs-16 font-weight-normal1">$54,456</span>
-												<span class="text-muted fs-12"><i class="mdi mdi-arrow-down-thick text-danger"></i> 20% decreased</span>
-											</div>
-											<div class="progress progress-sm">
-												<div class="progress-bar bg-pink progress-bar-striped progress-bar-animated" style="width: 70%"></div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- End Row-3 -->
-
-						<!--Row-->
-						<div class="row">
-							<div class="col-xl-12 col-lg-12 col-md-12">
-								<div class="card">
-									<div class="card-header">
-										<h3 class="card-title">Invoice Summary</h3>
-									</div>
-									<div class="card-body">
-										<div class="table-responsive">
-											<table class="table table-bordered card-table table-vcenter text-nowrap" id="datatable">
-												<thead>
-													<tr>
-														<th>Invoice ID</th>
-														<th scope="row">Customer Name</th>
-														<th>Customer ID</th>
-														<th>Date</th>
-														<th>Order Value</th>
-														<th>Status</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">002584611</a>
-														</td>
-														<td>Joan Powell</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$450,870</td>
-														<td>
-															<span class="badge bg-success-light border-success fs-11">Paid</span>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">004641215</a>
-														</td>
-														<td>Gavin Gibson</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$230,540</td>
-														<td>
-															<span class="badge bg-danger-light border-danger fs-11">Failed</span>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">004655445</a>
-														</td>
-														<td>Julian Kerr</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$55,300</td>
-														<td>
-															<span class="badge bg-success-light border-success fs-11">Paid</span>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">004343455</a>
-														</td>
-														<td>Cedric Kelly</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$234,100</td>
-														<td>
-															<span class="badge bg-success-light border-success fs-11">Paid</span>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">004651234</a>
-														</td>
-														<td>Junior Sam</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$43,198</td>
-														<td>
-															<span class="badge bg-success-light border-success fs-11">Paid</span>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">00434567</a>
-														</td>
-														<td>Gabriel</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$230,540</td>
-														<td>
-															<span class="badge bg-warning-light border-warning fs-11">Pending</span>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">004345623</a>
-														</td>
-														<td>Zach efron</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$55,300</td>
-														<td>
-															<span class="badge bg-success-light border-success fs-11">Paid</span>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">004345234</a>
-														</td>
-														<td>Mona matty</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$234,100</td>
-														<td>
-															<span class="badge bg-success-light border-success fs-11">Paid</span>
-														</td>
-													</tr>
-													<tr>
-														<td>
-															<a class="font-weight-normal1" href="">004567455</a>
-														</td>
-														<td>Samantha May</td>
-														<td>JoanPowell@gmail.com</td>
-														<td>08/3/2021</td>
-														<td>$43,198</td>
-														<td>
-															<span class="badge bg-warning-light border-warning fs-11">Pending</span>
-														</td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
+					@yield('content')
 					</div>
 				</div>
+
 				<!-- End app-content-->
+				@include('layouts.footer')
 
-
-				<!--Footer-->
-				<footer class="footer">
-					<div class="container">
-						<div class="row align-items-center flex-row-reverse">
-							<div class="col-md-12 col-sm-12 text-center">
-								Copyright © 2021 <a href="javascript:void(0);">azea</a>. Designed with <span class="fa fa-heart text-danger"></span> by <a href="javascript:void(0);"> Spruko </a> All rights reserved
-							</div>
-						</div>
-					</div>
-				</footer>
-				<!-- End Footer-->
-			</div>
+				</div>
 		</div>
         </div>
 		<!-- End Page -->
 
 		<!-- Back to top -->
 		<a href="#top" id="back-to-top"><i class="fe fe-chevron-up"></i></a>
-
-		<!-- Jquery js-->
-		<script src="{{asset('public')}}/assets/js/jquery.min.js"></script>
-
-		<!-- Bootstrap5 js-->
-		<script src="{{asset('public')}}/assets/plugins/bootstrap/popper.min.js"></script>
+		
+		<script src="{{asset('public')}}/js/app.js" ></script>
+	
 		<script src="{{asset('public')}}/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-
+	
+		<script src="{{asset('public')}}/assets/plugins/bootstrap/popper.min.js"></script>
+		
 		<!--Othercharts js-->
 		<script src="{{asset('public')}}/assets/plugins/othercharts/jquery.sparkline.min.js"></script>
 
@@ -665,51 +135,66 @@
 		<!--Sidemenu js-->
 		<script src="{{asset('public')}}/assets/plugins/sidemenu/sidemenu.js"></script>
 
+
+		<script src="{{asset('public')}}/assets/plugins/date-picker/date-picker.js"></script>
+		<script src="{{asset('public')}}/assets/plugins/date-picker/jquery-ui.js"></script>
+		<script src="{{asset('public')}}/assets/plugins/input-mask/jquery.maskedinput.js"></script>
 		<!-- P-scroll js-->
-		<script src="{{asset('public')}}/assets/plugins/p-scrollbar/p-scrollbar.js"></script>
+		<!-- <script src="{{asset('public')}}/assets/plugins/p-scrollbar/p-scrollbar.js"></script>
 		<script src="{{asset('public')}}/assets/plugins/p-scrollbar/p-scroll1.js"></script>
 		<script src="{{asset('public')}}/assets/plugins/p-scrollbar/p-scroll.js"></script>
-
+ -->
 		<!--INTERNAL Flot Charts js-->
-		<script src="{{asset('public')}}/assets/plugins/flot/jquery.flot.js"></script>
+<!-- 		<script src="{{asset('public')}}/assets/plugins/flot/jquery.flot.js"></script>
 		<script src="{{asset('public')}}/assets/plugins/flot/jquery.flot.fillbetween.js"></script>
 		<script src="{{asset('public')}}/assets/plugins/flot/jquery.flot.pie.js"></script>
 		<script src="{{asset('public')}}/assets/js/dashboard.sampledata.js"></script>
 		<script src="{{asset('public')}}/assets/js/chart.flot.sampledata.js"></script>
 
-		<!-- INTERNAL Chart js -->
-		<script src="{{asset('public')}}/assets/plugins/chart/chart.bundle.js"></script>
+ -->		<!-- INTERNAL Chart js -->
+<!-- 		<script src="{{asset('public')}}/assets/plugins/chart/chart.bundle.js"></script>
 		<script src="{{asset('public')}}/assets/plugins/chart/utils.js"></script>
-
+ -->
 		<!-- INTERNAL Apexchart js -->
-		<script src="{{asset('public')}}/assets/js/apexcharts.js"></script>
+		<!-- <script src="{{asset('public')}}/assets/js/apexcharts.js"></script> -->
 
 		<!--INTERNAL Moment js-->
 		<script src="{{asset('public')}}/assets/plugins/moment/moment.js"></script>
 
 		<!--INTERNAL Index js-->
-		<script src="{{asset('public')}}/assets/js/index1.js"></script>
+		<!-- <script src="{{asset('public')}}/assets/js/index1.js"></script> -->
 
 		<!-- INTERNAL Data tables -->
 		<script src="{{asset('public')}}/assets/plugins/datatables/DataTables/js/jquery.dataTables.js"></script>
+		
 		<script src="{{asset('public')}}/assets/plugins/datatables/DataTables/js/dataTables.bootstrap5.js"></script>
 		<script src="{{asset('public')}}/assets/plugins/datatables/Responsive/js/dataTables.responsive.min.js"></script>
 		<script src="{{asset('public')}}/assets/plugins/datatables/Responsive/js/responsive.bootstrap5.min.js"></script>
+		<script src = "http://cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js" defer ></script>
 
+<!-- https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js -->
 		<!-- INTERNAL Select2 js -->
 		<script src="{{asset('public')}}/assets/plugins/select2/select2.full.min.js"></script>
 		<script src="{{asset('public')}}/assets/js/select2.js"></script>
 
 		<!-- Simplebar JS -->
 		<script src="{{asset('public')}}/assets/plugins/simplebar/js/simplebar.min.js"></script>
-
+		<script src="{{asset('public')}}/assets/plugins/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 		<!-- Rounded bar chart js-->
-		<script src="{{asset('public')}}/assets/js/rounded-barchart.js"></script>
-
+		<!-- <script src="{{asset('public')}}/assets/js/rounded-barchart.js"></script> -->
 		<!-- Custom js-->
+		
+		<script src="{{url('public/')}}/assets/js/jquery.validate.min.js" ></script>
+		<script src="{{asset('public')}}/assets/js/form-vallidations.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js"></script>
 		<script src="{{asset('public')}}/assets/js/custom.js"></script>
+		<script src="{{asset('public')}}/assets/js/script.js"></script>
 
-		<script src="{{asset('public')}}/js/app.js"></script>
-
+		@section('after_script')
+        
+		@show
+	
 	</body>
 </html>
+
+		
