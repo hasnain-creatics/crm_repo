@@ -34,16 +34,23 @@
                         <br>
                         <br>
 
-                         <div class="row">
+                         <div class="row">       
+                          <div class="col-lg-12">
+                                     <div class="input-group">
                             <!-- <roles-permission-component role_id="{{$id}}"></roles-permission-component> -->
                             @foreach($permissions as $value)
-                                <label> 
-                                    {{ $value->name }}
-                                    <input type="checkbox" name="permission[]"  value="{{$value->id}}" class="name" {{in_array($value->id, $rolePermissions) ? 'checked'     :''}}>
-                                </label>
-                            <br/>
+                               <div class="form-group col-md-6">     
+                                    <label for="{{ $value->name }}"> 
+                                      {{ ucwords(str_replace("-", " ", $value->name)); }}
+                                    </label>   
+                                </div>    
+                                <div class="form-group col-md-6">      
+                                            <input type="checkbox" name="permission[]"  id="{{ $value->name }}" value="{{$value->id}}" class="name" {{in_array($value->id, $rolePermissions) ? 'checked'     :''}}>
+                            
+                               </div>    
                             @endforeach
                         </div>
+                        </div>  </div>
                         <div class="row">
                         <input type="submit" class="btn btn-primary">
                                 

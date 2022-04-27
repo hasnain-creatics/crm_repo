@@ -17,20 +17,21 @@ class UserController extends Controller
 {
     public function __construct(){
 
-        //  $this->middleware('permission:user-view|user-create|user-edit|user-delete', ['only' => ['index','update']]);
-        //  $this->middleware('permission:user-create', ['only' => ['create','update']]);
-        //  $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
-        //  $this->middleware('permission:user-delete', ['only' => ['destroy']]);
-        //  // $this->middleware('permission:user-list', ['only' => ['index']]);
-        // $this->middleware('permission:user-view', ['only' => ['index']]);
+         $this->middleware('permission:user-add', ['only' => ['create','update']]);
+         
+         $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
+        
+         $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+
+         $this->middleware('permission:user-view', ['only' => ['index']]);
+         
     }
 
     public function index(Request $request)
     {
-        // print_r(Auth::roles());
-        // die;
+     
         if ($request->ajax()) {
-
+            ;
             $data = User::select('users.id',DB::raw('CONCAT(users.first_name," ",users.last_name) AS name'),
                                     'users.email',
                                     'users.phone_number',
@@ -71,6 +72,13 @@ class UserController extends Controller
                 $data = $data->where('users.email','LIKE','%'.$email.'%');    
             }
         
+            if($this->is_admin() != true){
+
+                $data->where(['users.id'=>Auth::user()->id]);
+
+                $data->orWhere(['users.assigned_to'=>Auth::user()->id]);
+
+            }
 
             $data = $data->orderBy('users.id','DESC');             
 
@@ -117,7 +125,17 @@ class UserController extends Controller
 
     public function fetch_all_designation(){
 
-        return response()->json(Role::get(),200);
+        $data = $roles = new Role();
+
+        // if($this->is_admin() != true){  
+        
+        //     $data = $data->where('name',Auth::user()->roles[0]->name);
+        
+        // }
+        
+        $data = $data->get();
+        
+        return response()->json($data,200);
 
     }
 
@@ -206,7 +224,7 @@ class UserController extends Controller
 
         $user_update->email = $request->email;
 
-                $user_update->password =  Hash::make($request->password);
+        $user_update->password =  Hash::make($request->password);
      
         $user_update->designation = $request->designation;
 
@@ -218,12 +236,17 @@ class UserController extends Controller
 
         $user_update->city_id = $request->city_id;
 
-        $user_update->assigned_to = $request->assigned_to;
+        if(isset($request->assigned_to)){
+
+            $user_update->assigned_to = $request->assigned_to;
+
+        }
 
         $user_update->status = $request->status;
 
         $user_update->dob = $request->dob;
-       
+
+
         $user_update->save();
 
         if ($request->file('profile_image_id')) {
@@ -248,8 +271,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy($id,User $user)
+    {   
+        $users =  $user->find($id);
+        $users->delete();
+        return redirect()->back()->with('success', 'User deleted successfully!');   
     }
 }

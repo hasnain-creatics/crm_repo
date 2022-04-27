@@ -3,10 +3,10 @@
 <aside class="app-sidebar">
 					<div class="app-sidebar__logo">
 						<a class="header-brand" href="index.html">
-							<img src="{{asset('public')}}/assets/images/brand/logo.png" class="header-brand-img desktop-lgo" alt="Azea logo">
-							<img src="{{asset('public')}}/assets/images/brand/logo1.png" class="header-brand-img dark-logo" alt="Azea logo">
-							<img src="{{asset('public')}}/assets/images/brand/favicon.png" class="header-brand-img mobile-logo" alt="Azea logo">
-							<img src="{{asset('public')}}/assets/images/brand/favicon1.png" class="header-brand-img darkmobile-logo" alt="Azea logo">
+							<img src="{{asset('public')}}/logo/logo.png" class="header-brand-img desktop-lgo" alt="Azea logo">
+							<img src="{{asset('public')}}/logo/logo.png{{asset('public')}}/logo/logo.png" class="header-brand-img dark-logo" alt="Azea logo">
+							<img src="{{asset('public')}}/logo/logo.png" class="header-brand-img mobile-logo" alt="Azea logo">
+							<img src="{{asset('public')}}/logo/logo.png" class="header-brand-img darkmobile-logo" alt="Azea logo">
 						</a>
 					</div>
 					<ul class="side-menu app-sidebar3">

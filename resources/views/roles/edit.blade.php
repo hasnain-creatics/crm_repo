@@ -15,6 +15,7 @@
     </div>
 </div>
 <div class="row">
+    
     <roles-edit-component role_id="{{$id}}"></roles-edit-component>
 </div>
 @endsection

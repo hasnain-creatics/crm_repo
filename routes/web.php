@@ -27,7 +27,7 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
 
     Route::group(['prefix'=>'roles'],function(){
 
-        Route::view('/', 'roles.index');
+        Route::get('/', [RolesController::class,'index']);
 
         Route::get('/get_roles',[RolesController::class,'get_roles'])->name('get_roles');
 
@@ -68,6 +68,8 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/fetch_cities',[UserController::class,'fetch_cities'])->name('fetch_cities');
 
         Route::get('/fetch_managers/{id}',[UserController::class,'fetch_managers']);
+
+        Route::get('/delete/{id}',[UserController::class,'destroy'])->name('user.delete');
         
 
     });

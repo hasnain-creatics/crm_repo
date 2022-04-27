@@ -142,3 +142,36 @@ $(function(){
 		});
 	});
 });
+
+
+function userDelete(){
+		event.preventDefault(); // prevent form submit
+		var form = event.target.form; // storing the form
+		        swal({
+		  title: "Are you sure?",
+		  text: "When you click the Yes data will deleted",
+		  type: "warning",
+		  showCancelButton: true,
+		  confirmButtonColor: "#DD6B55",
+		  confirmButtonText: "Yes, delete it!",
+		  cancelButtonText: "No, cancel delete!",
+		  closeOnConfirm: false,
+		  closeOnCancel: false,
+		         customClass: {
+                confirmButton: 'btn btn-primary',
+                cancelButton: 'btn btn-secondary',
+            }
+		},
+		function(isConfirm){
+		  if (isConfirm) {
+
+		  	swal('Congratulations!', 'Data is delete successfully', 'success');
+			  	setTimeout(function(){
+					form.submit();          // submitting the form when user press yes
+			  	},1000);
+			    
+		  } else {
+		    swal("Cancelled", "Data is safe now", "error");
+		  }
+		});
+}

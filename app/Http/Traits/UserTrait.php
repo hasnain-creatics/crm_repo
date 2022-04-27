@@ -5,11 +5,15 @@ use App\Models\UserProfileImage;
 use App\Models\User;
 
 use Illuminate\Support\Facades\Http;
-
+use Auth;
 trait UserTrait 
 {
     
-    
+    public function is_admin(){
+        $role = false;
+        if(Auth::user()->roles[0]->name == 'Admin')
+            return $role = true;
+    }
       public function scan_profile_image($path){
 
         $response = Http::get('https://api.sightengine.com/1.0/check.json', [

@@ -22,14 +22,14 @@
                 <div class="card-title">Add User</div>
             </div>
             <div class="card-body">
-            @if(Session::has('success'))
-        <div class="alert alert-success">
-            {{ Session::get('success') }}
-            @php
-                Session::forget('success');
-            @endphp
-        </div>
-        @endif
+                            @if(Session::has('success'))
+                        <div class="alert alert-success">
+                            {{ Session::get('success') }}
+                            @php
+                                Session::forget('success');
+                            @endphp
+                        </div>
+                        @endif
     
                                     <form action="{{route('user.update')}}" method="post" class="user_form" id="user_form" enctype="multipart/form-data">
                                     @csrf

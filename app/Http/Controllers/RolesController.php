@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use App\Models\Modules;
 use Validator;
+use Auth;
 class RolesController extends Controller
 {
     /**
@@ -15,21 +16,55 @@ class RolesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function index()
-    // {
-    //    return view('roles.index');
-    // }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+
+    public function __construct(){
+
+        //  $this->middleware('permission:user-list|user-add|user-edit|user-delete', ['only' => ['index','update']]);
+        //  $this->middleware('permission:user-add', ['only' => ['create','update']]);
+        //  $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
+        //  $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+        //  $this->middleware('permission:role-list', ['only' => ['index']]);
+        //  $this->middleware('permission:role-add', ['only' => ['create']]);
+        //  $this->middleware('permission:user-view', ['only' => ['index']]);
+
+         $this->middleware('permission:role-add', ['only' => ['create','store']]);
+         
+         $this->middleware('permission:role-edit', ['only' => ['edit','update']]);
+        
+         $this->middleware('permission:role-delete', ['only' => ['destroy']]);
+
+         $this->middleware('permission:role-view', ['only' => ['index']]);
+         
+
+    }
+
+    public function index()
+    {
+       return view('roles.index');
+    }
+
     public function get_roles()
     {
-        $roles = Role::get();
+        // $roles = Role::get();
         
-        return response()->json($roles);
+        $data = $roles = new Role();
+
+        // if($this->is_admin() != true){  
+        
+        //     $data = $data->where('name',Auth::user()->roles[0]->name);
+        
+        // }
+        
+        $data = $data->get();
+
+        return response()->json($data);
 
     }
 

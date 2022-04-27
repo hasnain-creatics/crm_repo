@@ -21,7 +21,9 @@ class GlobalDatatables
     {   
         return Datatables::of($data)->addIndexColumn()->addColumn('action', function($row){
             $btn = "";
-            $btn .= "<a href='".route('user.edit',$row->id)."' class='btn btn-primary'>Edit</a>";
+            $btn .= "<a href='".route('user.edit',$row->id)."' class='btn btn-primary'>Edit</a>&nbsp;";
+            $btn .= "<form action='".route('user.delete',$row->id)."'>
+                        <button class='btn btn-danger' name='archive' type='submit' onclick='userDelete()'>Delete</button></form>";
       
             return $btn;
         })->rawColumns(['action'])->make(true);

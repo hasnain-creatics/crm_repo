@@ -30,7 +30,14 @@
                         <div class="row">
 
                       <form >
-                    
+                                @if(Session::has('success'))
+                                    <div class="alert alert-success">
+                                        {{ Session::get('success') }}
+                                        @php
+                                            Session::forget('success');
+                                        @endphp
+                                    </div>
+                                    @endif
                       <div class="row">
                                 <div class="col-md-2">
                                     <div class="input-group mb-4">
@@ -90,9 +97,11 @@
 </div>
 @endsection
 
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/5.0.7/sweetalert2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/5.0.7/sweetalert2.min.js"></script>
 @section('after_script')
 <script type="text/javascript">
+
 
 var filter_array = {};    
 
@@ -165,15 +174,13 @@ $(document).on('click','#filter',function(){
 
     }
 
-
-
-
-
     const u = new URLSearchParams(filter_array).toString();
 
     user_datatable(send_request+"?"+u);
 
 })
+
+// href='".route('user.delete',$row->id)."' 
 
 
 function user_datatable(send_request){
