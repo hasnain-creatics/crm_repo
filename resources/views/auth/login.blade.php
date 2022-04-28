@@ -52,7 +52,7 @@
 												<a href="javascript:void(0);" class="">Welcome Back !</a>
 											</div>
 						
-                                            <form method="POST" class="mt-5" action="{{ route('login') }}">
+                                            <form method="POST" class="mt-5" id="login_from" action="{{ route('login') }}">
                                                      @csrf
                                                      @error('email')
                                                                 <div class="alert alert-danger" role="alert">
@@ -78,11 +78,11 @@
 														  <i class="fe fe-eye" aria-hidden="true"></i>
 														</a>
                                                         <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password"  required="required"  autocomplete="off"  placeholder="Password" >
-         
 													</div>
 												</div>
 												<div class="form-group text-center mb-3">
-													<button  type="submit"  class="btn btn-primary btn-lg w-100 br-7">  {{ __('Login') }}</button>
+													<button  type="submit"  class="btn btn-primary btn-loaders btn-icon btn-lg w-100 br-7 login-btn">  {{ __('Login') }}</button>
+													<!-- <button type="button" class="btn btn-primary btn-loaders btn-icon">Button</button> -->
 												</div>
 										
 											</form>
@@ -117,6 +117,21 @@
 
 		<!-- Custom js-->
 		<script src="{{asset('public')}}/assets/js/custom.js"></script>
+
+		<script>
+
+					$(document).ready(function(){
+						// alert();
+
+						$(document).on('submit','#login_from',function(){
+
+								$('.login-btn').prop('disabled',true);
+
+						});
+
+					});
+
+		</script>
 
 	</body>
 </html>

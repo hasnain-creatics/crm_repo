@@ -13,6 +13,11 @@ use App\Http\Controllers\UserController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::fallback(function () {
+
+    return redirect('admin/home');
+
+});
 
 Route::get('/', function () {
     return redirect('login');

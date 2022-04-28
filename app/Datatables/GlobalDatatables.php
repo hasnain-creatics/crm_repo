@@ -2,6 +2,8 @@
 namespace App\Datatables;
 use Illuminate\Support\Facades\DB;
 use DataTables;
+// use Illuminate\Support\Facades\Gate;
+use Auth;
 
 class GlobalDatatables
 {
@@ -18,13 +20,16 @@ class GlobalDatatables
     }
 
     protected function users($data)
-    {   
+    {     
         return Datatables::of($data)->addIndexColumn()->addColumn('action', function($row){
             $btn = "";
-            $btn .= "<a href='".route('user.edit',$row->id)."' class='btn btn-primary'>Edit</a>&nbsp;";
-            $btn .= "<form action='".route('user.delete',$row->id)."'>
-                        <button class='btn btn-danger' name='archive' type='submit' onclick='userDelete()'>Delete</button></form>";
-      
+            if (Auth::user()->can('user-edit')):
+                $btn .= "<a href='".route('user.edit',$row->id)."' class='btn btn-primary'>Edit</a>&nbsp;";
+            endif;
+            
+            if (Auth::user()->can('user-delete')):
+                $btn .= "<form action='".route('user.delete',$row->id)."'><button class='btn btn-danger' name='archive' type='submit' onclick='userDelete()'>Delete</button></form>";
+            endif;
             return $btn;
         })->rawColumns(['action'])->make(true);
     }

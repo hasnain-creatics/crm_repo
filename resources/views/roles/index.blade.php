@@ -7,11 +7,12 @@
         <h4 class="page-title mb-0 text-primary"></h4>
     </div>
     <div class="page-rightheader">
+    @can('role-add')
         <div class="btn-list">
-            <a href="{{route('role.add')}}" class="btn btn-primary btn-pill" >
-                <i class="fa fa-plus"></i> Add New</a>
-
+                <a href="{{route('role.add')}}" class="btn btn-primary btn-pill" >
+                    <i class="fa fa-plus"></i> Add New</a>
         </div>
+    @endcan
     </div>
 </div>
 <div class="row">
@@ -27,8 +28,29 @@
                        
                         </div>
                         <div class="row">
-                            
-                            <roles-list-component></roles-list-component>
+                        <?php 
+                            $edit_role = "hide-btn";
+                            $permission = "hide-btn";
+                        ?>    
+                        @can('role-edit')
+
+                                <?php 
+                                            $edit_role  = "";
+                                                                       
+                                ?>
+
+                        @endcan
+
+                        
+                        @can('permission')
+
+                                <?php 
+                                            $permission  = "";
+                                                                       
+                                ?>
+
+                        @endcan
+                            <roles-list-component edit_role="{{$edit_role}}"  permission="{{$permission}}"></roles-list-component>
                             
                         </div>
                   

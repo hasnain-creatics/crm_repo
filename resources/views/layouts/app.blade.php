@@ -11,8 +11,21 @@
 						<div class="app-header header main-header1">
 							<div class="container-fluid">
 								<div class="d-flex">
-
+								<div class="app-sidebar__toggle d-flex" data-bs-toggle="sidebar">
+										<a class="open-toggle" href="javascript:void(0);">
+											<svg xmlns="http://www.w3.org/2000/svg" class="feather feather-align-left header-icon" width="24" height="24" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"></path></svg>
+										</a>
+									</div>
+									<a class="header-brand" href="index.html">
+										<img src="{{url('public')}}/logo/logo.png" class="header-brand-img desktop-lgo" alt="Azea logo">
+										<img src="{{url('public')}}/logo/logo.png" class="header-brand-img dark-logo" alt="Azea logo">
+										<img src="{{url('public')}}/logo/logo.png" class="header-brand-img mobile-logo" alt="Azea logo">
+										<img src="{{url('public')}}/logo/logo.png" class="header-brand-img darkmobile-logo" alt="Azea logo">
+									</a>
 									<div class="d-flex order-lg-2 ms-auto main-header-end">
+										<button class="navbar-toggler navresponsive-toggler d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent-4" aria-controls="navbarSupportedContent-4" aria-expanded="true" aria-label="Toggle navigation">
+											<i class="fe fe-more-vertical header-icons navbar-toggler-icon"></i>
+										</button>
 
 										<div class="navbar navbar-expand-lg navbar-collapse responsive-navbar p-0">
 											<div class="collapse navbar-collapse" id="navbarSupportedContent-4">

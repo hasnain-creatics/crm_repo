@@ -261,17 +261,14 @@ CREATE TABLE `model_has_roles` (
 insert  into `model_has_roles`(`role_id`,`model_type`,`model_id`) values 
 (1,'App\\Models\\User',101),
 (1,'App\\Models\\User',310),
-(1,'App\\Models\\User',311),
 (15,'App\\Models\\User',314),
 (15,'App\\Models\\User',315),
 (15,'App\\Models\\User',316),
-(15,'App\\Models\\User',321),
 (16,'App\\Models\\User',320),
-(16,'App\\Models\\User',321),
 (16,'App\\Models\\User',322),
+(17,'App\\Models\\User',311),
 (17,'App\\Models\\User',313),
 (17,'App\\Models\\User',321),
-(18,'App\\Models\\User',311),
 (18,'App\\Models\\User',319);
 
 /*Table structure for table `modules` */
@@ -507,19 +504,19 @@ CREATE TABLE `permissions` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `permissions_name_guard_name_unique` (`name`,`guard_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `permissions` */
 
 insert  into `permissions`(`id`,`name`,`guard_name`,`created_at`,`updated_at`) values 
-(1,'order-view','web','2022-04-22 09:48:39','2022-04-22 09:48:39'),
-(2,'order-edit','web','2022-04-22 09:48:45','2022-04-22 09:48:45'),
-(3,'order-delete','web','2022-04-22 09:48:50','2022-04-22 09:48:50'),
-(4,'order-add','web','2022-04-22 09:48:54','2022-04-22 09:48:54'),
-(5,'lead-add','web','2022-04-22 09:48:54','2022-04-22 09:48:54'),
-(6,'lead-edit','web','2022-04-22 09:48:54','2022-04-22 09:48:54'),
-(7,'lead-delete','web','2022-04-22 09:48:54','2022-04-22 09:48:54'),
-(8,'lead-view','web','0000-00-00 00:00:00','2022-04-22 09:48:54');
+(1,'user-view','web','2022-04-22 09:48:39','2022-04-22 09:48:39'),
+(2,'user-add','web','2022-04-22 09:48:45','2022-04-22 09:48:45'),
+(3,'user-edit','web','2022-04-22 09:48:50','2022-04-22 09:48:50'),
+(4,'user-delete','web','2022-04-22 09:48:54','2022-04-22 09:48:54'),
+(5,'role-view','web','2022-04-22 09:48:54','2022-04-22 09:48:54'),
+(6,'role-add','web','2022-04-22 09:48:54','2022-04-22 09:48:54'),
+(7,'role-edit','web','2022-04-22 09:48:54','2022-04-22 09:48:54'),
+(8,'role-delete','web','0000-00-00 00:00:00','2022-04-22 09:48:54');
 
 /*Table structure for table `personal_access_tokens` */
 
@@ -556,6 +553,19 @@ CREATE TABLE `role_has_permissions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `role_has_permissions` */
+
+insert  into `role_has_permissions`(`permission_id`,`role_id`) values 
+(1,1),
+(1,15),
+(1,16),
+(2,1),
+(3,1),
+(4,1),
+(5,1),
+(5,15),
+(6,1),
+(7,1),
+(8,1);
 
 /*Table structure for table `roles` */
 
@@ -729,7 +739,7 @@ CREATE TABLE `users` (
   `salary` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `dob` date DEFAULT NULL,
-  `assigned_to` bigint(20) DEFAULT NULL,
+  `assigned_to` bigint(20) unsigned DEFAULT NULL,
   `profile_image_id` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `email_verified_at` timestamp NULL DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -844,7 +854,7 @@ insert  into `users`(`id`,`name`,`first_name`,`last_name`,`email`,`designation`,
 (98,'Vergie Emard',NULL,NULL,'rice.aniya@example.net',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-21 10:06:06','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'m4gogOOyNn','2022-04-21 10:06:07','2022-04-21 10:06:07',NULL),
 (99,'Prof. Madison Gibson Sr.',NULL,NULL,'fisher.alvena@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-21 10:06:06','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'KCU6PjIHY9','2022-04-21 10:06:07','2022-04-21 10:06:07',NULL),
 (100,'Ansel Weissnat',NULL,NULL,'xsenger@example.org',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-21 10:06:06','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'8EqbgtNNxK','2022-04-21 10:06:07','2022-04-21 10:06:07',NULL),
-(101,'admin',NULL,NULL,'admin@admin.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'$2y$10$Eg5j1CFzPQzZQjGfWlTgAeNvJbsplfCXHOE.MYpFEtwHByg9PUQq2',NULL,NULL,'2022-04-21 10:06:07','2022-04-21 10:06:07',NULL),
+(101,'admin',NULL,NULL,'admin@admin.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'$2y$10$Eg5j1CFzPQzZQjGfWlTgAeNvJbsplfCXHOE.MYpFEtwHByg9PUQq2','ACTIVE',NULL,'2022-04-21 10:06:07','2022-04-21 10:06:07',NULL),
 (102,'Wendell Rau',NULL,NULL,'litzy.ferry@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:06:39','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'pYzPjQKeYd','2022-04-22 10:06:39','2022-04-22 10:06:39',NULL),
 (103,'Jaden Durgan Sr.',NULL,NULL,'leon.hegmann@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:06:39','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'fgFhF4LBRr','2022-04-22 10:06:39','2022-04-22 10:06:39',NULL),
 (104,'Rita Heller',NULL,NULL,'josianne97@example.org',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:06:39','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'YySzVg83Rj','2022-04-22 10:06:39','2022-04-22 10:06:39',NULL),
@@ -945,7 +955,6 @@ insert  into `users`(`id`,`name`,`first_name`,`last_name`,`email`,`designation`,
 (199,'Letitia Kreiger',NULL,NULL,'gerlach.gustave@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:06:39','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'XYzFRF5gBI','2022-04-22 10:06:39','2022-04-22 10:06:39',NULL),
 (200,'Ollie Bernier',NULL,NULL,'karen10@example.net',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:06:39','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'RlajevBFax','2022-04-22 10:06:39','2022-04-22 10:06:39',NULL),
 (201,'Clifton Batz',NULL,NULL,'kimberly03@example.org',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:06:39','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'8rNKHWGlfm','2022-04-22 10:06:39','2022-04-22 10:06:39',NULL),
-(202,'admin',NULL,NULL,'admin@admin.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'$2y$10$uMG4eIYtndVnJUn7cUiiZ.hSM3vKk4zQKoSCb/UStwPBfgXQH/xUy',NULL,NULL,'2022-04-22 10:06:40','2022-04-22 10:06:40',NULL),
 (203,'Prof. Kaleb Collins III',NULL,NULL,'reichert.augustine@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:07:17','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'dwjaTupUOE','2022-04-22 10:07:18','2022-04-22 10:07:18',NULL),
 (204,'Rosina Stamm',NULL,NULL,'katlynn50@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:07:17','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'n2Q4qVaarL','2022-04-22 10:07:18','2022-04-22 10:07:18',NULL),
 (205,'Dudley Mills',NULL,NULL,'qsatterfield@example.com',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2022-04-22 10:07:17','$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',NULL,'hu7JcC7w7E','2022-04-22 10:07:18','2022-04-22 10:07:18',NULL),
@@ -1054,7 +1063,7 @@ insert  into `users`(`id`,`name`,`first_name`,`last_name`,`email`,`designation`,
 (308,NULL,'HR','User','hr@management.com','administrator',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'$2y$10$kpARw.trY640p2imuq3EueEejvDtDZ.7IERsHBZ3ExjqXKzXy8I2.','ACTIVE','$2y$10$m7wM668bQay3GWcp05m4guoNfcCP37KYN1kkP4.2IN.2zA76Hre5e','2022-04-23 00:00:00','2022-04-23 00:00:00',NULL),
 (309,NULL,'hasnain','khan','admin123123@management.com','14','123456789','123456789','1000','1',NULL,NULL,NULL,NULL,'123456789','ACTIVE',NULL,'2022-04-25 06:41:47','2022-04-25 06:41:47',NULL),
 (310,NULL,'hasnain123','khan 2222','hasnain111@mailinator.com','14','123123123','123123123','123123123','1',NULL,NULL,NULL,NULL,'123456789','INACTIVE',NULL,'2022-04-25 06:49:47','2022-04-25 06:49:47',NULL),
-(311,NULL,'hasnainkhan','khan','hansainhkan@gmail.com','18','123123123','123123123','12123123',NULL,NULL,313,NULL,NULL,'123456789','INACTIVE',NULL,'2022-04-25 06:50:44','2022-04-25 11:18:30',NULL),
+(311,NULL,'hasnainkhan','khan','hansainhkan@gmail.com','17','123123123','123123123','12123123','1',NULL,313,NULL,NULL,'$2y$10$.bOPtMGvZX3yVZfDczC1Xuu.nl4/qsLLwXCESq5HyHRo5m5qbNb.K','INACTIVE',NULL,'2022-04-25 06:50:44','2022-04-26 06:19:02',NULL),
 (312,NULL,'hasnain','khan123','hasnain123123@mailinator.com','15','123123','123123','123123','1',NULL,NULL,NULL,NULL,'123456789','INACTIVE',NULL,'2022-04-25 06:52:02','2022-04-25 06:52:02',NULL),
 (313,NULL,'hasnainkhan','khanaa','khaaan@gmail.com','17','123123','123123','10000',NULL,NULL,NULL,NULL,NULL,'123456789','INACTIVE',NULL,'2022-04-25 06:55:12','2022-04-25 09:34:18',NULL),
 (314,NULL,'hasnainkhan2','khan','hasniankhan25@gmail.com','15','123123','123123','123123',NULL,NULL,NULL,NULL,NULL,'123456789','INACTIVE',NULL,'2022-04-25 06:56:45','2022-04-25 09:33:15',NULL),
@@ -1062,10 +1071,10 @@ insert  into `users`(`id`,`name`,`first_name`,`last_name`,`email`,`designation`,
 (316,NULL,'hasnain','khan 2222','admin123123123@admin.com','15','123123123','123123123','123123123',NULL,NULL,NULL,'profile_images/user_316/profile-image-20220425070054.jpg',NULL,'123123123','INACTIVE',NULL,'2022-04-25 07:00:54','2022-04-25 09:32:28',NULL),
 (317,NULL,'hasnain123123123123123','sdsdf123123','admin121113123123@management.com','14','123456789','123123123','1000',NULL,NULL,NULL,NULL,NULL,'123456789','INACTIVE',NULL,'2022-04-25 07:10:46','2022-04-25 08:46:54',NULL),
 (318,NULL,'hasnain123','sdsdf','admin123123123@management.com','14','123456789','123123123','1000',NULL,NULL,NULL,NULL,NULL,NULL,'INACTIVE',NULL,'2022-04-25 08:44:11','2022-04-25 08:44:11',NULL),
-(319,NULL,'hasnain123123','sdsdf123','admin123123123@management.com','18','123456789','123123123','1000',NULL,NULL,313,NULL,NULL,NULL,'INACTIVE',NULL,'2022-04-25 08:44:20','2022-04-25 11:17:55',NULL),
+(319,NULL,'hasnain123123','sdsdf123','admin123123123@management.com','18','123456789','123123123','1000','1','2022-04-26',313,'profile_images/user_319/profile-image-20220426063750.jfif',NULL,'$2y$10$UK73ink8/wbRDv484CHnYu4udBINBkIN1scWW6a89O28QcFsThTMq','INACTIVE',NULL,'2022-04-25 08:44:20','2022-04-26 06:37:51',NULL),
 (320,NULL,'hasnain123123','sdsdf123123','admin123123123@management.com','16','123456789','123123123','1000','2','2022-04-12',316,'profile_images/user_320/profile-image-20220425112847.jfif',NULL,NULL,'INACTIVE',NULL,'2022-04-25 08:44:24','2022-04-25 11:31:38',NULL),
-(321,NULL,'sale','manager','salemanager@gmail.com','17','123456789','123456789','1000','1','2022-04-26',NULL,'profile_images/user_321/profile-image-20220425115457.jfif',NULL,NULL,'INACTIVE',NULL,'2022-04-25 08:49:04','2022-04-25 12:00:54',NULL),
-(322,NULL,'hasnain khan','hasnain khan 25','hasnainkhan252@gmail.com','16','123123123','123123','123123',NULL,NULL,321,'profile_images/user_322/profile-image-20220425095400.jpg',NULL,'123456789','INACTIVE',NULL,'2022-04-25 09:54:00','2022-04-25 10:43:51',NULL);
+(321,NULL,'sale','manager','salemanager@gmail.com','17','123456789','123456789','1000','1','2022-04-26',NULL,'profile_images/user_321/profile-image-20220425115457.jfif',NULL,'$2y$10$fhxunpflhRFpInMS9O2tE.Rgk.cZwijsaBMHIwn/9czQReQZMvxe2','ACTIVE',NULL,'2022-04-25 08:49:04','2022-04-26 08:31:05',NULL),
+(322,NULL,'hasnain khan','hasnain khan 25','hasnainkhan252@gmail.com','16','123123123','123123','123123','1',NULL,315,'profile_images/user_322/profile-image-20220427061706.jfif',NULL,'$2y$10$CZQ550MgeSnvvG/HUoRIReiNyqxCEDlObPQkQBU78FlasYWu3fk4y','ACTIVE',NULL,'2022-04-25 09:54:00','2022-04-27 07:07:28',NULL);
 
 /*Table structure for table `writer_work_timelines` */
 

@@ -29,9 +29,10 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-     
+   
+
         if ($request->ajax()) {
-            ;
+            
             $data = User::select('users.id',DB::raw('CONCAT(users.first_name," ",users.last_name) AS name'),
                                     'users.email',
                                     'users.phone_number',
@@ -62,6 +63,7 @@ class UserController extends Controller
             if(isset($_GET['phone']) && !empty($_GET['phone'])){
         
                 $phone = $_GET['phone']; 
+
                 $data = $data->where('users.phone_number','LIKE','%'.$phone.'%');     
         
             }
@@ -69,6 +71,7 @@ class UserController extends Controller
             if(isset($_GET['email']) && !empty($_GET['email'])){
         
                 $email = $_GET['email'];
+
                 $data = $data->where('users.email','LIKE','%'.$email.'%');    
             }
         

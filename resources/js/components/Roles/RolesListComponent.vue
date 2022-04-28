@@ -12,8 +12,8 @@
                                     <tbody>
                                         <tr v-for="user in results" :key="user.id">
                                             <td>{{user.name}}</td>
-                                            <td><a :href="'./roles/edit/'+user.id" class="btn btn-primary">Edit</a>
-                                            <a :href="'./roles/permissions/'+user.id" class="btn btn-primary">Permissions</a></td>
+                                            <td><a :href="'./roles/edit/'+user.id" :class="'btn btn-primary edit_ '+edit_role" >Edit</a>
+                                            <a :href="'./roles/permissions/'+user.id" :class="'btn btn-primary permission_ '+permission" >Permissions</a></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -25,17 +25,21 @@ export default {
    data() {
     return {
       results:[],
+      edit_: '',
+      perm_: ''
     }
   },
+  props: ['edit_role','permission'],
  async created() {
-     console.log(this.$hostname);
-        const response = await fetch(this.$hostname+"roles/get_roles");
-            const data = await response.json();
-            this.results = data;
+    const response = await fetch(this.$hostname+"roles/get_roles");
+        const data = await response.json();
+        this.results = data;
         }
-}
+ }
 </script>
 
 <style>
-
+.hide-btn{
+    display:none
+}
 </style>

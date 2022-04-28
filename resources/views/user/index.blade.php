@@ -7,11 +7,12 @@
         <h4 class="page-title mb-0 text-primary"></h4>
     </div>
     <div class="page-rightheader">
+    @can('user-add')
         <div class="btn-list">
             <a href="{{route('user.add')}}" class="btn btn-primary btn-pill" >
                 <i class="fa fa-plus"></i> Add New</a>
-
         </div>
+    @endcan
     </div>
 </div>
 <div class="row">
