@@ -280,4 +280,47 @@ class UserController extends Controller
         $users->delete();
         return redirect()->back()->with('success', 'User deleted successfully!');   
     }
+
+    public function check_email_exists(Request $request, User $user){
+
+        $user_email = $user->where('email',$request->email);
+        if(isset($request->id)){
+            $user->where('id','!=',$request->id);
+        }
+        $user_email = $user_email->get();
+        $data['email'] = $request->email;
+        $data['status'] = 'success';
+        if(count($user_email)>0){
+            $data['data'] = $user_email;
+            $data['email'] = $request->email;
+            $data['status'] = 'error';
+        
+        }
+
+        return response()->json($data);
+
+    }
+
+    public function status_update($id,User $user){
+
+        $users = $user->find($id);
+
+        if($users->status == "ACTIVE"){
+
+            $users->status = 'INACTIVE';
+
+        }else 
+        
+        if($users->status == 'INACTIVE'){
+
+            $users->status = 'ACTIVE';
+
+        }
+
+        $users->save();
+
+        return response()->json(['status'=>'success']);
+
+    }
+
 }

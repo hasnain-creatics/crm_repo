@@ -93,7 +93,7 @@
                 </div>
             </div>
         </div>
-
+                                                   
     </div>
 </div>
 @endsection
@@ -207,8 +207,26 @@ function user_datatable(send_request){
 
 }
 
+
+$(document).on('click','.status_check_box',function(){
+    var id   = $(this).closest('tr');
+    var vale = id.find('.status_check_box').attr('data-set');
+    $.ajax({
+        url: "{{url('admin/user/status_update/')}}/"+vale,
+        dataType:'json',
+        success:function(response){
+            $('#toast_title').html('User Status')
+            $('#toast_txt').html('User Status Updated Successfully')
+            
+            $('#liveToast').toast('show').css('opacity','9');
+         
+        }   
+      });
+
+});
+
+
+
 </script>
+
 @endsection
-
-
-

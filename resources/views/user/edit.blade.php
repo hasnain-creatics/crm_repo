@@ -301,5 +301,24 @@ $(document).on('change','#designation',function(){
 });
 
 
+$(document).on('change',"input[name='email']",function(){
+    var email = $("input[name='email']").val();
+    var id = $("input[name='id']").val(); 
+    $.ajax({
+        url:"{{route('check_email_exists')}}",
+        headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+        dataType:'json',
+        type:'post',
+        data: {email:email,id:id},
+        success:function(data){
+           if(data.status == 'error')
+           alert('email already exists!');
+           $("input[name='email']").val("{{$result->email}}");
+        }
+    });
+})
+
 </script>
 @endsection

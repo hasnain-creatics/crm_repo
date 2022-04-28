@@ -200,7 +200,7 @@
 @endsection
 
 @section('after_script')
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js"></script>
 <script>
     
 
@@ -239,6 +239,7 @@ $(document).ready(function(){
                // messages: {
                //      number: "only image accepted"
                //  },
+            //    filesize: 1048576  
             }, 
             email:{
                 required: true,
@@ -298,6 +299,28 @@ $(document).on('change','#designation',function(){
     }
   });
 });
+
+
+$(document).on('change',"input[name='email']",function(){
+    var email = $("input[name='email']").val()
+    $.ajax({
+        url:"{{route('check_email_exists')}}",
+        headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+        dataType:'json',
+        type:'post',
+        data: {email:email},
+        success:function(data){
+           if(data.status == 'error'){
+            
+            alert('Email already exists!');
+            $("input[name='email']").val("");
+            
+           }
+        }
+    });
+})
 
 
 

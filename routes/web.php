@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrdersController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -62,6 +63,8 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
 
         Route::get('/get_users',[UserController::class,'get_users']);
 
+        Route::post('/check_email_exists',[UserController::class,'check_email_exists'])->name('check_email_exists');
+
         Route::get('/add',[UserController::class,'create'])->name('user.add');
         
         Route::get('/add/{id}',[UserController::class,'edit'])->name('user.edit');
@@ -76,8 +79,17 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
 
         Route::get('/delete/{id}',[UserController::class,'destroy'])->name('user.delete');
         
+        Route::get('/status_update/{id}',[UserController::class,'status_update']);
+        
 
     });
+
+    Route::group(['prefix'=>'orders'],function(){
+
+        Route::get('/',[OrdersController::class,'index'])->name('order.home');
+    
+    });
+
 
 });
 // Route::view('/roles', [RolesController::class, 'index']);

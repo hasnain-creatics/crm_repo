@@ -21,7 +21,14 @@ class GlobalDatatables
 
     protected function users($data)
     {     
-        return Datatables::of($data)->addIndexColumn()->addColumn('action', function($row){
+        return Datatables::of($data)->editColumn('status',function($row){
+
+                return '<label class="switch">
+                <input type="checkbox" class="status_check_box "  data-set="'.$row->id.'" '.($row->status == 'ACTIVE' ? 'checked' : '').'>
+                <span class="slider round"></span>
+              </label>';
+
+        })->addIndexColumn()->addColumn('action', function($row){
             $btn = "";
             if (Auth::user()->can('user-edit')):
                 $btn .= "<a href='".route('user.edit',$row->id)."' class='btn btn-primary'>Edit</a>&nbsp;";
@@ -31,7 +38,7 @@ class GlobalDatatables
                 $btn .= "<form action='".route('user.delete',$row->id)."'><button class='btn btn-danger' name='archive' type='submit' onclick='userDelete()'>Delete</button></form>";
             endif;
             return $btn;
-        })->rawColumns(['action'])->make(true);
+        })->rawColumns(['action','status'])->make(true);
     }
 
 }
