@@ -5580,12 +5580,38 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
       role: "",
-      permission: [],
+      permissions: [],
       modules: {}
     };
   },
@@ -5596,32 +5622,10 @@ __webpack_require__.r(__webpack_exports__);
 
       axios__WEBPACK_IMPORTED_MODULE_0___default().get(this.$hostname + 'roles/permissions/get_role_permissions/' + this.role_id).then(function (response) {
         _this.role = response.data.role;
-        _this.permission = response.data.permissions;
+        _this.permissions = response.data.all_permissions;
         _this.modules = response.data.modules;
       });
-    } //         responseMethods(response){
-    //                   if(response.data.success==0){
-    //                       this.name = response.data.message  
-    //                   if(response.data.message.name[0]){
-    //                         this.name = response.data.message.name[0];
-    //                     }
-    //                   }else{
-    //                     this.message = response.data.message
-    //                     this.alerts = true;
-    //                     setTimeout(function(){
-    //                       window.location.reload();
-    //                     },1000); 
-    //                   }
-    //         },
-    //         submitDetails(){
-    //             axios.post('http://localhost/crm/admin/roles/update', this.form)
-    //                   .then( 
-    //                   function( response ){
-    //                     this.responseMethods( response );
-    //                 }.bind(this)
-    //                 );
-    //         }
-
+    }
   },
   created: function created() {
     this.getPermission();
@@ -29987,68 +29991,61 @@ var render = function () {
         attrs: { id: "text" },
       }),
       _vm._v(" "),
-      _c(
-        "form",
-        { staticClass: "row g-3 needs-validation", attrs: { action: "#" } },
-        [
-          _c("div", { staticClass: "col-md-4" }, [
-            _c(
-              "label",
-              {
-                staticClass: "form-label",
-                attrs: { for: "validationCustom01" },
-              },
-              [_vm._v("Name")]
-            ),
-            _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.form.name,
-                  expression: "form.name",
-                },
-              ],
-              staticClass: "form-control",
-              attrs: { type: "text", id: "validationCustom01", required: "" },
-              domProps: { value: _vm.form.name },
-              on: {
-                input: function ($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.form, "name", $event.target.value)
-                },
-              },
-            }),
-            _vm._v(" "),
-            _c("span", { staticClass: "validate" }, [_vm._v(_vm._s(_vm.name))]),
-          ]),
-          _c("br"),
-          _c("br"),
-          _c("br"),
-          _c("br"),
-          _c("br"),
-          _c("br"),
+      _c("form", { staticClass: "row g-3 needs-validation" }, [
+        _c("div", { staticClass: "col-md-4" }, [
+          _c(
+            "label",
+            { staticClass: "form-label", attrs: { for: "validationCustom01" } },
+            [_vm._v("Name")]
+          ),
           _vm._v(" "),
-          _c("div", { staticClass: "col-12" }, [
-            _c(
-              "button",
+          _c("input", {
+            directives: [
               {
-                staticClass: "btn btn-primary",
-                attrs: { type: "button" },
-                on: {
-                  click: function ($event) {
-                    return _vm.submitDetails()
-                  },
+                name: "model",
+                rawName: "v-model",
+                value: _vm.form.name,
+                expression: "form.name",
+              },
+            ],
+            staticClass: "form-control",
+            attrs: { type: "text", id: "validationCustom01", required: "" },
+            domProps: { value: _vm.form.name },
+            on: {
+              input: function ($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.form, "name", $event.target.value)
+              },
+            },
+          }),
+          _vm._v(" "),
+          _c("span", { staticClass: "validate" }, [_vm._v(_vm._s(_vm.name))]),
+        ]),
+        _c("br"),
+        _c("br"),
+        _c("br"),
+        _c("br"),
+        _c("br"),
+        _c("br"),
+        _vm._v(" "),
+        _c("div", { staticClass: "col-12" }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-primary",
+              attrs: { type: "submit" },
+              on: {
+                click: function ($event) {
+                  return _vm.submitDetails()
                 },
               },
-              [_vm._v("Submit form")]
-            ),
-          ]),
-        ]
-      ),
+            },
+            [_vm._v("Submit form")]
+          ),
+        ]),
+      ]),
     ]),
   ])
 }
@@ -30183,9 +30180,71 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", { staticClass: "card-body" }, [
+    _c("form", { attrs: { method: "POST", action: "" } }, [
+      _c(
+        "div",
+        {
+          staticClass: "dataTables_wrapper dt-bootstrap5 no-footer",
+          attrs: { id: "example1_wrapper" },
+        },
+        [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "row" }, [
+            _c("div", { staticClass: "col-lg-12" }, [
+              _c(
+                "div",
+                { staticClass: "input-group" },
+                [
+                  _vm._m(1),
+                  _vm._v(" "),
+                  _vm._l(_vm.permissions, function (permission) {
+                    return _c(
+                      "div",
+                      {
+                        key: permission.id,
+                        staticClass: "form-group col-md-6",
+                      },
+                      [
+                        _c("label", { attrs: { for: permission.name } }, [
+                          _vm._v(_vm._s(permission.name)),
+                        ]),
+                      ]
+                    )
+                  }),
+                ],
+                2
+              ),
+            ]),
+          ]),
+        ]
+      ),
+    ]),
+  ])
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "row" }, [
+      _c("div", { staticClass: "col-lg-12" }, [
+        _c("div", { staticClass: "input-group" }, [
+          _c("div", { staticClass: "form-group col-md-6" }),
+        ]),
+      ]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "form-group col-md-6" }, [
+      _c("label", { attrs: { for: "" } }, [_vm._v("Admin")]),
+    ])
+  },
+]
 render._withStripped = true
 
 

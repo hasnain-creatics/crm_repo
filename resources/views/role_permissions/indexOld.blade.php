@@ -50,8 +50,7 @@
                                </div>    
                             @endforeach
                         </div>
-                        </div>  
-                    </div>
+                        </div>  </div>
                         <div class="row">
                         <input type="submit" class="btn btn-primary">
                                 

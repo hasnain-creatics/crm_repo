@@ -5,7 +5,7 @@
 										<h3 class="card-title">Add Role</h3>
 									</div>
 									<div class="card-body">   <p id="text" style="color:green; margin-left:100px;"></p>
-										<form class="row g-3 needs-validation" action="#" >
+										<form class="row g-3 needs-validation" >
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Name</label>
 											  <input type="text" class="form-control" id="validationCustom01" v-model="form.name" required>   
@@ -13,7 +13,7 @@
 											 
 											</div><br><br><br><br><br><br>
 											<div class="col-12">
-											  <button class="btn btn-primary" type="button"  v-on:click="submitDetails()" >Submit form</button>
+											  <button class="btn btn-primary" type="submit"  v-on:click="submitDetails()" >Submit form</button>
 											</div>
 										  </form>
 									</div>

@@ -4,7 +4,7 @@
 					<div class="app-sidebar__logo">
 						<a class="header-brand" href="index.html">
 							<img src="{{asset('public')}}/logo/logo.png" class="header-brand-img desktop-lgo" alt="Azea logo">
-							<img src="{{asset('public')}}/logo/logo.png{{asset('public')}}/logo/logo.png" class="header-brand-img dark-logo" alt="Azea logo">
+							<img src="{{asset('public')}}/logo/logo.png" class="header-brand-img dark-logo" alt="Azea logo">
 							<img src="{{asset('public')}}/logo/logo.png" class="header-brand-img mobile-logo" alt="Azea logo">
 							<img src="{{asset('public')}}/logo/logo.png" class="header-brand-img darkmobile-logo" alt="Azea logo">
 						</a>

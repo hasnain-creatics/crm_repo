@@ -1,12 +1,9 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\User; 
 use Spatie\Permission\Models\Role;
 use App\Models\City;
-
 use App\Http\Requests\UserAddRequest;
 use App\Http\Requests\UserEditRequest;
 use DB;
@@ -17,75 +14,81 @@ class UserController extends Controller
 {
     public function __construct(){
 
-         $this->middleware('permission:user-add', ['only' => ['create','update']]);
+        $this->middleware('permission:user-add', ['only' => ['create','update']]);
          
-         $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
+        $this->middleware('permission:user-edit', ['only' => ['edit','update']]);
         
-         $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
 
-         $this->middleware('permission:user-view', ['only' => ['index']]);
+        $this->middleware('permission:user-view', ['only' => ['index']]);
          
     }
 
-    public function index(Request $request)
-    {
-   
+    public function index(Request $request){
 
         if ($request->ajax()) {
             
-            $data = User::select('users.id',DB::raw('CONCAT(users.first_name," ",users.last_name) AS name'),
-                                    'users.email',
-                                    'users.phone_number',
-                                    'users.status',
-                                    'users.designation',
-                                    DB::raw('CONCAT(assu.first_name," ",assu.last_name) AS assigned_name'));
-                            
-            if(isset($_GET['role']) && !empty($_GET['role'])){
+                            $data = User::select('users.id',DB::raw('CONCAT(users.first_name," ",users.last_name) AS name'),
 
-                $role = $_GET['role'];
+                                     'users.email',
             
-                $data = $data->where('users.designation',$_GET['role']);
+                                     'users.phone_number',
+            
+                                     'users.status',
+            
+                                     'users.designation',
+            
+                                     DB::raw('CONCAT(assu.first_name," ",assu.last_name) AS assigned_name')
+            
+                                    );
+                            
+                            if(isset($_GET['role']) && !empty($_GET['role'])){
 
-            }
+                                $role = $_GET['role'];
+                            
+                                $data = $data->where('users.designation',$_GET['role']);
 
-            $data = $data->with('roles');
+                            }
 
-            $data = $data->leftJoin('users as assu','users.assigned_to','=','assu.id');       
+                            $data = $data->with('roles');
 
-            if(isset($_GET['status']) && !empty($_GET['status'])){
-        
-                $status = $_GET['status'];
-    
-                $data = $data->where('users.status',$status);  
-        
-            }
+                            $data = $data->leftJoin('users as assu','users.assigned_to','=','assu.id');       
 
-            if(isset($_GET['phone']) && !empty($_GET['phone'])){
-        
-                $phone = $_GET['phone']; 
+                            if(isset($_GET['status']) && !empty($_GET['status'])){
+                        
+                                $status = $_GET['status'];
+                    
+                                $data = $data->where('users.status',$status);  
+                        
+                            }
 
-                $data = $data->where('users.phone_number','LIKE','%'.$phone.'%');     
-        
-            }
+                            if(isset($_GET['phone']) && !empty($_GET['phone'])){
+                        
+                                $phone = $_GET['phone']; 
 
-            if(isset($_GET['email']) && !empty($_GET['email'])){
-        
-                $email = $_GET['email'];
+                                $data = $data->where('users.phone_number','LIKE','%'.$phone.'%');     
+                        
+                            }
 
-                $data = $data->where('users.email','LIKE','%'.$email.'%');    
-            }
-        
-            if($this->is_admin() != true){
+                            if(isset($_GET['email']) && !empty($_GET['email'])){
+                        
+                                $email = $_GET['email'];
 
-                $data->where(['users.id'=>Auth::user()->id]);
+                                $data = $data->where('users.email','LIKE','%'.$email.'%');    
+                            
+                            }
+                        
+                            if($this->is_admin() != true){
 
-                $data->orWhere(['users.assigned_to'=>Auth::user()->id]);
+                                $data->where(['users.id'=>Auth::user()->id]);
 
-            }
+                                $data->orWhere(['users.assigned_to'=>Auth::user()->id]);
 
-            $data = $data->orderBy('users.id','DESC');             
+                            }
 
-            return $this->table($data,'users');   
+                            $data = $data->orderBy('users.id','DESC');             
+
+                            return $this->table($data,'users');   
 
         }
 
@@ -249,7 +252,6 @@ class UserController extends Controller
 
         $user_update->dob = $request->dob;
 
-
         $user_update->save();
 
         if ($request->file('profile_image_id')) {
@@ -284,16 +286,26 @@ class UserController extends Controller
     public function check_email_exists(Request $request, User $user){
 
         $user_email = $user->where('email',$request->email);
+
         if(isset($request->id)){
+        
             $user->where('id','!=',$request->id);
+        
         }
+        
         $user_email = $user_email->get();
+        
         $data['email'] = $request->email;
+        
         $data['status'] = 'success';
+        
         if(count($user_email)>0){
+        
             $data['data'] = $user_email;
+        
             $data['email'] = $request->email;
-            $data['status'] = 'error';
+        
+            $data['status'] = 'error'; 
         
         }
 
@@ -311,7 +323,7 @@ class UserController extends Controller
 
         }else 
         
-        if($users->status == 'INACTIVE'){
+        if($users->status == NULL || $users->status == 'INACTIVE'){
 
             $users->status = 'ACTIVE';
 

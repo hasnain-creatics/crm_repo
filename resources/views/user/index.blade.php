@@ -39,7 +39,7 @@
                                         @endphp
                                     </div>
                                     @endif
-                      <div class="row">
+                                <div class="row">
                                 <div class="col-md-2">
                                     <div class="input-group mb-4">
                                          <input type="text" class="form-control input-text"  name="email" placeholder="Search Email...." aria-label="Recipient's username" aria-describedby="basic-addon2"  id="filter_email">

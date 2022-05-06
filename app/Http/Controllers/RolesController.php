@@ -47,6 +47,8 @@ class RolesController extends Controller
 
     public function index()
     {
+
+    //    $modulesModules::get();
        return view('roles.index');
     }
 
@@ -91,15 +93,15 @@ class RolesController extends Controller
     public function update_permmission(Request $request){
         $role=Role::find($request['name']);
         $role->syncPermissions($request->input('permission'));
-            return redirect()->route('roles.permission',$request['name'])
-                            ->with('success','Role created successfully');
+        return redirect()->route('roles.permission',$request['name'])->with('success','Role created successfully');
     }
 
-    public function get_role_permissions($id=null){
+    public function get_role_permissions($id=null,Role $roles,Permission $permissions){
 
-       
+        $data['usere_roles'] = $roles->find($id);
         $data['id'] = $id;
-
+        // $data['all_roles'] = $roles->get(); 
+        $data['all_permissions'] = $permissions->get();
         return response()->json($data);
 
     }

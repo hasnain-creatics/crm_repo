@@ -24,9 +24,7 @@ class CreateAdminUserSeed extends Seeder
                 'name'=>'admin',
                 'email'=>'admin@admin.com',
                 'password'=>bcrypt('123456')
-        ])->assignRole([
-'Admin'
-        ]);
+        ])->assignRole(['Admin']);
         // $user =[
           
         //     'first_name' => 'Sale Manager',
