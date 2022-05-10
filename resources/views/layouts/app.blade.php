@@ -120,7 +120,19 @@
 
 					@yield('content')
 
-												<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+
+					</div>
+				</div>
+
+				<!-- End app-content-->
+				@include('layouts.footer')
+
+				</div>
+		</div>
+        </div>
+		<!-- End Page -->
+
+		<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
                                                         <div id="liveToast" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
                                                             <div class="toast-header bg-success text-white">
                                                                 <strong class="me-auto" id="toast_title">User Status</strong>
@@ -134,18 +146,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
-					</div>
-				</div>
-
-				<!-- End app-content-->
-				@include('layouts.footer')
-
-				</div>
-		</div>
-        </div>
-		<!-- End Page -->
-
 		<!-- Back to top -->
 		<a href="#top" id="back-to-top"><i class="fe fe-chevron-up"></i></a>
 		
@@ -218,7 +218,7 @@
 		
 		<script src="{{url('public/')}}/assets/js/jquery.validate.min.js" ></script>
 		<script src="{{asset('public')}}/assets/js/form-vallidations.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js"></script>
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.2/additional-methods.min.js"></script> -->
 		<script src="{{asset('public')}}/assets/plugins/sweet-alert/jquery.sweet-modal.min.js"></script>
 		<script src="{{asset('public')}}/assets/plugins/sweet-alert/sweetalert.min.js"></script>
 		<script src="{{asset('public')}}/assets/js/sweet-alert.js"></script>

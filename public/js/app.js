@@ -5760,6 +5760,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
 
 /***/ }),
 
@@ -30392,6 +30394,15 @@ var staticRenderFns = [
                   attrs: { tabindex: "0" },
                 },
                 [_vm._v("ID")]
+              ),
+              _vm._v(" "),
+              _c(
+                "th",
+                {
+                  staticClass: "wd-15p border-bottom-0 sorting sorting_asc",
+                  attrs: { tabindex: "0" },
+                },
+                [_vm._v("Profile Image")]
               ),
               _vm._v(" "),
               _c(

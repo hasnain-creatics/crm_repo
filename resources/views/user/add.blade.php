@@ -62,15 +62,18 @@
 
 
                                                 <div class="input-group">
-                                                    
-                                                    <div class="form-group col-md-6">
+                                                    <div class="form-group col-md-4">
+                                                        <label for="" class="form-label">Nickname</label>
+                                                        <input type="text" id="nickname" class="form-control" name="nickname">
+                                                    </div>
+                                                    <div class="form-group col-md-4">
                                                         <label for="" class="form-label">Password</label>
                                                         <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" name="password">
                                                         @error('password')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
-                                                    <div class="form-group col-md-6">
+                                                    <div class="form-group col-md-4">
                                                         <label for="" class="form-label">Confirm Password</label>
                                                         <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"  name="password_confirmation">
                                                         @error('password_confirmation')
@@ -82,21 +85,34 @@
 
 
                                                 <div class="input-group">
-                                                    <div class="form-group col-md-6">
+                                                    <div class="form-group col-md-3">
                                                         <label for="" class="form-label">Designation</label>
-                                                        <select name="designation" class="form-control custom-select select2 select2-hidden-accessible @error('designation') is-invalid @enderror"  id="designation">
+                                                        <select name="designation" class="form-control designation_id custom-select select2 select2-hidden-accessible @error('designation') is-invalid @enderror"  id="designation">
                                                            
                                                         </select>
                                                         @error('designation')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
-                                                    <div class="assignTo form-group col-md-6 d-none" >
+                                                    <div class="assignTo form-group col-md-3 d-none" >
                                                         <label for="" class="form-label">Assign To</label>
                                                         <select name="assigned_to" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" id="assigned_to"   aria-hidden="true">
                                                             
                                                         </select>
-                                                    </div>  
+                                                    </div> 
+                                                    
+                                                    <div class="assignTo  form-group col-md-3 d-none" style="margin-top: 35px;">
+                                                        <label for="lead" >Make this user Lead</label>
+                                                        <input type="checkbox" id="lead" name="is_lead" >
+                                                    </div> 
+                                                    
+                                                    <div class="assignTo assignLead form-group col-md-3 d-none"  id="assignLead">
+                                                        <label for="" class="form-label">Assign Lead</label>
+                                                        <select name="lead_id" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" id="lead_id"   aria-hidden="true">
+                                                            
+                                                        </select>
+                                                    </div> 
+                                                     
                                                 </div>
 
 
@@ -216,8 +232,7 @@ $(document).ready(function(){
     $('#designation').html(all_designations("{{route('fetch_all_designation')}}"));
     
     $('#city_id').html(all_cities("{{route('fetch_cities')}}"));
-   
-
+  
     $('#user_form').validate({
 
     errorPlacement: function(label, element) {
@@ -281,7 +296,7 @@ $(document).ready(function(){
 
 $(document).on('change','#designation',function(){
   var designation = $('#designation').val();
-  
+
   $.ajax({
     url:'{{url("admin/user/fetch_managers")}}/'+designation,
     dataType:'json',
@@ -295,9 +310,15 @@ $(document).on('change','#designation',function(){
             }
             $('.assignTo').removeClass('d-none').addClass('d-block');
             $('#assigned_to').html(html);
+        }else{
+            $('.assignTo').removeClass('d-block').addClass('d-none');
         }
     }
   });
+ 
+  lead_checkes('{{url("admin/user/fetch_leads")}}');
+    
+
 });
 
 
@@ -320,13 +341,16 @@ $(document).on('change',"input[name='email']",function(){
            }
         }
     });
-})
-
-
+});
 
 });
 
 
+$(document).on('click','#lead',function(){
+
+   lead_checkes('{{url("admin/user/fetch_leads")}}');
+
+});
 
 
 </script>

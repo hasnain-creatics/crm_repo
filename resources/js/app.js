@@ -24,8 +24,6 @@ Vue.component('roles-list-component', require('./components/Roles/RolesListCompo
 Vue.component('roles-add-component', require('./components/Roles/RoleAddComponent.vue').default);   
 Vue.component('roles-edit-component', require('./components/Roles/RoleEditComponent.vue').default);   
 Vue.component('roles-permission-component', require('./components/Roles/RolePermissionComponent.vue').default);   
-
-
 Vue.component('user-list-component', require('./components/Users/UserListComponent.vue').default);   
 
 

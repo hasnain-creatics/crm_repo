@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrdersController;
+use App\Http\Controllers\LeadsController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -76,10 +77,13 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/fetch_cities',[UserController::class,'fetch_cities'])->name('fetch_cities');
 
         Route::get('/fetch_managers/{id}',[UserController::class,'fetch_managers']);
+        
+        Route::get('/fetch_leads/{id}',[UserController::class,'fetch_leads']);
 
         Route::get('/delete/{id}',[UserController::class,'destroy'])->name('user.delete');
         
         Route::get('/status_update/{id}',[UserController::class,'status_update']);
+        Route::get('/show/{id}',[UserController::class,'show']);
         
 
     });
@@ -87,6 +91,15 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
     Route::group(['prefix'=>'orders'],function(){
 
         Route::get('/',[OrdersController::class,'index'])->name('order.home');
+    
+    });
+
+
+    Route::group(['prefix'=>'leads'],function(){
+
+        Route::get('/',[LeadsController::class,'index'])->name('leads.home');
+        Route::get('/add',[LeadsController::class,'create'])->name('leads.add');
+        Route::get('/view/{id}',[LeadsController::class,'show'])->name('leads.view');
     
     });
 

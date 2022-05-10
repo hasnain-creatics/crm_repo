@@ -144,9 +144,10 @@ $(function(){
 });
 
 
-function userDelete(){
+function userDelete(ele){
 		event.preventDefault(); // prevent form submit
-		var form = event.target.form; // storing the form
+		// var forms = event.target.form; // storing the form
+		form = $('.delete_submit');
 		        swal({
 		  title: "Are you sure?",
 		  text: "When you click the Yes data will deleted",
@@ -167,7 +168,7 @@ function userDelete(){
 
 		  	swal('Congratulations!', 'Data is delete successfully', 'success');
 			  	setTimeout(function(){
-					form.submit();          // submitting the form when user press yes
+					window.location.href = main_url+'/user/delete/'+ele;
 			  	},1000);
 			    
 		  } else {

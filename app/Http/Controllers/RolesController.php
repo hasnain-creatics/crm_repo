@@ -47,24 +47,15 @@ class RolesController extends Controller
 
     public function index()
     {
-
-    //    $modulesModules::get();
        return view('roles.index');
     }
 
     public function get_roles()
     {
-        // $roles = Role::get();
         
         $data = $roles = new Role();
 
-        // if($this->is_admin() != true){  
-        
-        //     $data = $data->where('name',Auth::user()->roles[0]->name);
-        
-        // }
-        
-        $data = $data->get();
+        $data = $data->where("id","!=",1)->get();
 
         return response()->json($data);
 

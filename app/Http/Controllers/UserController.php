@@ -28,67 +28,75 @@ class UserController extends Controller
 
         if ($request->ajax()) {
             
-                            $data = User::select('users.id',DB::raw('CONCAT(users.first_name," ",users.last_name) AS name'),
+                                $data = User::select('users.id',DB::raw('CONCAT(users.first_name," ",users.last_name) AS name'),
 
                                      'users.email',
+
+                                     'users.profile_image_id as profile_image',
             
                                      'users.phone_number',
             
                                      'users.status',
             
                                      'users.designation',
+
+                                     'users.is_lead',
             
-                                     DB::raw('CONCAT(assu.first_name," ",assu.last_name) AS assigned_name')
+                                     DB::raw('CONCAT(assu.first_name," ",assu.last_name) AS assigned_name'),
+
+                                     DB::raw('CONCAT(assl.first_name," ",assl.last_name) AS lead_name')
             
-                                    );
+            );
                             
-                            if(isset($_GET['role']) && !empty($_GET['role'])){
+           if(isset($_GET['role']) && !empty($_GET['role'])){
 
-                                $role = $_GET['role'];
-                            
-                                $data = $data->where('users.designation',$_GET['role']);
+               $role = $_GET['role'];
+           
+               $data = $data->where('users.designation',$_GET['role']);
 
-                            }
+           }
 
-                            $data = $data->with('roles');
+           $data = $data->with('roles');
 
-                            $data = $data->leftJoin('users as assu','users.assigned_to','=','assu.id');       
+           $data = $data->leftJoin('users as assu','users.assigned_to','=','assu.id');
 
-                            if(isset($_GET['status']) && !empty($_GET['status'])){
-                        
-                                $status = $_GET['status'];
-                    
-                                $data = $data->where('users.status',$status);  
-                        
-                            }
+           $data = $data->leftJoin('users as assl','users.lead_id','=','assl.id');       
 
-                            if(isset($_GET['phone']) && !empty($_GET['phone'])){
-                        
-                                $phone = $_GET['phone']; 
+           if(isset($_GET['status']) && !empty($_GET['status'])){
+       
+               $status = $_GET['status'];
+   
+               $data = $data->where('users.status',$status);  
+       
+           }
 
-                                $data = $data->where('users.phone_number','LIKE','%'.$phone.'%');     
-                        
-                            }
+           if(isset($_GET['phone']) && !empty($_GET['phone'])){
+       
+               $phone = $_GET['phone']; 
 
-                            if(isset($_GET['email']) && !empty($_GET['email'])){
-                        
-                                $email = $_GET['email'];
+               $data = $data->where('users.phone_number','LIKE','%'.$phone.'%');     
+       
+           }
 
-                                $data = $data->where('users.email','LIKE','%'.$email.'%');    
-                            
-                            }
-                        
-                            if($this->is_admin() != true){
+           if(isset($_GET['email']) && !empty($_GET['email'])){
+       
+               $email = $_GET['email'];
 
-                                $data->where(['users.id'=>Auth::user()->id]);
+               $data = $data->where('users.email','LIKE','%'.$email.'%');    
+           
+           }
+       
+           if($this->is_admin() != true){
 
-                                $data->orWhere(['users.assigned_to'=>Auth::user()->id]);
+               $data->where(['users.id'=>Auth::user()->id]);
 
-                            }
+               $data->orWhere(['users.assigned_to'=>Auth::user()->id]);
 
-                            $data = $data->orderBy('users.id','DESC');             
+           }
 
-                            return $this->table($data,'users');   
+           $data = $data->orderBy('users.id','DESC');             
+
+           return $this->table($data,'users');   
 
         }
 
@@ -122,7 +130,7 @@ class UserController extends Controller
 
     public function edit($id){
 
-        $result = User::find($id);
+        $result = User::findOrFail($id);
 
         return view('user.edit',compact('result'));
 
@@ -170,32 +178,81 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
+       $data['users_details'] = User::where('users.id',$id)->with('roles')->get();
+       return view('modals.users.view_user',$data);
     }
 
-    public function fetch_managers($id){
-
-        // $users = User::whereHas(['roles' => function($q){
-        //     $q->where('id', $id);
-        // }])->get();
+    public function fetch_leads($id){
         $role = "";
+
         $role_name = Role::find($id)->name;
+
         $data['status'] = 'error';
+
         $data['data'] = [];
+
         if($role_name == 'Sale Agent' || $role_name == 'sale agent'){
-            $role = 'Sale Manager';
+
+            $role = 'Sale Agent';
+
             $data['status'] = 'success';
 
         }
 
 
         if($role_name == 'Writer' || $role_name == 'write'){
-            $role = 'Writer Manager';
+
+            $role = 'Writer';
+
+            $data['status'] = 'success';
+
+
+        }
+
+        if($data['status'] == 'success'){
+
+            $data['data'] = User::select('id',DB::raw('CONCAT(first_name," ",last_name) AS name','is_lead','lead_id'))
+            ->where('is_lead','!=',NULL)
+            ->whereHas('roles', function($q) use ($role){
+                $q->whereIn('name', [$role]);
+                })->get();
+
+        }
+    
+        return response()->json($data);
+    }
+
+    public function fetch_managers($id){
+
+        $role = "";
+
+        $role_name = Role::find($id)->name;
+
+        $data['status'] = 'error';
+
+        $data['data'] = [];
+
+        if($role_name == 'Sale Agent' || $role_name == 'sale agent'){
+
+            $role = 'Sale Manager';
+
             $data['status'] = 'success';
 
         }
+
+
+        if($role_name == 'Writer' || $role_name == 'write'){
+
+            $role = 'Writer Manager';
+
+            $data['status'] = 'success';
+
+
+        }
+
         if($data['status'] == 'success'){
-            $data['data'] = User::select('id',DB::raw('CONCAT(first_name," ",last_name) AS name'))->whereHas('roles', function($q) use ($role){
+
+            $data['data'] = User::select('id',DB::raw('CONCAT(first_name," ",last_name) AS name','is_lead','lead_id'))->whereHas('roles', function($q) use ($role){
                 $q->whereIn('name', [$role]);
             })->get();
     
@@ -242,6 +299,8 @@ class UserController extends Controller
 
         $user_update->city_id = $request->city_id;
 
+        $user_update->nickname = $request->nickname;
+
         if(isset($request->assigned_to)){
 
             $user_update->assigned_to = $request->assigned_to;
@@ -251,6 +310,22 @@ class UserController extends Controller
         $user_update->status = $request->status;
 
         $user_update->dob = $request->dob;
+        
+        $user_update->is_lead = NULL;
+
+        $user_update->lead_id = NULL;
+
+        if($request->is_lead){
+
+            $user_update->is_lead = 1;            
+
+        }
+
+        if($request->lead_id){
+
+            $user_update->lead_id = $request->lead_id;
+
+        }
 
         $user_update->save();
 
@@ -278,7 +353,7 @@ class UserController extends Controller
      */
     public function destroy($id,User $user)
     {   
-        $users =  $user->find($id);
+        $users =  $user->findOrFail($id);
         $users->delete();
         return redirect()->back()->with('success', 'User deleted successfully!');   
     }
@@ -315,7 +390,7 @@ class UserController extends Controller
 
     public function status_update($id,User $user){
 
-        $users = $user->find($id);
+        $users = $user->findOrFail($id);
 
         if($users->status == "ACTIVE"){
 

@@ -58,7 +58,7 @@
                                     <div class="input-group mb-4"> 
                                         <select    name="role" id="filter_designation" class="form-control input-text" aria-label="Recipient's username" aria-describedby="basic-addon2">
                                             
-                                            <option value=""></option>
+                                            <option value="">Designation</option>
                                             @foreach($designation as $key=>$value)
                                                     <option value="{{$value->id}}">{{$value->name}}</option>
                                             @endforeach
@@ -70,21 +70,25 @@
                                 <div class="col-md-2">
                                     <div class="input-group mb-4"> 
                                         <select    name="status" id="filter_status" class="form-control input-text" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                                            <option value=""></option>
+                                            <option value="">Status</option>
                                             <option value="ACTIVE">Active</option>
                                             <option value="INACTIVE">Inactive</option>
                                         </select>
                                     </div>
                                 
                                 </div>
-
-
-                                <div class="col-md-3">
-                                <div class="input-group-append"> 
-                                    <button class="btn btn-outline-primary" id="filter" type="button"><i class="fa fa-search"></i>Filter</button> </div>
-
+                                <div class="col-md-1">
+                                    <div class="input-group mb-1"> 
+                                        <button class="btn btn-outline-primary" id="filter" type="button"><i class="fa fa-search"></i> Filter</button> 
                                     </div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="input-group mb-2"> 
+                                        <button class="btn btn-outline-primary" id="reset" type="button"><i class="fa fa-undo"></i> Reset</button> 
+                                    </div>
+                                </div>
+
+                            </div>
 
                             </div>
                       </form>
@@ -185,14 +189,14 @@ $(document).on('click','#filter',function(){
 
 
 function user_datatable(send_request){
-        var table = $('#example1').DataTable({
-            
+        return  table = $('#example1').DataTable({
             processing: true,
             serverSide: true,
             ajax:send_request,
             destroy : true, 
             columns: [
                 {data: 'id',       name: 'id'},
+                {data: 'profile_image',       name: 'profile_image'},
                 {data: 'name',       name: 'name'},
                 {data: 'email',     name: "email"},
                 {data: 'roles',     render:"[roles].name"},
@@ -225,8 +229,13 @@ $(document).on('click','.status_check_box',function(){
 
 });
 
-
-
+$(document).on('click','#reset',function(){
+    $('#filter_phone').val("");
+    $('#filter_email').val("");
+    $("option:selected").prop("selected", false)
+    var send_request = "{{url('admin/user')}}";
+    user_datatable(send_request)
+});
 </script>
 
 @endsection

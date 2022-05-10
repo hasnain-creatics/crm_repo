@@ -7,6 +7,8 @@
                                         <tr role="row">
                                             <th class="wd-15p border-bottom-0 sorting sorting_asc" tabindex="0">ID</th>
 
+                                            <th class="wd-15p border-bottom-0 sorting sorting_asc" tabindex="0">Profile Image</th>
+
                                             <th class="wd-15p border-bottom-0 sorting sorting_asc" tabindex="0">Name</th>
 
                                             <th class="wd-15p border-bottom-0 sorting sorting_asc" tabindex="0">Email</th>

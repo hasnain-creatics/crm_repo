@@ -15,6 +15,7 @@
 
 		<script type="text/javascript">
 			const public_url = "{{asset('public')}}";
+			const main_url = "{{url('admin')}}";
 
 		</script>
 
@@ -63,7 +64,6 @@
 		<link href="{{asset('public')}}/assets/toggle/css/bootstrap-toggle.css" rel="stylesheet">
 		<link href="{{asset('public')}}/assets/toggle/css/bootstrap-toggle.min.css" rel="stylesheet"> -->
 		<!-- Jquery js-->
-		  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
 		<script src="{{asset('public')}}/assets/js/jquery.min.js"></script>
 	<style type="text/css">
 		.swal-button--confirm {
@@ -139,6 +139,9 @@ input:checked + .slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+.lead_assigned_name{background:lightblue;padding:5px;border-radius:5px;text-transform:capitalize;}
+.lead_id{color:blue;}
+.lead_id:hover{text-decoration:underline;cursor:pointer}
 </style>
 	</head>
 

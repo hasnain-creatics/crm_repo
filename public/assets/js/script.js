@@ -73,9 +73,6 @@ $.ajax({
 
          
             html+="<option value="+response[i].id+">"+response[i].title+"</option>";
-
-
-          
             
 
         }
@@ -89,3 +86,87 @@ $.ajax({
 });
 
 }
+
+
+function lead_checkes(request_url,lead=null){
+    
+
+    if($('input[name="is_lead"]').is(':checked') ){
+
+        $('#assignLead').removeClass('d-block').addClass('d-none');
+
+
+    }else{
+
+        $('#assignLead').removeClass('d-none').addClass('d-block');
+
+         var designation = $('.designation_id').val();
+         
+          $.ajax({
+
+            url:request_url+'/'+designation,
+            
+            dataType:'json',
+            
+            type:'get',
+            
+            success:function(data){
+
+                var html = "";
+
+                if(data['status'] == 'success'){
+            
+                    html +="<option value=''>Select Lead</option>";
+            
+                    for(i = 0;i<data['data'].length;i++){
+            
+                        html +="<option value="+data['data'][i].id+" "+(lead ? (lead == data['data'][i].id ? 'selected' : '') : '')+">"+data['data'][i].name+"</option>";
+            
+                    }
+                    $('#lead_id').html(html);
+
+                }else{
+
+                    $('#assignLead').addClass('d-none').removeClass('d-block');
+
+                }
+            
+            
+            
+            }
+         
+          });
+
+
+
+    }
+
+}
+
+
+function check_team(ele){
+
+    alert(ele);
+}
+
+
+function userView(ele){
+    
+$.ajax({
+
+    type: "get",
+
+    url : main_url+'/user/show/'+ele,
+
+    dataType: "html",
+
+    success:function(response){
+
+        $('#all-modals').html(response);
+        $('#modaldemo8').modal('show');
+    }
+
+});
+
+}
+
