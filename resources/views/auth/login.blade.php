@@ -70,14 +70,14 @@
 														<div class="input-group-text">
 															<i class="fe fe-user"></i>
 														</div>
-                                                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required="required" autocomplete="off" placeholder="Email" autofocus>
+                                                    <input id="email" tabindex="2" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required="required" autocomplete="off" placeholder="Email" autofocus>
 												</div>
 												<div class="input-group mb-4">
 													<div class="input-group" id="Password-toggle1">
 														<a href="" class="input-group-text">
 														  <i class="fe fe-eye" aria-hidden="true"></i>
 														</a>
-                                                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password"  required="required"  autocomplete="off"  placeholder="Password" >
+                                                        <input id="password" tabindex="2" type="password" class="form-control @error('password') is-invalid @enderror" name="password"  required="required"  autocomplete="off"  placeholder="Password" >
 													</div>
 												</div>
 												<div class="form-group text-center mb-3">

@@ -63,14 +63,18 @@
 
                                                 <div class="input-group">
                                                     
-                                                    <div class="form-group col-md-6">
+                                                    <div class="form-group col-md-4">
+                                                        <label for="" class="form-label">Nickname</label>
+                                                        <input type="text" id="nickname" class="form-control" name="nickname" value="{{@$result->nickname}}">
+                                                    </div>
+                                                    <div class="form-group col-md-4">
                                                         <label for="" class="form-label">Password</label>
                                                         <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" name="password">
                                                         @error('password')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
-                                                    <div class="form-group col-md-6">
+                                                    <div class="form-group col-md-4">
                                                         <label for="" class="form-label">Confirm Password</label>
                                                         <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"  name="password_confirmation">
                                                         @error('password_confirmation')
@@ -81,22 +85,35 @@
 
 
 
+                                     
+
                                                 <div class="input-group">
-                                                    <div class="form-group col-md-6">
+                                                    <div class="form-group col-md-3">
                                                         <label for="" class="form-label">Designation</label>
-                                                        <select name="designation"   class="form-control custom-select select2 select2-hidden-accessible @error('designation') is-invalid @enderror"  id="designation">
+                                                        <select name="designation" class="form-control custom-select designation_id select2 select2-hidden-accessible @error('designation') is-invalid @enderror"  id="designation">
                                                            
                                                         </select>
-                                                        @error('designation')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                        @enderror
+                                                        <span class="arrow "><label id="designation-error" class="error" for="designation" style="display:none">This field is required.</label></span>
                                                     </div>
-                                                    <div class="form-group col-md-6 d-none assignTo" >
+                                                    <div class="assignTo form-group col-md-3 d-none" >
                                                         <label for="" class="form-label">Assign To</label>
                                                         <select name="assigned_to" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" id="assigned_to"   aria-hidden="true">
                                                             
                                                         </select>
-                                                    </div>  
+                                                    </div> 
+                                                    
+                                                    <div class="assignTo form-group col-md-3 d-none" style="margin-top: 35px;">
+                                                        <label for="lead" >Make this user Lead</label>
+                                                        <input type="checkbox" id="lead" name="is_lead" >
+                                                    </div> 
+                                                    
+                                                    <div class="assignTo assignLead form-group col-md-3 d-none" id="assignLead" >
+                                                        <label for="" class="form-label">Assign Lead</label>
+                                                        <select name="lead_id" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" id="lead_id"   aria-hidden="true">
+                                                            
+                                                        </select>
+                                                    </div> 
+                                                     
                                                 </div>
 
 
@@ -194,16 +211,26 @@
 @endsection
 
 @section('after_script')
-
+<script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
 <script>
-    
 
 $(document).ready(function(){
-
+    
     $('#designation').html(all_designations("{{route('fetch_all_designation')}}","{{$result->designation}}"));
     
     $('#city_id').html(all_cities("{{route('fetch_cities')}}","{{$result->city_id}}"));
    
+    var checked_value = "{{$result->is_lead}}";
+
+    if(checked_value){
+
+     $('input[name="is_lead"]').prop('checked',true);   
+     
+         $('#assignLead').removeClass('d-block').addClass('d-none');
+     
+    }
+
+    setTimeout(function(){lead_checkes('{{url("admin/user/fetch_leads")}}',"{{$result->lead_id}}");},1000);
 
     $('#user_form').validate({
 
@@ -238,7 +265,6 @@ $(document).ready(function(){
 
             },
             password_confirmation:{
-        
               minlength : 8,
               equalTo : "#password"
             },
@@ -284,9 +310,10 @@ function manager_designation(id=null){
                     $('#assigned_to').html(html);
                 }else{
                     $('.assignTo').removeClass('d-block').addClass('d-none');
+                    $('#assignLead').removeClass('d-block').addClass('d-none');
                 }
                 if(id){
-                $('#assigned_to').val(id).trigger('change');
+                    $('#assigned_to').val(id).trigger('change');
 
             }
             }
@@ -298,6 +325,7 @@ function manager_designation(id=null){
 $(document).on('change','#designation',function(){
   
     manager_designation("{{$result->assigned_to}}");
+
 });
 
 
@@ -313,12 +341,24 @@ $(document).on('change',"input[name='email']",function(){
         type:'post',
         data: {email:email,id:id},
         success:function(data){
-           if(data.status == 'error')
-           alert('email already exists!');
-           $("input[name='email']").val("{{$result->email}}");
+            console.log(data);
+           if(data.status == 'error'){
+
+                alert('email already exists!');
+                 $("input[name='email']").val("{{$result->email}}");
+           }
+      
         }
     });
 })
+
+
+$(document).on('click','#lead',function(){
+
+   lead_checkes('{{url("admin/user/fetch_leads")}}');
+
+});
+
 
 </script>
 @endsection

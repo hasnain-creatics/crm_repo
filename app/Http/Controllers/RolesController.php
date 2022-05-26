@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use App\Models\Modules;
 use Validator;
+use Illuminate\Support\Facades\Artisan;
 use Auth;
 class RolesController extends Controller
 {
@@ -47,24 +48,15 @@ class RolesController extends Controller
 
     public function index()
     {
-
-    //    $modulesModules::get();
        return view('roles.index');
     }
 
     public function get_roles()
     {
-        // $roles = Role::get();
         
-        $data = $roles = new Role();
+        $roles = new Role();
 
-        // if($this->is_admin() != true){  
-        
-        //     $data = $data->where('name',Auth::user()->roles[0]->name);
-        
-        // }
-        
-        $data = $data->get();
+        $data = $roles->where("id","!=",1)->get();
 
         return response()->json($data);
 
@@ -77,20 +69,21 @@ class RolesController extends Controller
         $data['modules'] = Modules::get();
         $data['permissions'] = Permission::get();
 
-         $rolePermissions = Permission::select('permissions.id')->leftJoin("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
+        $rolePermissions = Permission::select('permissions.id')->leftJoin("role_has_permissions","role_has_permissions.permission_id","=","permissions.id")
             ->where("role_has_permissions.role_id",$id)
             ->get();
             $rolesPermission =[];    
-        if($rolePermissions){
-            foreach($rolePermissions as $key=>$value){
-                    $rolesPermission[] = $value->id;
+            if($rolePermissions){
+                foreach($rolePermissions as $key=>$value){
+                        $rolesPermission[] = $value->id;
+                }
             }
-        }
-        $data['rolePermissions'] =$rolesPermission;
+        $data['rolePermissions'] = $rolesPermission;
         return view('role_permissions.index',$data);
 
     }
     public function update_permmission(Request $request){
+        Artisan::call('cache:forget spatie.permission.cache');
         $role=Role::find($request['name']);
         $role->syncPermissions($request->input('permission'));
         return redirect()->route('roles.permission',$request['name'])->with('success','Role created successfully');
@@ -170,10 +163,12 @@ class RolesController extends Controller
     public function update(Request $request)
     {
         $rules = [
-            'name'      =>'required'
+            'name'      =>'required',
+            'type'      =>'required'
         ];
         $messages = [
-            'name'      =>'Name is required'
+            'name'      =>'Name is required',
+            'type'      =>'Role Type is required'
         ];
         
         $validator = Validator::make( $request->all(), $rules, $messages );
@@ -187,7 +182,8 @@ class RolesController extends Controller
         }else{
             
             $form_data = [
-                'name'   =>$request['name']
+                'name'   =>$request['name'],
+                'type'   =>$request['type']
             ];
             
             if(isset($request['role_id'])){

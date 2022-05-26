@@ -73,9 +73,6 @@ $.ajax({
 
          
             html+="<option value="+response[i].id+">"+response[i].title+"</option>";
-
-
-          
             
 
         }
@@ -87,5 +84,464 @@ $.ajax({
     }
 
 });
+
+}
+
+
+function lead_checkes(request_url,lead=null){
+    
+
+    if($('input[name="is_lead"]').is(':checked') ){
+
+        $('#assignLead').removeClass('d-block').addClass('d-none');
+
+
+    }else{
+
+        $('#assignLead').removeClass('d-none').addClass('d-block');
+
+         var designation = $('.designation_id').val();
+         
+          $.ajax({
+
+            url:request_url+'/'+designation,
+            
+            dataType:'json',
+            
+            type:'get',
+            
+            success:function(data){
+
+                var html = "";
+
+                if(data['status'] == 'success'){
+            
+                    html +="<option value=''>Select Lead</option>";
+            
+                    for(i = 0;i<data['data'].length;i++){
+            
+                        html +="<option value="+data['data'][i].id+" "+(lead ? (lead == data['data'][i].id ? 'selected' : '') : '')+">"+data['data'][i].name+"</option>";
+            
+                    }
+                    $('#lead_id').html(html);
+
+                }else{
+
+                    $('#assignLead').addClass('d-none').removeClass('d-block');
+
+                }
+            
+            
+            
+            }
+         
+          });
+
+
+
+    }
+
+}
+
+
+function check_team(ele){
+
+    alert(ele);
+}
+
+
+function userView(ele){
+    
+$.ajax({
+
+    type: "get",
+
+    url : main_url+'/user/show/'+ele,
+
+    dataType: "html",
+
+    success:function(response){
+
+        $('#all-modals').html(response);
+        $('#modaldemo8').modal('show');
+    }
+
+});
+
+}
+
+
+
+function leadDocs(ele){
+                
+            $.ajax({
+
+                type: "get",
+
+                url : main_url+'/leads/all_docs/'+ele,
+
+                dataType: "html",
+
+                success:function(response){
+
+                    $('#all-modals').html(response);
+
+                    $('#lead_modal').modal('show');
+
+                }
+
+            });
+}
+
+
+function deleteDocs(ele){
+
+    if(confirm('Are you sure')){
+ 
+        $.ajax({
+
+            type: "get",
+    
+            url : main_url+'/leads/docs/delete/'+ele,
+    
+            dataType: "json",
+    
+            success:function(response){
+                
+                if(response.status == 'success')
+                {
+                    $('.lead_tr_'+ele).hide(500);
+                }
+    
+            }
+    
+        });
+    }      
+}
+
+function transferLead(ele){
+
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/leads/lead_transfers/'+ele,
+    
+        dataType: "html",
+    
+        success:function(response){
+    
+            $('#all-modals').html(response);
+            $('#lead_transfer_modal').modal('show');
+        }
+    
+    });
+    
+}
+
+
+
+function lead_transfer_user(ele){
+
+    var user = $("input[name='transfer']:checked").val();
+    if(user !=""){
+
+        if(confirm('Are you sure')){
+
+            $.ajax({
+    
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                
+                type: "post",
+            
+                url : main_url+'/leads/lead_transfers',
+            
+                data: {lead_id:ele,user_id:user},
+            
+                dataType: "json",
+            
+                success:function(response){
+    
+                    if(response.status == 'error'){
+                        
+                        alert(response.message);
+
+                    }else if(response.status == 'success'){
+                        
+                        alert(response.message);
+                    
+                    }
+                    // $('#all-modals').html(response);
+    
+                    // $('#lead_transfer_modal').modal('show');
+                    
+                }
+            
+            });
+        }
+    }else{
+        alert('please select the user')
+    }
+}
+
+function transferLeadDetails(ele){
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/leads/lead_transfers_details/'+ele,
+    
+        dataType: "html",
+    
+        success:function(response){
+    
+            $('#all-modals').html(response);
+
+            $('#lead_transfer_details_modal').modal('show');
+        }
+    
+    });
+    
+}
+
+
+function convertLead(ele){
+
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/leads/convert_lead/'+ele,
+    
+        dataType: "html",
+    
+        success:function(response){
+    
+            $('#all-modals').html(response);
+
+            $('#convert_lead').modal('show');
+        }
+    
+    });
+    
+
+}
+
+
+function redirect_lead(ele){
+	window.location.href =  main_url+'/orders/lead/'+ele;
+}
+
+function sync_currency(){
+
+    if(confirm('are you sure')){
+
+        $.ajax({
+
+            type: "get",
+        
+            url : main_url+'/currency/sync',
+        
+            dataType: "json",
+        
+            success:function(response){
+                setTimeout(function(){
+    
+                    window.location.href = main_url+'/currency';
+
+                },1000);
+                    
+    
+            }
+        
+        });
+        
+    
+    }
+
+}
+
+
+function change_order_status(item,ele){
+    
+    const status_value = item.value;
+
+    $.ajax({
+
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                
+        type: "post",
+    
+        url : main_url+'/writers/change_status/'+ele,
+    
+        data: {title:item.value},
+    
+        dataType: "json",
+    
+        success:function(response){
+            var status = [];
+            status.push("New");
+            status.push("In Progress");
+            status.push("Completed");
+            status.push("Feedback");
+            status.push("Qa In Progress");
+            status.push("Rejected");
+            status.push("Qa Approved");
+            status.push("Delivered");
+            // console.log(response.id);
+            //     $( ".status_type_"+response.id ).load(window.location.href +  ".status_type_"+response.id );  
+            // var html ="<option></option>";
+            // for(i =0;i<status.length;i++){
+            //     if(status[i] == )
+            // }
+            // console.log(status);
+        //  $(".status_type_"+response.id ).val();
+        }
+    
+    });
+    
+
+}
+
+
+function assign_writer(item,ele){
+
+
+        if(item.value !=""){
+
+            $.ajax({
+
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        
+                type: "post",
+            
+                url : main_url+'/writers/check_user_assignments/'+ele,
+            
+                data: {user_id:item.value},
+            
+                dataType: "json",
+            
+                success:function(response){
+                    
+                    swal({
+                        title: "Are you sure?",
+                        text: response.message,
+                        type: "info",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Yes, Continue it!",
+                        cancelButtonText: "No, Cancel Asigning!",
+                        closeOnConfirm: false,
+                        closeOnCancel: false,
+                              customClass: {
+                              confirmButton: 'btn btn-primary',
+                              cancelButton: 'btn btn-secondary',
+                          }
+                      },
+                      function(isConfirm){
+    
+                        if (isConfirm) {
+              
+                                    $.ajax({
+    
+                                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                                
+                                        type: "post",
+                                    
+                                        url : main_url+'/writers/assigned_user/'+ele,
+                                    
+                                        data: {user_id:item.value},
+                                    
+                                        dataType: "json",
+                                    
+                                        success:function(response){
+    
+                                            if(response.status == 'success'){
+    
+                                                swal('Congratulations!', response.message, response.success);
+    
+                                                $('#writers_data_table').DataTable().ajax.reload();
+
+                                                // $( "#lead_docs_table" ).load(window.location.href + " #lead_docs_table" );
+                         
+                                            }
+                                            
+                                        }
+                                    
+                                    });
+                        } else {
+                          swal("Cancelled", "Task Not Aassigned", "error");
+                        }
+                      });
+    
+                }
+            
+            });
+    
+        }
+        // $.ajax({
+
+        //     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    
+        //     type: "post",
+        
+        //     url : main_url+'/writers/assigned_user/'+ele,
+        
+        //     data: {user_id:item.value},
+        
+        //     dataType: "json",
+        
+        //     success:function(response){
+              
+        //     }
+        
+        // });
+        
+
+}
+
+
+function assigned_users_details(ele){
+
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/writers/writers_assiged_lists/'+ele,
+    
+        dataType: "html",
+    
+        success:function(response){
+    
+            $('#all-modals').html(response);
+
+            $('#writers_user_tasks').modal('show');
+        }
+    
+    });
+    
+
+}
+
+
+function OrderProgress(ele){
+
+
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/orders/order_timline/'+ele,
+    
+        dataType: "html",
+    
+        success:function(response){
+    
+            $('#all-modals').html(response);
+
+            $('#orders_timline').modal('show');
+        }
+    
+    });
 
 }

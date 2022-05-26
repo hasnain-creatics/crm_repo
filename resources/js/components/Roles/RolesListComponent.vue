@@ -30,11 +30,16 @@ export default {
     }
   },
   props: ['edit_role','permission'],
- async created() {
-    const response = await fetch(this.$hostname+"roles/get_roles");
-        const data = await response.json();
-        this.results = data;
-        }
+  created() {
+    // const response = await fetch(this.$hostname+"roles/get_roles");
+    //     const data = await response.json();
+    //     this.results = data;
+    //   
+    axios.get(this.$hostname+"roles/get_roles").then((response)=>{
+        this.results = response.data
+    });
+  }
+
  }
 </script>
 

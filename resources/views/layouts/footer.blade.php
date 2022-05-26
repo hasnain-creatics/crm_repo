@@ -9,4 +9,7 @@
 					</div>
 				</footer>
 				<!-- End Footer-->
-	
+				
+	<div id="all-modals">
+
+	</div>

@@ -39,7 +39,9 @@ class UserAddRequest extends FormRequest
 
             $rules['password']='confirmed';
         }
+
         return $rules;
+        
     }
 
      public function messages()

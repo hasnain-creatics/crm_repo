@@ -31,9 +31,8 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+        'remember_token',"deleted_at"
     ];
-
     /**
      * The attributes that should be cast.
      *
@@ -43,5 +42,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function city(){
+      return $this->belongsTo(City::class,'city_id');
+    }
+
+    public function order_assigns(){
+        return $this->hasMany(OrderAssigns::class,'user_id')->groupBy('user_id');
+    }
     
 }

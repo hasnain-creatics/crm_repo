@@ -52496,6 +52496,9 @@ body.rtl {
     line-height: 2rem;
     margin-top: 0.3rem;
 }
+.error{
+    color: red;
+}
 
 /*---End profile---*/
 /* ######  sidemenu ###### */
