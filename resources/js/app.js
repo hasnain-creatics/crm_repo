@@ -69,6 +69,7 @@ Vue.component('website-edit-component', require('./components/Websites/WebsiteEd
 
 
 Vue.component('writers-list-component', require('./components/Writers/WritersListComponent.vue').default);  
+Vue.component('task-details-component', require('./components/Writers/TaskDetailsComponent.vue').default);  
 
 
 

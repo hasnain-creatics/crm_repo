@@ -123,12 +123,42 @@
        transform: translateY(-50%);
     }
 
-</style><?php  $current_statuss = $current_status;?>
+</style><?php 
+
+$current_statuss = $current_status;
+$old_status = "New";
+
+if($current_statuss == "New"){
+    $old_status = "New";
+}
+
+if($current_statuss == "Pending"){
+    $old_status = "New";
+}
+
+if($current_statuss == "In Progress"){
+    $old_status = "Pending";
+}
+
+?>
                     <div class="container">
-                        <div class="content <?php echo $current_statuss == 'New' ? 'current_status' : 'status_done' ?>">
+                        <div class="content <?php echo $current_statuss == 'New' ? 'current_status' : 'status_done'; ?>
+                        <?php echo $old_status == 'New' ?  'status_done' : ''; ?>
+                        
+                        ">
                             <p>New</p>
                         </div>
-                        <div class="content <?php echo ($current_statuss == 'In Progress')  ? 'current_status' : '' ?> ">
+                        
+                        <div class="content <?php echo ($current_statuss == 'Pending')  ? 'current_status' : '' ?> 
+                        <?php echo $old_status == 'Pending' ?  'status_done' : ''; ?>
+                        ">
+                            <p>Pending</p>
+                            
+                        </div>
+                        
+                        <div class="content <?php echo ($current_statuss == 'In Progress')  ? 'current_status' : '' ?>
+                        <?php echo $old_status == 'In Progress' ?  'status_done' : ''; ?>
+                        ">
                             <p>In Progress</p>
                             
                         </div>

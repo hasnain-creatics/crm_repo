@@ -263,7 +263,12 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::post('/check_user_assignments/{id}',[WriterController::class,'check_user_assignments'])->name('writers.check_user_assignments');
 
         Route::post('/assigned_user/{id}',[WriterController::class,'assigned_user'])->name('writers.change_status');
-
+      
+        Route::get('/task_details/{id}',[WriterController::class,'task_details'])->name('writers.task_details');
+        
+        Route::get('/fetch_order/{id}',[WriterController::class,'fetch_order'])->name('writers.fetch_order');
+        
+      
     });
 
 

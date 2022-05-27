@@ -25,14 +25,48 @@ class WriterController extends Controller
         // $this->middleware('permission:orders-view', ['only' => ['index']]);
          
     }
-    public function all_tasks(){
+  
+    public function fetch_order($id=null,Orders $order){
+        $result = $order->with(['subjects',
+                                'order_status',
+                                'sale_order_documents'=>function($query){
+                                        $query->select('sale_order_documents.sale_order_id',
+                                                        'documents.id',
+                                                        'documents.name',
+                                                        'documents.url',
+                                                        'documents.file_type'
+                                                    );
+                                         $query->join('documents','documents.id','=','sale_order_documents.document_id');
+                                }])->find($id);
+        $data = [
 
+            'data' => [],
 
+            'deadline' => "",
 
-    }
+            'success' => false, 
 
-    public function new_tasks(){
+            'message'=>'Order not found Successfully'
 
+        ];
+
+        if($result){
+
+            
+            $data = [
+                'data' => $result,
+
+                'deadline' =>date('Y-m-d\TH:i', strtotime($result->deadline)),
+                
+                'success' => true, 
+    
+                'message'=>'Order found Successfully'
+    
+            ];
+
+        }
+    
+        return response()->json($data);
 
     }
 
@@ -108,13 +142,13 @@ class WriterController extends Controller
 
         $count_status_already = $status->where(['order'=>$id])->orderBy('id','desc')->take(1)->first();
 
-        $order_assign->status_id = 'In Progress';
+        $order_assign->status_id = 'Pending';
 
         $order_assign->save();
 
         $status->type = 'task';
 
-        $status->title = 'In Progress';
+        $status->title = 'Pending';
 
         $status->order = $id;;
 
@@ -167,21 +201,24 @@ class WriterController extends Controller
             return response()->json($data);
         }
 
+    }
+
+    public function task_details($id){
+
+        $task_details = [];
+        
+        return view('writers.task_details',compact('task_details','id'));
 
     }
-  
+
     public function index(Request $request)
     {   $user_show_new_table = true;
         if ($request->ajax()) {
             $data = new Orders();
 
-                           $data = $data->select('sale_orders.*','users.first_name','documents.url as doc_url')->with('status');
+                           $data = $data->select('sale_orders.*','users.first_name')->with('status')->with('order_assigns');
 
                             $data = $data->join('users','users.id','=','sale_orders.created_by_user_id');
-
-                            $data = $data->leftJoin('sale_order_documents','sale_order_documents.sale_order_id','=','sale_orders.id');
-
-                            $data = $data->leftJoin('documents','documents.id','=','sale_order_documents.document_id');
 
                             if(isset($_GET['order_id']) && !empty($_GET['order_id'])){
     
@@ -241,7 +278,7 @@ class WriterController extends Controller
 
                                   }
                             
-                                  $data = $data->orderBy('sale_orders.id','ASC');          
+                                  $data = $data->orderBy('sale_orders.id','DESC');          
                             
                                 }
           

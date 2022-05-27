@@ -13,4 +13,7 @@ class OrderAssigns extends Model
     protected $id = 'id';
     protected $fillable=['*'];
 
+    public function user(){
+        $this->belongsTo(User::class,'user_id');
+    }
 }

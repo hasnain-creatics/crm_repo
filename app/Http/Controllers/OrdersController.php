@@ -49,19 +49,15 @@ class OrdersController extends Controller
 
         $data = new Orders();
 
-        $data = $data->select('sale_orders.*','users.first_name','documents.url as doc_url');
+        $data = $data->select('sale_orders.*','users.first_name')->with('order_status');
 
                         // $data = $data->leftJoin('lead_issues','lead_issues.id','=','leads.lead_issue_id');
 
                         $data = $data->join('users','users.id','=','sale_orders.created_by_user_id');
 
-                        $data = $data->leftJoin('sale_order_documents','sale_order_documents.sale_order_id','=','sale_orders.id');
-
-                        $data = $data->leftJoin('documents','documents.id','=','sale_order_documents.document_id');
-
                         // $data = $data->leftJoin('lead_transfers lt','lt.lead_id','=','leads.id');
 
-                        if(isset($_GET['order_id'])&& !empty($_GET['order_id'])){
+                        if(isset($_GET['order_id']) && !empty($_GET['order_id'])){
    
                             $order_id = $_GET['order_id']; 
              
@@ -126,20 +122,25 @@ class OrdersController extends Controller
 
                                 if(Auth::user()->roles[0]->type == 'manager'){
 
+                                    $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
                                     $data = $data->orWhere('users.assigned_to',Auth::user()->id);
 
-                                }else{
+                                }
+                                else{
                                     
                                     if(Auth::user()->is_lead){
-
+                                        $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
                                         $data = $data->orWhere('users.lead_id',Auth::user()->id);
                      
+                                    }else{
+                                        $data = $data->where('sale_orders.created_by_user_id',Auth::user()->id);
                                     }
                                 }
                               
                             }
 
-            $data = $data->orderBy('sale_orders.id','DESC');          
+            $data = $data->orderBy('sale_orders.id','DESC')->get();          
+
 
             return $this->table($data,'orders');   
         
@@ -263,6 +264,7 @@ class OrdersController extends Controller
         
         return view('orders.add',$data);
     }
+    
 
     public function fetch_order($id=null,Orders $order){
         

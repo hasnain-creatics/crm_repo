@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use League\CommonMark\Node\Block\Document;
 
 class Sale_Order_Documents extends Model
 {
@@ -16,4 +17,10 @@ class Sale_Order_Documents extends Model
     // public function lead_documents(){
     //     return $this->hasMany(Lead_Document::class,'file_id');
     // }
+
+    public function documents(){
+
+        return $this->hasMany(Documents::class);
+        
+    }
 }
