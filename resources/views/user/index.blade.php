@@ -40,25 +40,25 @@
                                     </div>
                                     @endif
                                 <div class="row">
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <div class="input-group mb-4">
                                          <input type="text" class="form-control input-text"  name="email" placeholder="Search Email...." aria-label="Recipient's username" aria-describedby="basic-addon2"  id="filter_email">
                                         
                                     </div>
                                 </div>
 
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <div class="input-group mb-4"> <input type="text"   name="phone_number"  class="form-control input-text" id="filter_phone" placeholder="Search Phone...." aria-label="Recipient's username" aria-describedby="basic-addon2">
                                     
                                     </div>
                                 </div>
 
 
-                                <div class="col-md-2">
+                                <div class="col-md-4">
                                     <div class="input-group mb-4"> 
                                         <select    name="role" id="filter_designation" class="form-control input-text" aria-label="Recipient's username" aria-describedby="basic-addon2">
                                             
-                                            <option value=""></option>
+                                            <option value="">Designation</option>
                                             @foreach($designation as $key=>$value)
                                                     <option value="{{$value->id}}">{{$value->name}}</option>
                                             @endforeach
@@ -67,24 +67,44 @@
                                 
                                 </div>
 
-                                <div class="col-md-2">
+                                <div class="col-md-4" id="myDIV" style="display :none">
                                     <div class="input-group mb-4"> 
                                         <select    name="status" id="filter_status" class="form-control input-text" aria-label="Recipient's username" aria-describedby="basic-addon2">
-                                            <option value=""></option>
+                                            <option value="">Status</option>
                                             <option value="ACTIVE">Active</option>
                                             <option value="INACTIVE">Inactive</option>
                                         </select>
                                     </div>
                                 
                                 </div>
-
-
-                                <div class="col-md-3">
-                                <div class="input-group-append"> 
-                                    <button class="btn btn-outline-primary" id="filter" type="button"><i class="fa fa-search"></i>Filter</button> </div>
-
+                                <div class="row">
+                                <div class="col-md-1" class="more_button">
+                                    <div class="input-group mb-1"> 
+                                        <button class="btn btn-outline-primary" onclick="myFunction()"  type="button" ><i class="fa fa-plus" id="fa_more_button" ></i> More </button> 
                                     </div>
                                 </div>
+
+                                <div class="col-md-1">
+                                    
+                                    <div class="input-group mb-1"> 
+                                        <button class="btn btn-outline-primary" id="filter" type="button"><i class="fa fa-search"></i> Filter</button> 
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="input-group mb-2"> 
+                                        <button class="btn btn-outline-primary" id="reset" type="button"><i class="fa fa-undo"></i> Reset</button> 
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                                
+
+                            </div>
+
+                            
+
 
                             </div>
                       </form>
@@ -185,14 +205,15 @@ $(document).on('click','#filter',function(){
 
 
 function user_datatable(send_request){
-        var table = $('#example1').DataTable({
-            
+        return  table = $('#users_data_table').DataTable({
             processing: true,
             serverSide: true,
             ajax:send_request,
-            destroy : true, 
+            destroy : true,
+            "order": [[ 1, "desc" ]], 
             columns: [
                 {data: 'id',       name: 'id'},
+                {data: 'profile_image',       name: 'profile_image'},
                 {data: 'name',       name: 'name'},
                 {data: 'email',     name: "email"},
                 {data: 'roles',     render:"[roles].name"},
@@ -202,7 +223,7 @@ function user_datatable(send_request){
                 {data: 'action',   name: 'action', orderable: false, searchable: false},
             ],
             filter: false,
-            sort: false
+            sort: true
         });
 
 }
@@ -225,7 +246,35 @@ $(document).on('click','.status_check_box',function(){
 
 });
 
+$(document).on('click','#reset',function(){
+    $('#filter_phone').val("");
+    $('#filter_email').val("");
+    $("option:selected").prop("selected", false)
+    var send_request = "{{url('admin/user')}}";
+    user_datatable(send_request)
+});
 
+
+function myFunction() {
+  var x = document.getElementById("myDIV");
+
+ 
+  
+
+  if (x.style.display === "none") {
+    x.style.display = "block";
+   // $('.more_button').find('i').removeClass('fa fa-plus').addClass('fa fa-minus');
+
+
+   // $("#fa_more_button").switchClass("fa fa-plus", "fa fa-minus"); 
+  } else {
+    x.style.display = "none";
+    
+    $("#filter_status option:selected").prop("selected", false);
+   // $("#fa_more_button").switchClass("fa fa-plus", "fa fa-plus"); 
+   
+  }
+}
 
 </script>
 

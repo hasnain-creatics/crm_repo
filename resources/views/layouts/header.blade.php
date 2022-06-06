@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 	<head>
-
+	
 		<!-- Meta data -->
 		<meta charset="UTF-8">
 		<meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
@@ -15,13 +15,20 @@
 
 		<script type="text/javascript">
 			const public_url = "{{asset('public')}}";
+			const main_url = "{{url('admin')}}";
 
 		</script>
+
+		  <!-- CK Editor -->
+		<script src="{{asset('public')}}/assets/ckeditor/ckeditor.js" type="text/javascript">
+	
+		</script>
+
 
 
 		<!--Favicon -->
 		<link rel="icon" href="{{asset('public')}}/logo/logo.png" type="image/x-icon"/>
-
+		<link href="{{asset('public')}}/assets/plugins/dist_file_upload/imageuploadify.min.css" rel="stylesheet">
 		<!--Bootstrap css -->
 		<link id="style" href="{{asset('public')}}/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -49,13 +56,27 @@
 		<link href="{{asset('public')}}/assets/plugins/select2/select2.min.css" rel="stylesheet" />
 
 		<!-- Data table css -->
-		<link href="{{asset('public')}}/assets/plugins/datatables/DataTables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
-		<link href="{{asset('public')}}/assets/plugins/datatables/Responsive/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+		<!-- <link href="{{asset('public')}}/assets/plugins/datatables/DataTables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+		<link href="{{asset('public')}}/assets/plugins/datatables/Responsive/css/responsive.bootstrap4.min.css" rel="stylesheet" /> -->
+
+		<link href="{{asset('public')}}/assets/plugins/datatables/DataTables/css/dataTables.bootstrap5.css" rel="stylesheet" />
+		<link href="{{asset('public')}}/assets/plugins/datatables/Buttons/css/buttons.bootstrap5.min.css"  rel="stylesheet">
+		<link href="{{asset('public')}}/assets/plugins/datatables/Responsive/css/responsive.bootstrap5.min.css" rel="stylesheet" />
+
+
+<!-- INTERNAL File Uploads css -->
+<link href="{{asset('public')}}/assets/plugins/fancyuploder/fancy_fileupload.css" rel="stylesheet" />
+<!-- <link rel="stylesheet" type="text/css" href="{{asset('public')}}/assets/plugins/DataTables12/datatables.css"> -->
+<!-- INTERNAL File Uploads css-->
+<link href="{{asset('public')}}/assets/plugins/fileupload/css/fileupload.css" rel="stylesheet" type="text/css" />
+
+
 
 	    <!-- Color Skin css -->
 		<link id="theme" href="{{asset('public')}}/assets/colors/color1.css" rel="stylesheet" type="text/css"/>
 	
-		<link href="{{asset('public')}}/assets/plugins/date-picker/date-picker.css" rel="stylesheet">
+		<!-- <link href="{{asset('public')}}/assets/plugins/date-picker/date-picker.css" rel="stylesheet"> -->
+		
 		<link href="{{asset('public')}}/assets/plugins/sweet-alert/jquery.sweet-modal.min.css" rel="stylesheet">
 		<link href="{{asset('public')}}/assets/plugins/sweet-alert/sweetalert.css" rel="stylesheet">
 		<!-- <link href="{{asset('public')}}/assets/toggle/css/bootstrap2-toggle.css" rel="stylesheet">
@@ -63,7 +84,8 @@
 		<link href="{{asset('public')}}/assets/toggle/css/bootstrap-toggle.css" rel="stylesheet">
 		<link href="{{asset('public')}}/assets/toggle/css/bootstrap-toggle.min.css" rel="stylesheet"> -->
 		<!-- Jquery js-->
-		  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css">
+		<!-- <link rel="stylesheet" href="{{asset('public')}}/assets/css/jquery.dataTables.min.css"> -->
+
 		<script src="{{asset('public')}}/assets/js/jquery.min.js"></script>
 	<style type="text/css">
 		.swal-button--confirm {
@@ -77,9 +99,7 @@
 			.swal-button--danger {
 			    background: #a00;
 			}
-	</style>
 
-	<style>
 .switch {
   position: relative;
   display: inline-block;
@@ -138,6 +158,21 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+.lead_assigned_name{background:lightblue;padding:5px;border-radius:5px;text-transform:capitalize;}
+.lead_id{color:blue;}
+.lead_id:hover{text-decoration:underline;cursor:pointer}
+.paid{
+	padding:5px;
+	background:lightblue;border-radius:5px;
+}
+.un-paid{
+	padding:5px;
+	background:lightgray;border-radius:5px;
+}
+.followup{
+	padding:5px;
+	background:lightpink;border-radius:5px;
 }
 </style>
 	</head>

@@ -1,11 +1,13 @@
 <template>
            <div class="col-sm-12">
          
-               <table class="table table-bordered text-nowrap dataTable no-footer" id="example1"
+               <table class="table table-bordered text-nowrap dataTable no-footer" id="users_data_table"
                                     role="grid" aria-describedby="example1_info">
                                     <thead>
                                         <tr role="row">
                                             <th class="wd-15p border-bottom-0 sorting sorting_asc" tabindex="0">ID</th>
+
+                                            <th class="wd-15p border-bottom-0 sorting sorting_asc" tabindex="0">Profile Image</th>
 
                                             <th class="wd-15p border-bottom-0 sorting sorting_asc" tabindex="0">Name</th>
 
