@@ -26,7 +26,19 @@ class Orders extends Model
 
     }
 
+       
+    public function order_statuses(){
+
+        return $this->hasMany(Status::class,'order');
+
+    }
+
     public function sale_order_documents(){
+
+        return $this->hasMany(Sale_Order_Documents::class,'sale_order_id');
+
+    }
+    public function sale_order_uploaded_document(){
 
         return $this->hasMany(Sale_Order_Documents::class,'sale_order_id');
 
@@ -39,6 +51,14 @@ class Orders extends Model
     }
     
     public function subjects(){
+
         return $this->hasOne(Subjects::class,'id','subject_id');
+        
+    }
+
+    public function user(){
+
+        return $this->hasOne(User::class,'id','created_by_user_id');
+        
     }
 }

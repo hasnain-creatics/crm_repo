@@ -147,20 +147,21 @@
 	
 
 
-											<div class="col-12">
-											  <label for="validationCustom01" class="form-label">Upload Your Order Document </label>
+											<div class="col-12  upload_docs">
+											 <label for="validationCustom01" class="form-label"></label>
 												<div class="form-group mb-0">
-											<input  type="file" name="files"  @change="processFile"  accept=".jpg, .png, image/jpeg, image/png" >
-										</div>
-										</div>	
-											
-											
-												<div class="col-12">
-											 <label for="validationCustom01" class="form-label">Upload Your Invoice </label>
-												<div class="form-group mb-0">
-											<input id="demo2" type="file" name="invoice_files"   @change="processInvoice" accept=".jpg, .png, image/jpeg, image/png" >
-										</div>
+													<input name="files"  @change="processFile($event)"  id="multi_file_upload_1" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple>
+												</div>
 											</div>
+
+											<div class="col-12 upload_invoice">
+											 <label for="validationCustom01" class="form-label"></label>
+												<div class="form-group mb-0">
+													 <input name="files"  @change="processInvoice($event)"  id="multi_file_upload_2" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple>
+								
+												</div>
+											</div>
+											
 											
 											
 											
@@ -223,11 +224,7 @@ export default {
 
 	        this.all_websites_method();
 		
-			$(document).ready(function(){
-				$('input[type="file"]').imageuploadify();
-				$('input[type="file"]').imageuploadify();
-			});
-
+			
   },
   
   methods: {

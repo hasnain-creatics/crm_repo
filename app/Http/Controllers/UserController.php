@@ -86,7 +86,7 @@ class UserController extends Controller
            
            }
        
-           if($this->is_admin() != true){
+        //    if($this->is_admin() != true){
 
             //    $data->where(['users.id'=>Auth::user()->id]);
 
@@ -112,7 +112,7 @@ class UserController extends Controller
             }
 
 
-           }
+        //    }
 
         //    $data = $data->orderBy('users.id','DESC');             
 

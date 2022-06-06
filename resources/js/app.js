@@ -50,6 +50,7 @@ Vue.component('issue-edit-component', require('./components/Issues/IssueEditComp
 Vue.component('orders-list-component', require('./components/Orders/OrdersListComponent.vue').default);  
 Vue.component('orders-add-component', require('./components/Orders/OrdersAddComponent.vue').default);  
 Vue.component('orders-edit-component', require('./components/Orders/OrdersEditComponent.vue').default);  
+Vue.component('delivery-list-component', require('./components/Orders/DeliveryListComponent.vue').default);  
 
 Vue.component('subjects-list-component', require('./components/Subjects/SubjectsListComponent.vue').default);  
 Vue.component('subjects-add-component', require('./components/Subjects/SubjectsAddComponent.vue').default);  
@@ -70,6 +71,21 @@ Vue.component('website-edit-component', require('./components/Websites/WebsiteEd
 
 Vue.component('writers-list-component', require('./components/Writers/WritersListComponent.vue').default);  
 Vue.component('task-details-component', require('./components/Writers/TaskDetailsComponent.vue').default);  
+Vue.component('task-timeline-component', require('./components/TaskTimeline/TaskTimelineComponent.vue').default);  
+Vue.component('rating-modal-component',require('./components/Writers/RatingModalComponent.vue').default);
+
+
+// dashboard
+
+Vue.component('dashboard-count-component',require('./components/Dashboard/DashboardCountComponent.vue').default);
+Vue.component('urgent-task-component',require('./components/Dashboard/UrgentTaskComponent.vue').default);
+Vue.component('new-task-component',require('./components/Dashboard/NewTaskComponent.vue').default);
+Vue.component('inprogress-task-component',require('./components/Dashboard/InprogressTaskComponent.vue').default);
+Vue.component('feedback-task-component',require('./components/Dashboard/FeedbackTaskComponent.vue').default);
+Vue.component('required-qa-component',require('./components/Dashboard/RequiredQAComponent.vue').default);
+Vue.component('unassigned-component',require('./components/Dashboard/UnassignedComponent.vue').default);
+
+
 
 
 

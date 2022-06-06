@@ -12,7 +12,7 @@ class Sale_Order_Documents extends Model
 
     protected $table = 'sale_order_documents';
     protected $id = 'id';
-    protected $fillable =['document_id','sale_order_id'];
+    protected $fillable =['document_id','sale_order_id','document_name'];
 
     // public function lead_documents(){
     //     return $this->hasMany(Lead_Document::class,'file_id');

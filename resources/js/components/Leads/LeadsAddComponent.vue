@@ -169,9 +169,9 @@ export default {
 
     	let file = event.target.files;
 
-      let reader = new FileReader();  
+      	let reader = new FileReader();  
 
-		  this.form.files = event.target.files;
+		this.form.files = event.target.files;
 
   	}
   },

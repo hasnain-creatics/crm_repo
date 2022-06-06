@@ -26,9 +26,49 @@ class OrdersController extends Controller
          
     }
 
+    public function add_feedback($id){
+
+        $data['id'] = $id;
+        return view('modals.orders.add_feedback',$data);
+
+    }
+
+    public function store_feedback(Request $request){
+        if(!empty($request->feedback)){
+            $save_feedback = DB::table('order_feedback')->insert([
+                'order_id'=>$request->order_id,
+                'created_by'=>Auth::user()->id,
+                'created_at'=>date('Y-m-d H:i:s'),
+                'feedback'=>$request->feedback
+
+            ]);
+            if($save_feedback){
+
+                $orders = new Orders();
+
+                $orders_update = $orders->find($request->order_id);
+
+                $orders_update->order_status = 'Feedback';
+                
+                $orders_update->save();
+
+                $statuses = new Status();
+
+                $statuses->type = 'task';
+               
+                $statuses->title = 'Feedback';
+              
+                $statuses->order = $request->order_id;
+    
+                $statuses->save(); 
+            }
+
+        }
+            
+    }
 
     public function order_timline($id){
-        $status = OrderAssigns::select('status_id')
+        $status = OrderAssigns::select('*')
                                         ->where('sale_order_id',$id)
                                         ->orderBy('id','desc')
                                         ->take(1)->get();
@@ -43,6 +83,140 @@ class OrdersController extends Controller
 
     }
 
+    public function delivery(Request $request){
+        if ($request->ajax()) {
+
+            $data = new Orders();
+    
+            $data = $data->select('sale_orders.*','users.first_name')->with('order_status');
+    
+                            // $data = $data->leftJoin('lead_issues','lead_issues.id','=','leads.lead_issue_id');
+    
+                            $data = $data->join('users','users.id','=','sale_orders.created_by_user_id');
+    
+                            // $data = $data->leftJoin('lead_transfers lt','lt.lead_id','=','leads.id');
+    
+                            if(isset($_GET['order_id']) && !empty($_GET['order_id'])){
+       
+                                $order_id = $_GET['order_id']; 
+                 
+                                $data = $data->where('sale_orders.order_id',$_GET['order_id']);     
+                        
+                            }
+    
+                            if(isset($_GET['customer_email'])&& !empty($_GET['customer_email'])){
+       
+                                $customer_email = $_GET['customer_email']; 
+                 
+                                $data = $data->where('sale_orders.customer_email',$_GET['customer_email']);     
+                        
+                            }
+    
+                            if(isset($_GET['payment_status'])&& !empty($_GET['payment_status'])){
+       
+                                $status = $_GET['payment_status']; 
+                 
+                                $data = $data->where('sale_orders.payment_status',$_GET['payment_status']);     
+                        
+                            }
+    
+                            if(isset($_GET['date_start'])&& !empty($_GET['date_start'])){
+           
+                                $date_start = $_GET['date_start'] ." 00:00:00";
+                                
+                                $data = $data->where('sale_orders.created_at','>=',$date_start);     
+                        
+                            }
+    
+                            if(isset($_GET['date_end'])&& !empty($_GET['date_end'])){
+       
+                                $date_end = $_GET['date_end'] ." 23:59:59";
+                 
+                                $data = $data->where('sale_orders.created_at','<=',$date_end);     
+                        
+                            }
+    
+                                if($this->is_admin() != true){
+    
+                                    // $data = $data->where('leads.transfered_id',Auth::user()->id);
+    
+                                    if(Auth::user()->roles[0]->type == 'manager'){
+    
+                                        $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
+                                        $data = $data->orWhere('users.assigned_to',Auth::user()->id);
+    
+                                    }
+                                    else{
+                                        
+                                        if(Auth::user()->is_lead){
+                                            $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
+                                            $data = $data->orWhere('users.lead_id',Auth::user()->id);
+                         
+                                        }else{
+                                            $data = $data->where('sale_orders.created_by_user_id',Auth::user()->id);
+                                        }
+                                    }
+                                  
+                                }
+                         
+
+                                    if($_GET['status'] =='delivered'){
+
+                                        $data = $data->where('sale_orders.order_status','Delivered');
+
+                                    }
+
+                                    if($_GET['status'] =='ready_to_delivered'){
+
+                                        $data = $data->where('sale_orders.order_status','QA Approved');
+
+                                    }
+                                    
+                      
+
+                $data = $data->orderBy('sale_orders.id','DESC')->get();          
+    
+    
+                return $this->table($data,'ready_to_delivery');   
+            
+        }
+           return view('orders.delivery');
+    }
+
+    public function change_order_status(Request $request,$id){
+
+        $status = new Status();
+        
+        $orders = new Orders();
+
+        $status->type = 'task';
+        
+        $status->title = $request->status;
+        
+        $status->order = $id;
+        
+        $find_order = $orders->find($id);
+
+        $find_order->order_status = $request->status;
+
+        $find_order->save();
+
+        $status->save();
+
+        $data['status'] = 'success';
+        
+        $data['message'] = 'status updated successfully';
+
+        $data['id'] = $id;
+   
+        $data['order_status'] = $request->title;
+    
+        return response()->json($data);
+ 
+
+    }
+
+
     public function index(Request $request)
     {       
         if ($request->ajax()) {
@@ -56,6 +230,27 @@ class OrdersController extends Controller
                         $data = $data->join('users','users.id','=','sale_orders.created_by_user_id');
 
                         // $data = $data->leftJoin('lead_transfers lt','lt.lead_id','=','leads.id');
+                        if($this->is_admin() != true){
+                            
+                            $data = $data->where('sale_orders.created_by_user_id',Auth::user()->id);
+                 
+                            if(Auth::user()->roles[0]->type == 'manager'){
+
+                                $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
+
+                                $data = $data->orWhere('users.assigned_to',Auth::user()->id);
+
+                            }
+                            else{
+                                
+                                if(Auth::user()->is_lead){
+                                    $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
+                                    $data = $data->orWhere('users.lead_id',Auth::user()->id);
+                 
+                                }
+                            }
+                          
+                        }
 
                         if(isset($_GET['order_id']) && !empty($_GET['order_id'])){
    
@@ -116,29 +311,7 @@ class OrdersController extends Controller
                     
                         }
 
-                            if($this->is_admin() != true){
-
-                                // $data = $data->where('leads.transfered_id',Auth::user()->id);
-
-                                if(Auth::user()->roles[0]->type == 'manager'){
-
-                                    $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
-                                    $data = $data->orWhere('users.assigned_to',Auth::user()->id);
-
-                                }
-                                else{
-                                    
-                                    if(Auth::user()->is_lead){
-                                        $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
-                                        $data = $data->orWhere('users.lead_id',Auth::user()->id);
-                     
-                                    }else{
-                                        $data = $data->where('sale_orders.created_by_user_id',Auth::user()->id);
-                                    }
-                                }
-                              
-                            }
-
+                         
             $data = $data->orderBy('sale_orders.id','DESC')->get();          
 
 
@@ -325,8 +498,8 @@ class OrdersController extends Controller
         $rules['additional_notes'] = 'required';
         $rules['website'] = 'required';
         $rules['lead_id'] = '';
-        // $rules['is_urgent'] = '';
-        // $rules['files'] = 'required';
+      
+
         $change_status = true;
         if($request->payment_status == 'Partially Paid'){
 
@@ -375,6 +548,7 @@ class OrdersController extends Controller
 
            
               $order_updated['subject_id'] = (int)$request->subject_id;
+              $order_updated['order_status'] = 'New';
                 
             }
             $order_updated->save();
@@ -401,13 +575,13 @@ class OrdersController extends Controller
             
                     $leads_files          =  new Documents();
             
-                    $leads_files->name = $lead_file_name;
+                    $leads_files->name = 'order files';
 
                     // $leads_files->original_name = $file[$i]->getClientOriginalName();
 
                     $leads_files->file_type = $file[$i]->getClientOriginalExtension();
                     
-                    $leads_files->url = url("storage/app/orders_files/order_{$lead_id}");
+                    $leads_files->url = url("storage/app/orders_files/order_{$lead_id}/{$lead_file_name}");
                     
                     $leads_files->created_at = date('Y-m-d');
         
@@ -438,13 +612,13 @@ class OrdersController extends Controller
             
                     $leads_files          =  new Documents();
             
-                    $leads_files->name = $lead_file_name;
+                    $leads_files->name = 'order invoices';
 
                     // $leads_files->original_name = $file[$i]->getClientOriginalName();
 
                     $leads_files->file_type = $file[$i]->getClientOriginalExtension();
                     
-                    $leads_files->url = url("storage/app/orders_files/order_{$lead_id}");
+                    $leads_files->url = url("storage/app/orders_files/order_{$lead_id}/{$lead_file_name}");
                     
                     $leads_files->created_at = date('Y-m-d');
         

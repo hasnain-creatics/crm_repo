@@ -42,9 +42,12 @@ class LeadsController extends Controller
         
      if ($request->ajax()) {
 
+
             $data = new Leads();
 
+
             $data = $data->select(
+
                                 'leads.id',
                                 'leads.email',
                                 'leads.phone_number',
@@ -55,7 +58,9 @@ class LeadsController extends Controller
                                 'leads.lead_id',
                                 'leads.created_at',
                                 DB::raw('CONCAT(leads.first_name," ",leads.last_name) AS name'),
-                                DB::raw('CONCAT(users.first_name," ",users.last_name) AS created_name'),
+
+                                DB::raw('CONCAT(users.first_name," ",users.last_name) AS created_name')
+                                
                             );
 
                             $data = $data->leftJoin('lead_issues','lead_issues.id','=','leads.lead_issue_id');
@@ -63,6 +68,27 @@ class LeadsController extends Controller
                             $data = $data->join('users','users.id','=','leads.created_by');
 
                             // $data = $data->leftJoin('lead_transfers lt','lt.lead_id','=','leads.id');
+
+
+                            if($this->is_admin() != true){
+
+                                $data = $data->where('leads.transfered_id',Auth::user()->id);
+
+                                if(Auth::user()->roles[0]->type == 'manager'){
+
+                                    $data = $data->orWhere('users.assigned_to',Auth::user()->id);
+
+                                }else{
+                                    
+                                    if(Auth::user()->is_lead){
+
+                                        $data = $data->orWhere('users.lead_id',Auth::user()->id);
+                     
+                                    }
+                                }
+                              
+                            }
+
 
                             if(isset($_GET['lead_id'])&& !empty($_GET['lead_id'])){
        
@@ -122,25 +148,6 @@ class LeadsController extends Controller
                                 $data = $data->orWhere('leads.last_name','LIKE','%'.$name.'%');  
 
                             }
-                                if($this->is_admin() != true){
-
-                                    $data = $data->where('leads.transfered_id',Auth::user()->id);
-
-                                    if(Auth::user()->roles[0]->type == 'manager'){
-
-                                        $data = $data->orWhere('users.assigned_to',Auth::user()->id);
-
-                                    }else{
-                                        
-                                        if(Auth::user()->is_lead){
-
-                                            $data = $data->orWhere('users.lead_id',Auth::user()->id);
-                         
-                                        }
-                                    }
-                                  
-                                }
-
                 // $data = $data->orderBy('leads.id','DESC');          
 
                 return $this->table($data,'leads');   
@@ -427,6 +434,7 @@ class LeadsController extends Controller
     public function fetch_lead(Leads $lead,$id){
 
         $lead_deatils= $lead->find($id);
+        
         if($lead_deatils){
             $status = 200;
         }else{

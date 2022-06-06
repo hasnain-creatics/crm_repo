@@ -37,6 +37,20 @@ Auth::routes();
 Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
     
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    
+    Route::get('/dashboard/countes', [App\Http\Controllers\HomeController::class, 'writer_dashboard_counters'])->name('dashboard.counts');
+    
+    Route::get('/dashboard/writer_urgent_tasks', [App\Http\Controllers\HomeController::class, 'writer_urgent_tasks'])->name('dashboard.writer_urgent_tasks');
+    
+    Route::get('/dashboard/inprogress_task', [App\Http\Controllers\HomeController::class, 'inprogress_task'])->name('dashboard.inprogress_task');
+
+    Route::get('/dashboard/unassigned_task', [App\Http\Controllers\HomeController::class, 'writer_unassigned_tasks'])->name('dashboard.unassigned_task');
+
+    Route::get('/dashboard/new_task', [App\Http\Controllers\HomeController::class, 'writer_new_tasks'])->name('dashboard.new_task');
+
+    Route::get('/dashboard/qa_required_task', [App\Http\Controllers\HomeController::class, 'qa_required_task'])->name('dashboard.qa_required_task');
+
+    Route::get('/dashboard/writer_feedback_tasks', [App\Http\Controllers\HomeController::class, 'writer_feedback_tasks'])->name('dashboard.writer_feedback_tasks');
 
     Route::group(['prefix'=>'roles'],function(){
 
@@ -117,6 +131,17 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/order_timline/{id}',[OrdersController::class,'order_timline'])->name('orders.order_timline');
 
         Route::post('/insert',[OrdersController::class,'store']);
+
+        Route::post('/change_order_status/{id}',[OrdersController::class,'change_order_status']);
+
+        Route::get('/add_feedback/{id}',[OrdersController::class,'add_feedback'])->name('orders.add_feedback');
+
+        Route::post('/add_feedback',[OrdersController::class,'store_feedback'])->name('orders.store_feedback');
+    });
+
+    Route::group(['prefix'=>'delivery'],function(){
+
+        Route::get('/',[OrdersController::class,'delivery'])->name('delivery.index');
 
     });
 
@@ -268,8 +293,17 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         
         Route::get('/fetch_order/{id}',[WriterController::class,'fetch_order'])->name('writers.fetch_order');
         
-      
-    });
+        Route::get('/fetch_all_writers',[WriterController::class,'fetch_all_writers'])->name('writers.fetch_all_writers');
+        
+        Route::post('/task_update/{id}',[WriterController::class,'task_update'])->name('writers.task_update');
+
+        Route::post('/user_task_details_update/{id}',[WriterController::class,'user_task_details_update'])->name('writers.user_task_details_update');
+   
+        Route::post('/delete_assigned_user',[WriterController::class,'delete_assigned_user'])->name('writers.delete_assigned_user');
+
+        Route::post('/submit_ratings',[WriterController::class,'submit_ratings'])->name('writers.submit_ratings');
+        
+     });
 
 
 });

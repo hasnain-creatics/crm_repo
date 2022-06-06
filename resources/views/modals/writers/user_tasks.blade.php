@@ -4,18 +4,20 @@
 			<div class="modal-dialog modal-lg modal-dialog-centered text-center" role="document">
 				<div class="modal-content modal-content-demo">
 					<div class="modal-header">
-						<h6 class="modal-title">Task Details / Order-{{$id}}</h6><button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
+						<h6 class="modal-title">Task Details / ORDER-{{$id}}</h6><button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
 					</div>
              
 					<div class="modal-body">
 
-                 <div class="table-responsive">
+                <div class="table-responsive">
 
                     <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
                       
                         <div class="row">
 
                     <div class="col-sm-12">
+
+                    @if($lead_manager_admin == true)
                         <div class="form-group col-md-12"> 
                             <div class="input-group">
                                 <!-- <input type="text" name="" id="" class="form-control" placeholder="Assign More"> -->
@@ -27,6 +29,7 @@
                                 </select>
                             </div>
                         </div>
+                    @endif
                         <div class="form-group col-md-12"> 
                         <div class="input-group">
                                         
@@ -41,7 +44,9 @@
                                                         <th>Current Status</th>
                                                         <th>Progress</th>
                                                         <th>Assigned_date</th>
-                                                        <th>Action</th>
+                                                        @if($lead_manager_admin == true)
+                                                            <th>Action</th>
+                                                        @endif
                                                     </tr>
                                                 </thead>
                                             <tbody>
@@ -53,11 +58,17 @@
                                                     <td>{{$value->status_id}}</td>
                                                     <td>
                                                         <div class="progress progress-md mb-3">
-											                <div class="progress-bar progress-bar-striped progress-bar-animated bg-green" style="width: 80%">80%</div>
+											                <div class="progress-bar progress-bar-striped progress-bar-animated bg-green" style="width: {{$value->completed}}%">{{$value->completed}}%</div>
 										                </div>
                                                     </td>
                                                     <td>{{$value->created_at}}</td>
-                                                    <td><i class="fa fa-trash" title="remove task" style="cursor:pointer"></i>  <i class="fa fa-exchange"  style="cursor:pointer" title="task revoke"></i></td>
+                                              
+                                                    @if($lead_manager_admin == true)
+                                                    
+                                                    <td><i class="fa fa-trash" onClick="delete_user_task({{$value->order_assign_id}})" title="remove task" style="cursor:pointer"></i>  
+                                                    <!-- <i class="fa fa-exchange"  style="cursor:pointer" title="task revoke"></i> -->
+                                                    </td>  @endif
+                                        
                                                 </tr>
 
                                                 <?php $i++;?>

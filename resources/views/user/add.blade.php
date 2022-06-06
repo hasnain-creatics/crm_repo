@@ -87,14 +87,14 @@
                                                 <div class="input-group">
                                                     <div class="form-group col-md-3">
                                                         <label for="" class="form-label">Designation</label>
-                                                        <select name="designation" class="form-control designation_id custom-select select2 select2-hidden-accessible @error('designation') is-invalid @enderror"  id="designation">
+                                                        <select name="designation" class="form-select designation_id @error('designation') is-invalid @enderror"  id="designation">
                                                            
                                                         </select>
                                                         <span class="arrow "><label id="designation-error" class="error" for="designation" style="display:none">This field is required.</label></span>
                                                     </div>
                                                     <div class="assignTo form-group col-md-3 d-none" >
                                                         <label for="" class="form-label">Assign To</label>
-                                                        <select name="assigned_to" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" id="assigned_to"   aria-hidden="true">
+                                                        <select name="assigned_to" class="form-select" tabindex="-1" id="assigned_to"   aria-hidden="true">
                                                             
                                                         </select>
                                                     </div> 
@@ -106,7 +106,7 @@
                                                     
                                                     <div class="assignTo assignLead form-group col-md-3 d-none"  id="assignLead">
                                                         <label for="" class="form-label">Assign Lead</label>
-                                                        <select name="lead_id" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" id="lead_id"   aria-hidden="true">
+                                                        <select name="lead_id" class="form-select" tabindex="-1" id="lead_id"   aria-hidden="true">
                                                             
                                                         </select>
                                                     </div> 
@@ -142,7 +142,7 @@
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label for="" class="form-label">City</label>
-                                                        <select name="city_id" id="city_id" class="form-control custom-select select2 select2-hidden-accessible  @error('alternate_phone_number') is-invalid @enderror" tabindex="-1" id="city_id" aria-hidden="true">
+                                                        <select name="city_id" id="city_id" class="form-select  @error('alternate_phone_number') is-invalid @enderror" tabindex="-1" id="city_id" aria-hidden="true">
                                                             
                                                         </select>
                                                         @error('city_id')
@@ -154,7 +154,7 @@
 
                                                 <div class="input-group">
                                                     <div class="form-group col-md-6"> <label for="" class="form-label">Status</label>
-                                                    <select name="status" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+                                                    <select name="status" class="form-select" tabindex="-1" aria-hidden="true">
                                                             <option value="inactive">Inactive</option>
                                                             <option value="active">Active</option>
                                                     </select>
@@ -227,9 +227,9 @@ $(document).ready(function(){
            language: "de"
         });
 
-    $('#designation').html(all_designations("{{route('fetch_all_designation')}}"));
+   all_designations("{{route('fetch_all_designation')}}")
     
-    $('#city_id').html(all_cities("{{route('fetch_cities')}}"));
+    all_cities("{{route('fetch_cities')}}")
   
     $('#user_form').validate({
 

@@ -286,6 +286,8 @@ if($('.profile-dropdown .profile_drop_down_div').hasClass('d-block')){
 </script>
 <script type="text/javascript">
             $(document).ready(function() {
+				
+                $('#task_documents_uploadd').imageuploadify();
                 $('#multi_file_upload_1').imageuploadify();
 				$('#multi_file_upload_2').imageuploadify();
 				$('#multi_file_upload_lead').imageuploadify();

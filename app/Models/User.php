@@ -50,4 +50,7 @@ class User extends Authenticatable
         return $this->hasMany(OrderAssigns::class,'user_id')->groupBy('user_id');
     }
     
+    public function user_ratings(){
+        return $this->hasMany(UserRatings::class,'user_id');
+    }
 }

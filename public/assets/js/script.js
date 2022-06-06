@@ -545,3 +545,187 @@ function OrderProgress(ele){
     });
 
 }
+
+function delete_user_task(order_id){
+
+    swal({
+        title: "Are you sure?",
+        text: 'Click on yes, continue then assgined task will delete permenantly',
+        type: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, Continue it!",
+        cancelButtonText: "No, Cancel Deleting!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+              customClass: {
+              confirmButton: 'btn btn-primary',
+              cancelButton: 'btn btn-secondary',
+          }
+      },
+      function(isConfirm){
+
+        if (isConfirm) {
+
+                    $.ajax({
+
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                
+                        type: "post",
+                    
+                        url : main_url+'/writers/delete_assigned_user',
+                    
+                        data: {order_id:order_id},
+                    
+                        dataType: "json",
+                    
+                        success:function(response){
+
+                            if(response.status == 'success'){
+
+                                swal('Congratulations!', response.message, response.status);
+
+                                // $('#writers_data_table').DataTable().ajax.reload();
+
+                                // $( "#lead_docs_table" ).load(window.location.href + " #lead_docs_table" );
+         
+                            }
+                            
+                        }
+                    
+                    });
+        } else {
+          swal("Cancelled", "Task Not Deleted", "error");
+        }
+      });
+}
+
+
+function deliver_order(item,ele){
+    
+    var order_status = 'Delivered';
+   
+    swal({
+        title: "Are you sure?",
+        text: 'Click on yes deliver it!, your order will be deliver',
+        type: "info",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes, Deliver it!",
+        cancelButtonText: "No, Cancel Delivery!",
+        closeOnConfirm: false,
+        closeOnCancel: false,
+              customClass: {
+              confirmButton: 'btn btn-primary',
+              cancelButton: 'btn btn-secondary',
+          }
+      },
+      function(isConfirm){
+
+        if (isConfirm) {
+ 
+                    $.ajax({
+
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                                
+                        type: "post",
+                    
+                        url : main_url+'/orders/change_order_status/'+ele,
+                    
+                        data: {status:order_status},
+                    
+                        dataType: "json",
+                    
+                        success:function(response){
+
+                            if(response.status == 'success'){
+
+                                swal('Congratulations!', response.message, response.status);
+
+                                // $('#writers_data_table').DataTable().ajax.reload();
+
+                                // $( "#lead_docs_table" ).load(window.location.href + " #lead_docs_table" );
+         
+                            }
+                            
+                        }
+                    
+                    });
+        } else {
+          swal("Cancelled", "Task Not Deleted", "error");
+        }
+      });
+
+}
+
+function add_feedback(ele){
+    
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/orders/add_feedback/'+ele,
+    
+        dataType: "html",
+    
+        success:function(response){
+    
+            $('#all-modals').html(response);
+
+            $('#add_order_feedback').modal('show');
+        }
+    
+    });
+
+}
+
+$(document).on('click','#submit_feedback',function(){
+
+    var id = $('.delivered_order_id').val();
+    var feedback = $('#feedback').val().trim();
+    if(feedback==""){
+
+        alert('feed back required');
+        return false;
+    }
+
+    $.ajax({
+
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        type: "post",
+
+        data:{order_id:id,feedback:feedback},
+    
+        url : main_url+'/orders/add_feedback',
+    
+        dataType: "json",
+    
+        success:function(response){
+    
+            // $('#all-modals').html(response);
+
+            // $('#add_order_feedback').modal('show');
+
+            swal('Congratulations!', "Feedback Added Successfully", 'Success');
+
+            setTimeout(function () {
+                location.reload(true);
+            }, 1000);
+
+
+        }
+    
+    });
+
+})
+
+
+function order_fail(ele){
+
+    console.log(ele)
+
+}
+
+
+// add_feedback(this,".$row->id.")
+// order_fail(this,".$row->id.")

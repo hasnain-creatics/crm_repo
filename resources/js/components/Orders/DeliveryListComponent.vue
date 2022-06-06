@@ -1,5 +1,22 @@
 <template>
   <div class="col-sm-12">
+    
+      <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-pills">
+   
+                <li class="nav-item">
+                    <a class="nav-link" href="#" :class="ready_to_delivered ? 'active' : ''"  @click="readyToDeliver()">Ready To Deliver </a>
+                </li>
+                   &nbsp;
+                <li class="nav-item">
+                    <a class="nav-link"  href="#"  :class="delivered ? 'active' : ''"    @click="order_delivered()">Delivered</a>
+                </li>    
+     
+            </ul>
+        </div>
+    </div>
+<br>
     <div class="row">
       <div class="col-md-4">
         <div class="input-group mb-4">
@@ -132,7 +149,7 @@
     </div>
     <table
       class="orders_data_table table table-bordered text-nowrap dataTable no-footer"
-      id="orders_data_table"
+      id="delivery_data_table"
       role="grid"
       aria-describedby="example1_info"
     >
@@ -188,18 +205,21 @@ export default {
         name:"",
         url:"",
       },
+      ready_to_delivered: true,
+      delivered: false,
       more_filter : false,
       less_filter : true,
       less_filterbutton :false,
-      filter_url : this.$hostname + "orders",
-      filtered_url : ""
+      filter_url : this.$hostname + "delivery",
+      filtered_url : this.$hostname + "delivery?status=ready_to_delivered",
+      filter_array : {},
     };
   },
   methods: {
     
     filter_button() {
 
-      var filter_array = {};    
+        var filter_array = this.filter_array;     
 
       filter_array.order_id = "";
 
@@ -240,14 +260,20 @@ export default {
         filter_array.url = this.filter.url;
 
       }
+      
       filter_array.date_start = "";
+      
       if(this.filter.date_start){
+
         filter_array.date_start = this.filter.date_start;
       }
       
       filter_array.date_end = "";
+
       if(this.filter.date_end){
+
         filter_array.date_end = this.filter.date_end;
+
       }
        const u = new URLSearchParams(filter_array).toString();
 
@@ -293,13 +319,46 @@ export default {
        
       
     },
+
+
+    readyToDeliver(){
+      this.ready_to_delivered = true;
+      
+      this.delivered = false;
+
+      this.filter_array.status = "ready_to_delivered"
+
+       var u = new URLSearchParams(this.filter_array).toString();
+
+       this.filtered_url = this.filter_url+"?"+u;
+
+       this.dataTables(this.filtered_url);
+
+
+    },
+
+    order_delivered(){
+      
+      this.ready_to_delivered = false;
+      
+      this.delivered = true;
+      
+      this.filter_array.status = "delivered"
+
+       var u = new URLSearchParams(this.filter_array).toString();
+
+       this.filtered_url = this.filter_url+"?"+u;
+
+       this.dataTables(this.filtered_url);
+
+    },
     dataTables(search_url){
 
             // search_url = this.filtered_url;
 
             $(document).ready(function () {
 
-              $("#orders_data_table").DataTable({
+              $("#delivery_data_table").DataTable({
 
                 processing: true,
 
@@ -356,5 +415,6 @@ export default {
 .in-progress, .pending{font-size:8px;color:#eee;padding:5px;background:rgb(67, 112, 67);border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
 .qa-in-progress{font-size:8px;color:rgb(23, 19, 19);padding:5px;background:rgb(160, 179, 201);border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
 .qa-approved{font-size:8px;color:rgb(253, 253, 253);padding:5px;background:rgb(152, 166, 179);border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.delivered{font-size:8px;color:rgb(253, 253, 253);padding:5px;background:rgb(26, 102, 173);border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
 </style>
 

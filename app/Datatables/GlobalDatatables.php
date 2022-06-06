@@ -145,16 +145,16 @@ class GlobalDatatables
 
         return Datatables::of($data)->editColumn('created_at',function($row){
 
-                // return Carbon::createFromFormat('Y-m-d H:i:s', $row->created_at)->format('D M Y H:i:s');
+
                 return date("d M Y H:i:s", strtotime($row->created_at));
                 
         })->editColumn('order_status',function($row){
 
-            return (isset($row->order_status) ? $row->order_status->title : '');
+            return (isset($row->order_status) ? $row->order_status : '');
 
         })->editColumn('deadline',function($row){
 
-            // return Carbon::createFromFormat('Y-m-d H:i:s', $row->created_at)->format('D M Y H:i:s');
+
             return date("d M Y H:i:s", strtotime($row->deadline));
             
           })->addIndexColumn()->addColumn('action', function($row){
@@ -177,7 +177,63 @@ class GlobalDatatables
 
             }
             
-            $btn .= "&nbsp;&nbsp;<i class='fa fa-info-circle' aria-hidden='true' onclick='OrderProgress(".$row->id.")' style='cursor:pointer' title='Order Runtime Progress'></i>";
+            // $btn .= "&nbsp;&nbsp;<i class='fa fa-info-circle' aria-hidden='true' onclick='OrderProgress(".$row->id.")' style='cursor:pointer' title='Order Runtime Progress'></i>";
+            
+            return $btn;
+            
+        })->rawColumns(['action','created_at','deadline','order_status'])->make(true);
+    }
+
+
+    public function ready_to_delivery($data){
+
+        return Datatables::of($data)->editColumn('created_at',function($row){
+
+
+                return date("d M Y H:i:s", strtotime($row->created_at));
+                
+        })->editColumn('order_status',function($row){
+
+            return (isset($row->order_status) ? $row->order_status : '');
+
+        })->editColumn('deadline',function($row){
+
+
+            return date("d M Y H:i:s", strtotime($row->deadline));
+            
+          })->addIndexColumn()->addColumn('action', function($row){
+
+            $btn = "";
+
+            if (Auth::user()->can('orders-edit')):
+
+                // $btn .= "<a href='".route('orders.edit',$row->id)."' class='fa fa-edit' aria-hidden='true' title='Edit'></a>&nbsp;";
+
+            endif;
+       
+            // $btn .= "&nbsp;&nbsp;<i class='fa fa-files-o' aria-hidden='true' onclick='leadDocs(".$row->id.")' style='cursor:pointer' title='Documents'></i>";
+
+            if(Auth::user()->roles[0]->name == 'Admin' || Auth::user()->roles[0]->type == 'manager' || Auth::user()->is_lead){
+
+                // $btn .= "&nbsp;&nbsp;<i class='fa fa-exchange' aria-hidden='true' onclick='transferLead(".$row->id.")' style='cursor:pointer' title='Transfer Lead'></i>";
+
+                // $btn .= "&nbsp;&nbsp;<i class='fa fa-info-circle' aria-hidden='true' onclick='transferLeadDetails(".$row->id.")' style='cursor:pointer' title='Lead Details'></i>";
+
+            }
+            if($row->order_status == "QA Approved"){
+
+                $btn .="&nbsp; <i class='fa fa-truck' title='Deliver Order' onclick='deliver_order(this,".$row->id.")' style='cursor:pointer;' aria-hidden='true' ></i>";
+
+            }
+
+            if($row->order_status == 'Delivered'){
+
+                $btn .="&nbsp; <i class='fa fa-comments-o' title='Add Feedback' onclick='add_feedback(".$row->id.")' style='cursor:pointer;' aria-hidden='true' ></i>";
+                $btn .="&nbsp; <i class='fa fa-exclamation-triangle' title='Failed' onclick='order_fail(".$row->id.")' style='cursor:pointer;' aria-hidden='true' ></i>";
+
+            }
+            
+            // $btn .= "&nbsp;&nbsp;<i class='fa fa-info-circle' aria-hidden='true' onclick='OrderProgress(".$row->id.")' style='cursor:pointer' title='Order Runtime Progress'></i>";
             
             return $btn;
             
@@ -186,17 +242,7 @@ class GlobalDatatables
 
     public function writers($data){
 
-        // $status = ["New","In Progress","Completed","Feedback","Qa In Progress","Rejected","Qa Approved","Delivered"];
-        $status[] = "New";
-        $status[] = "Pending";
-        $status[] = "In Progress";
 
-        $status[] = "Completed";
-        // $status[] = "Feedback";
-        $status[] = "Qa In Progress";
-        $status[] = "Rejected";
-        $status[] = "Qa Approved";
-        // $status[] = "Delivered";
             $all_writers = User::select('users.id',
                         DB::raw('CONCAT(users.first_name," ",users.last_name) AS name'),'users.is_lead','users.lead_id')
                         ->whereHas('roles', function($q){
@@ -206,25 +252,82 @@ class GlobalDatatables
                 $query->where('order_assigns.status_id', '!=', 'Revoke');
                 $query->where('order_assigns.status_id', '!=', 'Deleted');
             }])->get();
-        return Datatables::of($data)->editColumn('order_status',function($row) use ($status){
+        return Datatables::of($data)->editColumn('order_status',function($row){
 
             $html = "";
+           
+            if($row->order_status){
+       
+                $html .="<select disabled class='form-select status_type_".$row->id."' onChange='change_order_status(this,".$row->id.")'>";
+            
+                if($row->order_status == 'New'){
 
-            $order_status = Status::where('order',$row->id)->orderBy('id','desc')->take(1)->first();
-                           
-            $html .="<select class='form-select status_type_".$row->id."' onChange='change_order_status(this,".$row->id.")'>";
-                        
-            foreach($status as $key=>$value){
+                    $html .="<option value='New'  selected >New</option>";
 
-                    if($order_status){
-                    
-                        $html .="<option ".($order_status->title == $value ? 'selected' : '').">".$value."</option>";
+                }else{
+
+                    $html .="<option value='New' >New</option>";
+
+                }
                 
+                if($row->order_status == 'Pending'){
+
+                    $html .="<option value='Pending' selected >Pending</option>";
+
+                }else{
+
+
+                    $html .="<option value='Pending' >Pending</option>";
+
+
+                }
+                
+                if($row->order_status == 'In Progress'){
+
+                   $html .="<option value='In Progress' selected >In Progress</option>";
+
+
+                }else{
+
+                    $html .="<option value='In Progress' >In Progress</option>";
+                    
+                }
+                
+                if($row->order_status == 'Ready to QA'){
+
+                    $html .="<option value='Ready to QA' selected >Ready to QA</option>";
+
+                }else{
+
+                    $html .="<option value='Ready to QA'>Ready to QA</option>";
+
+                }
+                if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type === 'manager' || Auth::user()->is_lead == 1){
+
+                    if($row->order_status == 'QA Approved'){
+
+                        $html .="<option value='QA Approved' selected >QA Approved</option>";
+
+                    }else{
+
+                        $html .="<option value='QA Approved' >QA Approved</option>";
+
                     }
+                }
+                   
+                if($row->order_status == 'Feedback'){
+
+                    $html .="<option value='Feedback' selected >Feedback</option>";
+
+                }else{
+
+                    $html .="<option value='Feedback'>Feedback</option>";
+
+                }
+                $html .="</select>";
+
             }
-
-            $html .="</select>";
-
+             
             return $html;
 
           })->editColumn('order_assigns',function($row){
@@ -232,7 +335,6 @@ class GlobalDatatables
                 return $row->order_assigns;
 
           })->editColumn('assign_to',function($row) use ($all_writers){
-
          
             $html = "";
 
@@ -241,8 +343,7 @@ class GlobalDatatables
             $html .="<option ''></option>";
 
             foreach($all_writers as $key=>$value){
-
-                // $count_orders_tasks = OrderAssigns::where('user_id',$value->user_id)->where('status_id','!=','Completed')->count();
+                
                 $html .="<option value=".$value->id.">".$value->name."(".$value->order_assigns_count.")</option>";
           
             }
@@ -253,37 +354,18 @@ class GlobalDatatables
 
           })->editColumn('deadline',function($row){
 
-            // return Carbon::createFromFormat('Y-m-d H:i:s', $row->created_at)->format('D M Y H:i:s');
             return date("D M Y H:i:s", strtotime($row->deadline));
             
           })->editColumn('documents',function($row){
 
-            // // return Carbon::createFromFormat('Y-m-d H:i:s', $row->created_at)->format('D M Y H:i:s');
             return 'documents';
-            // Orders::sale_order_documents()
-            // 
+         
             
           })->addIndexColumn()->addColumn('action', function($row){
 
             $btn = "";
             $btn .= "<a href='".route('writers.task_details',$row->id)."' class='fa fa-edit' aria-hidden='true' title='Edit'></a>&nbsp;";
 
-            // if (Auth::user()->can('orders-edit')):
-
-            //     $btn .= "<a href='".route('orders.edit',$row->id)."' class='fa fa-edit' aria-hidden='true' title='Edit'></a>&nbsp;";
-
-            // endif;
-       
-            // $btn .= "&nbsp;&nbsp;<i class='fa fa-files-o' aria-hidden='true' onclick='leadDocs(".$row->id.")' style='cursor:pointer' title='Documents'></i>";
-
-            // if(Auth::user()->roles[0]->name == 'Admin' || Auth::user()->roles[0]->type == 'manager' || Auth::user()->is_lead){
-
-                // $btn .= "&nbsp;&nbsp;<i class='fa fa-exchange' aria-hidden='true' onclick='transferLead(".$row->id.")' style='cursor:pointer' title='Transfer Lead'></i>";
-
-                // $btn .= "&nbsp;&nbsp;<i class='fa fa-info-circle' aria-hidden='true' onclick='transferLeadDetails(".$row->id.")' style='cursor:pointer' title='Lead Details'></i>";
-
-            // }
-            
             return $btn;
             
         })->rawColumns(['action','created_at','deadline','order_status','documents','assign_to','order_assigns'])->make(true);
