@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Leads extends Model
 {
     use HasFactory;
+
+    public function website_url(){
+      return  $this->hasOne(Website::class,'id','url');
+    }
 }

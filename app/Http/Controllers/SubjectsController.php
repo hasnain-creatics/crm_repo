@@ -45,12 +45,19 @@ class SubjectsController extends Controller
         return view('subjects.add');
     }
 
+    public function get_all_active_subjects(){
+        $data = new Subjects();
+
+        $result = $data->get();
+
+        return response()->json($result);
+    }
     public function get_all_subjects(){
 
           
         $data = new Subjects();
 
-        $result = $data->get();
+        $result = $data->paginate(5);
 
         return response()->json($result);
 

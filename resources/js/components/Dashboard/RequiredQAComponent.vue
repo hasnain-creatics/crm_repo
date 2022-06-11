@@ -111,7 +111,7 @@ export default {
   async mounted() {
 
     this.fetch_urgent_record(this.url);
-
+   this.interval = setInterval(() =>this.fetch_urgent_record(this.url), 5000);
   },
 };
 </script>

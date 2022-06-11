@@ -61,7 +61,7 @@ class LeadsController extends Controller
 
                                 DB::raw('CONCAT(users.first_name," ",users.last_name) AS created_name')
                                 
-                            );
+                            )->with('website_url');
 
                             $data = $data->leftJoin('lead_issues','lead_issues.id','=','leads.lead_issue_id');
 
@@ -70,29 +70,12 @@ class LeadsController extends Controller
                             // $data = $data->leftJoin('lead_transfers lt','lt.lead_id','=','leads.id');
 
 
-                            if($this->is_admin() != true){
-
-                                $data = $data->where('leads.transfered_id',Auth::user()->id);
-
-                                if(Auth::user()->roles[0]->type == 'manager'){
-
-                                    $data = $data->orWhere('users.assigned_to',Auth::user()->id);
-
-                                }else{
-                                    
-                                    if(Auth::user()->is_lead){
-
-                                        $data = $data->orWhere('users.lead_id',Auth::user()->id);
-                     
-                                    }
-                                }
-                              
-                            }
+                    
 
 
                             if(isset($_GET['lead_id'])&& !empty($_GET['lead_id'])){
        
-                                $lead_id = $_GET['lead_id']; 
+                                $lead_id = trim($_GET['lead_id']); 
                  
                                 $data = $data->where('leads.lead_id',$_GET['lead_id']);     
                         
@@ -149,7 +132,24 @@ class LeadsController extends Controller
 
                             }
                 // $data = $data->orderBy('leads.id','DESC');          
+                if($this->is_admin() != true){
 
+                    $data = $data->where('leads.transfered_id',Auth::user()->id);
+
+                    if(Auth::user()->roles[0]->type == 'manager'){
+
+                        $data = $data->orWhere('users.assigned_to',Auth::user()->id);
+
+                    }else{
+                        
+                        if(Auth::user()->is_lead){
+
+                            $data = $data->orWhere('users.lead_id',Auth::user()->id);
+         
+                        }
+                    }
+                  
+                }
                 return $this->table($data,'leads');   
             
         }
@@ -227,7 +227,9 @@ class LeadsController extends Controller
                 }else{
 
                     $lead_update['created_by'] = Auth::user()->id;
+
                     $lead_update['transfered_id'] = Auth::user()->id;
+                    
                 }
             
             }

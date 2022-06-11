@@ -111,8 +111,9 @@ export default {
   async mounted() {
 
     this.fetch_urgent_record(this.url);
-    var element = component('DashboardCountComponent').load_card_details(ele)//like this
-    console.log(element);
+    // var element = component('DashboardCountComponent').load_card_details(ele)//like this
+      
+    this.interval = setInterval(() =>this.fetch_urgent_record(this.url), 5000);
   },
 };
 </script>

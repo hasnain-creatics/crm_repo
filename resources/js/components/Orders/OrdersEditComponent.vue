@@ -4,28 +4,28 @@
 											
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Lead</label>
-													<input type="text" class="form-control"  placeholder="Enter Customer Name" id="Customer_Name"  :value="lead" :readOnly=true >
+													<input type="text" class="form-control"  placeholder="Enter Customer Name" id="Customer_Name"  :value="lead" :readOnly="true" >
 											 	
 											</div>
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Customer Name</label>
-											  <input type="text" class="form-control" :value="lead_name" placeholder="Enter Customer Name" id="Customer_Name" @change="customerName" name="Customer_Name">
+											  <input type="text" class="form-control" :value="form.customer_name" placeholder="Enter Customer Name" id="Customer_Name" @change="customerName" name="Customer_Name">
 											 		  <span  :class="'error'" v-if="errorss.customer_name">{{errorss.customer_email[0]}}</span>
 											</div>
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Customer Email</label>
-											  <input type="text" class="form-control" @change="customerEmail" :value="lead_email" placeholder="Enter Customer Email" id="customer_email"  name="customer_email"  >
+											  <input type="text" class="form-control" @change="customerEmail" :value="form.customer_email" placeholder="Enter Customer Email" id="customer_email"  name="customer_email"  >
 											 	<span  :class="'error'" v-if="errorss.customer_email">{{errorss.customer_email[0]}}</span>
 											</div>
 
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Select Customer Type</label>
-											  <select   @change="customer_type" class="form-select border" id="customer_type" name="customer_type" :value="form.customer_type">
+											  <select   @change="customer_type" class="form-select border" id="customer_type" name="customer_type" >
 												<option selected disabled value="">Choose...</option>
 
-												<option  value="EXISTING">Existing</option>
-												<option  value="REFFERAL">Refferral</option>
-												<option  value="NEW">New</option>
+												<option :selected="form.customer_type == 'EXISTING' ? 'selected' : ''" value="EXISTING">Existing</option>
+												<option :selected="form.customer_type == 'REFFERAL ' ? 'selected' : ''"  value="REFFERAL">Refferral</option>
+												<option  :selected="form.customer_type == 'NEW' ? 'selected' : ''" value="NEW">New</option>
 											 </select>
 											 	 <span  :class="'error'" v-if="errorss.customer_type">{{errorss.customer_type[0]}}</span>
 											</div>
@@ -64,19 +64,19 @@
 
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Select Payment Status</label>
-											  <select class="form-select border"  @change="change_payment_status"  :value="form.payment_status"  id="payment_status" name="payment_status" >
-												<option  value="Paid">Paid</option>
-												<option  value="UnPaid">UnPaid</option>
-												<option  value="Partially Paid">Partially Paid</option>																						
+											  <select class="form-select border"  @change="change_payment_status"   id="payment_status" name="payment_status" >
+												<option :selected="form.payment_status == 'PAID' ? 'selected' :''"  value="PAID">Paid</option>
+												<option :selected="form.payment_status == 'UNPAID' ? 'selected' :''"  value="UNPAID">UnPaid</option>
+												<option :selected="form.payment_status == 'PARTIALLY PAID' ? 'selected' :''"  value="PARTIALLY PAID">Partially Paid</option>																						
 											  </select>
 											<span  :class="'error'" v-if="errorss.payment_status">{{errorss.payment_status[0]}}</span>
 											</div>
 
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Select Currency</label>
-											  <select class="form-select border" @change="currencyRates" id="currency" name="currency" :value="form.currency_id">
+											  <select class="form-select border" @blur="currencyRates" @change="currencyRates" id="currency" name="currency" >
 												<option selected disabled value="">Choose...</option>
-											    <option v-for="currency in all_currency" :key="currency.id" :data-rate="currency.rate"   :value="currency.id">{{currency.currency}}</option>
+											    <option v-for="currency in all_currency" :selected="(form.currency_id == currency.id ? 'selected' : '')" :key="currency.id" :data-rate="currency.rate"   :value="currency.id" >{{currency.currency}}</option>
 											  </select>
 												<span  :class="'error'" v-if="errorss.currency_id">{{errorss.currency_id[0]}}</span>
 											</div>
@@ -84,13 +84,13 @@
 									<!--End Third Row-->
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Order Amount</label>
-											  <input type="number"  @change="change_amount"   class="form-control" placeholder="Enter Order Amount" id="order_amount"  name="order_amount" value="0" >
+											  <input type="number"  @change="change_amount"   class="form-control" placeholder="Enter Order Amount" id="order_amount"  name="order_amount" :value="form.amount" >
 											 <span  :class="'error'" v-if="errorss.amount">{{errorss.amount[0]}}</span>
 											</div>
 
 											<div class="col-md-4" v-if=partial>
 											  <label for="validationCustom01" class="form-label">Received Amount</label>
-											  <input type="number"  @change="change_receive_amount"  class="form-control" placeholder="Enter Received Amount" id="Received"  name="Received" value="" >
+											  <input type="number"  @change="change_receive_amount"  :value="form.amount_received" class="form-control" placeholder="Enter Received Amount" id="Received"  name="Received" value="" >
 											  		 <span  :class="'error'" v-if="errorss.amount_received">{{errorss.amount_received[0]}}</span>
 											</div>
 
@@ -106,25 +106,24 @@
 
 										<div class="col-md-6">
 											  <label for="validationCustom01" class="form-label">Notes <span class="">*</span></label>
-											  <textarea style="resize: none;"  @change="change_notes"   rows="5" name="Notes" id="Notes"  cols="50" class="form-control">												</textarea>
+											  <textarea style="resize: none;"  @change="change_notes"   rows="5" name="Notes" id="Notes" :value="form.notes"  cols="50" class="form-control">												</textarea>
 												  		 <span  :class="'error'" v-if="errorss.notes">{{errorss.notes[0]}}</span>
 											</div>
 
 
 								<div class="col-md-6">
 											  <label for="validationCustom01" class="form-label">Notes by Writer<span class="">*</span></label>
-											  <textarea style="resize: none;"   @change="change_additional_notes"   rows="5" name="Notes_by_writer" id="Notes_by_writer" cols="50" class="form-control">												</textarea>
-											 				  		 <span  :class="'error'" v-if="errorss.additional_notes">{{errorss.additional_notes[0]}}</span>
+											  <textarea style="resize: none;"   @change="change_additional_notes"  :value="form.additional_notes"  rows="5" name="Notes_by_writer" id="Notes_by_writer" cols="50" class="form-control">												</textarea>
+											  <span  :class="'error'" v-if="errorss.additional_notes">{{errorss.additional_notes[0]}}</span>
 											</div>
 
 											<!--End Fifth Row-->
 
 										<div class="col-md-6">
 											  <label for="validationCustom01" class="form-label">Website</label>
-											  
-											  <select name="" class="form-select border" @change="customerWebsite" :value="lead_website" id="">
+											  <select name="" class="form-select border" @change="customerWebsite"id="">
 												  	<option value=""></option>
-													  <option :value="web.name" v-for="web in websites" :key="web.id"  >
+													  <option :value="web.name" v-for="web in websites" :key="web.id" :selected="web.id == form.website ? 'selected' :''">
 														  {{web.name}}
 													  </option>
 											  </select>
@@ -132,35 +131,33 @@
 											  <span  :class="'error'" v-if="errorss.website">{{errorss.website[0]}}</span>
 											</div>
 
-
 										
 										<div class="col-md-6">
 											  
 											 
 												<label class="custom-control custom-checkbox custom-control-md" style=" margin-top: 25px;">
-															<input    v-model="form.is_urgent" type="checkbox" class="custom-control-input" name="is_urgent" value="Yes">
+															<input v-model="form.is_urgent" type="checkbox" class="custom-control-input" name="is_urgent" :value="form.is_urgent==1 ? 'Yes' : '' " >
 															<span class="custom-control-label custom-control-label-md">Is Urgent?</span>
 														</label>
 											</div>
 	
 
 
-											<div class="col-12">
-											  <label for="validationCustom01" class="form-label">Upload Your Order Document </label>
+									
+											<div class="col-12  upload_docs">
+											 <label for="validationCustom01" class="form-label"></label>
 												<div class="form-group mb-0">
-											<input  type="file" name="files"  @change="processFile"  accept=".jpg, .png, image/jpeg, image/png" >
-										</div>
-										</div>	
-											
-											
-												<div class="col-12">
-											 <label for="validationCustom01" class="form-label">Upload Your Invoice </label>
-												<div class="form-group mb-0">
-											<input id="demo2" type="file" name="files"   @change="processInvoice" accept=".jpg, .png, image/jpeg, image/png" >
-										</div>
+													<input name="files"  @change="processFile($event)"  id="multi_file_upload_1" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple>
+												</div>
 											</div>
-											
-											
+
+											<div class="col-12 upload_invoice">
+											 <label for="validationCustom01" class="form-label"></label>
+												<div class="form-group mb-0">
+													 <input name="files"  @change="processInvoice($event)"  id="multi_file_upload_2" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple>
+								
+												</div>
+											</div>
 											
 											<div class="col-12" v-if=btn_disabled>
 											  <button class="btn btn-primary pull-right submt_button"  type="submit">Submit form</button>
@@ -206,7 +203,7 @@ export default {
 		btn_disabled : true,
 		all_subjects : [],
 		all_currency : [],
-		partial: true,
+		partial: false,
 		currency_rate : 0,
 		lead_name: "",
 		lead_email: "",
@@ -224,14 +221,8 @@ export default {
 			this.all_currency_method();
 
 	        this.all_websites_method();
+
 			this.fetch_order(this.id);
-
-		
-
-			
-
-	
-
 
   },
   
@@ -247,26 +238,39 @@ export default {
 
 			this.lead = 'LEAD-'+this.order.data.lead_id;
 
-
 			this.lead_name = this.order.data.customer_name;
+
 			this.lead_email = this.order.data.customer_email;
 
 			this.form = this.order.data
+
+			this.form.payment_status == 'PARTIALLY PAID' ? this.partial = true : this.partial = true;
+
 			this.deadline = this.order.deadline;
+
+					for(var j =0; j<this.all_currency.length;j++){
+						if(this.form.currency_id == this.all_currency[j].id){
+							this.currency_rate =this.all_currency[j].rate;
+						}
+						
+					}
 
     },
 
 	async all_currency_method(){
 
-            var currency_response = await fetch(this.$hostname+"currency/get_all_subjects");
+          var currency_response = await fetch(this.$hostname+"currency/get_all_active_currency");
 
             var currency_ = await currency_response.json();
 
             this.all_currency = currency_;
+
+
+
 	},
 	async all_subjects_method(){
 
-			var response = await fetch(this.$hostname+"subjects/get_all_subjects");
+					var response = await fetch(this.$hostname+"subjects/get_all_active_subjects");
 
             var subjects_ = await response.json();
 
@@ -280,7 +284,7 @@ export default {
 
 	            }
 
-			    var website_response = await fetch(this.$hostname+"websites/get_active_website");
+		    var website_response = await fetch(this.$hostname+"websites/get_active_website");
 
        		 	var website_data = await website_response.json();
 
@@ -371,14 +375,11 @@ export default {
 	},	
 
 	async change_payment_status(e){
-
-		// const customers_name = this.form.customer_name;
 				
 		this.form.payment_status = e.target.value;
 	
-		this.form.payment_status == 'Partially_Paid' ? this.partial = true : this.partial = false;
-		
-
+		this.form.payment_status == 'PARTIALLY PAID' ? this.partial = true : this.partial = false;
+	
 	},
 
 	async customer_type(e){

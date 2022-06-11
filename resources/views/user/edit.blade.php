@@ -90,32 +90,36 @@
                                                 <div class="input-group">
                                                     <div class="form-group col-md-3">
                                                         <label for="" class="form-label">Designation</label>
-                                                        <select name="designation" class="form-control custom-select designation_id select2 select2-hidden-accessible @error('designation') is-invalid @enderror"  id="designation">
+                                                        <select name="designation" class="form-select designation_id @error('designation') is-invalid @enderror"  id="designation">
                                                            
                                                         </select>
                                                         <span class="arrow "><label id="designation-error" class="error" for="designation" style="display:none">This field is required.</label></span>
                                                     </div>
                                                     <div class="assignTo form-group col-md-3 d-none" >
                                                         <label for="" class="form-label">Assign To</label>
-                                                        <select name="assigned_to" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" id="assigned_to"   aria-hidden="true">
+                                                        <select name="assigned_to" class="form-select " tabindex="-1" id="assigned_to"   aria-hidden="true">
                                                             
                                                         </select>
                                                     </div> 
                                                     
                                                     <div class="assignTo form-group col-md-3 d-none" style="margin-top: 35px;">
                                                         <label for="lead" >Make this user Lead</label>
-                                                        <input type="checkbox" id="lead" name="is_lead" >
+                                                        <input type="checkbox" id="lead" name="is_lead" {{@$result->is_lead ==1? 'checked' : ''}}>
                                                     </div> 
                                                     
                                                     <div class="assignTo assignLead form-group col-md-3 d-none" id="assignLead" >
                                                         <label for="" class="form-label">Assign Lead</label>
-                                                        <select name="lead_id" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" id="lead_id"   aria-hidden="true">
+                                                        <select name="lead_id" class="form-select " tabindex="-1" id="lead_id"   aria-hidden="true">
                                                             
                                                         </select>
                                                     </div> 
                                                      
                                                 </div>
-
+                                                <div class="is_qa form-group col-md-3 d-block" style="margin-top: 35px;">
+                                                        <label for="is_qa" >QA</label>
+                                                        <input type="checkbox" id="is_qa" name="is_qa" {{@$result->is_qa == 1?'checked':''}} >
+                                                    </div> 
+                                                    
 
                                                 <div class="input-group">
                                                     <div class="form-group col-md-6">
@@ -145,7 +149,7 @@
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label for="" class="form-label">City</label>
-                                                        <select name="city_id" id="city_id" class="form-control custom-select select2 select2-hidden-accessible " tabindex="-1" id="city_id" aria-hidden="true">
+                                                        <select name="city_id" id="city_id" class="form-select " tabindex="-1" id="city_id" aria-hidden="true">
                                                             
                                                         </select>
                                                         @error('city_id')
@@ -157,7 +161,7 @@
 
                                                 <div class="input-group">
                                                     <div class="form-group col-md-6"> <label for="" class="form-label">Status</label>
-                                                    <select name="status" class="form-control custom-select select2 select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+                                                    <select name="status" class="form-select" tabindex="-1" aria-hidden="true">
                                                             <option value="inactive" {{$result->status == 'INACTIVE' ? 'selected' : ''}}>Inactive</option>
                                                             <option value="active" {{$result->status == 'ACTIVE' ? 'selected' : ''}}>Active</option>
                                                     </select>
@@ -216,9 +220,9 @@
 
 $(document).ready(function(){
     
-    $('#designation').html(all_designations("{{route('fetch_all_designation')}}","{{$result->designation}}"));
+   all_designations("{{route('fetch_all_designation')}}","{{$result->designation}}");
     
-    $('#city_id').html(all_cities("{{route('fetch_cities')}}","{{$result->city_id}}"));
+    all_cities("{{route('fetch_cities')}}","{{$result->city_id}}");
    
     var checked_value = "{{$result->is_lead}}";
 
@@ -308,9 +312,11 @@ function manager_designation(id=null){
                     }
                     $('.assignTo').removeClass('d-none').addClass('d-block');
                     $('#assigned_to').html(html);
+                    $('.is_qa').removeClass('d-block').addClass('d-none');
                 }else{
                     $('.assignTo').removeClass('d-block').addClass('d-none');
                     $('#assignLead').removeClass('d-block').addClass('d-none');
+                    $('.is_qa').removeClass('d-none').addClass('d-block');
                 }
                 if(id){
                     $('#assigned_to').val(id).trigger('change');

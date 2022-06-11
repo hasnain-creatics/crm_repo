@@ -67,6 +67,7 @@
 
           <th style="width:25px">S.No</th>
           <th style="width:60px">Ref No.</th>
+          <th style="width:100px">Title</th>
           <th style="width:100px">Deadline</th>
           <th style="width:60px">Words</th>
           <th style="width:100px">Notes</th>
@@ -197,6 +198,8 @@ export default {
 
                   { data: "order_id", name: "order_id" },
 
+                  { data: "title", name: "title" },
+                  
                   { data: "deadline", name: "deadline" },
                   
                   { data: "word_count", name: "word_count" },
@@ -270,7 +273,10 @@ export default {
   mounted() {
    
        this.show_tab == false ? this.showAllTasks() : '';
+       
        this.dataTables(this.filtered_url,this.visible);
+ 
+       this.interval = setInterval(() =>  this.dataTables(this.filtered_url,this.visible), 30000);
   },
 };
 </script>

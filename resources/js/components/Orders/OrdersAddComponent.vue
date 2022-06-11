@@ -123,10 +123,10 @@
 
 										<div class="col-md-6">
 											  <label for="validationCustom01" class="form-label">Website</label>
-											  
-											  <select name="" class="form-select border" @change="customerWebsite" :value="lead_website" id="">
+
+											  <select name="" class="form-select border" @change="customerWebsite" id="">
 												  	<option value=""></option>
-													  <option :value="web.name" v-for="web in websites" :key="web.id"  >
+													  <option :value="web.name" :selected="lead_website == web.id ? 'selected' : ''" v-for="web in websites" :key="web.id"  >
 														  {{web.name}}
 													  </option>
 											  </select>
@@ -206,7 +206,7 @@ export default {
 		btn_disabled : true,
 		all_subjects : [],
 		all_currency : [],
-		partial: true,
+		partial: false,
 		currency_rate : 0,
 		lead_name: "",
 		lead_email: "",
@@ -231,7 +231,7 @@ export default {
 
 	async all_currency_method(){
 
-            var currency_response = await fetch(this.$hostname+"currency/get_all_subjects");
+            var currency_response = await fetch(this.$hostname+"currency/get_all_active_currency");
 
             var currency_ = await currency_response.json();
 
@@ -239,7 +239,7 @@ export default {
 	},
 	async all_subjects_method(){
 
-			var response = await fetch(this.$hostname+"subjects/get_all_subjects");
+			var response = await fetch(this.$hostname+"subjects/get_all_active_subjects");
 
             var subjects_ = await response.json();
 

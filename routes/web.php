@@ -137,6 +137,11 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/add_feedback/{id}',[OrdersController::class,'add_feedback'])->name('orders.add_feedback');
 
         Route::post('/add_feedback',[OrdersController::class,'store_feedback'])->name('orders.store_feedback');
+
+        Route::get('/order_full_details/{id}',[OrdersController::class,'order_full_details'])->name('orders.order_full_details');
+ 
+
+
     });
 
     Route::group(['prefix'=>'delivery'],function(){
@@ -182,6 +187,8 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
 
     Route::group(['prefix'=>'issue'],function(){
 
+        route::get('/select_all_active_issues',[IssueController::class,'select_all_active_issues'])->name('issues.select_all_active_issues');
+
         Route::get('/',[IssueController::class,'index'])->name('issue.home');
 
         Route::get('/add',[IssueController::class,'create'])->name('issue.add');
@@ -215,6 +222,9 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/get_all_subjects',[SubjectsController::class,'get_all_subjects'])->name('subjects.get_all_subjects');
 
         Route::get('/get_subject/{id}',[SubjectsController::class,'get_subject'])->name('subjects.get_issue');
+        Route::get('/get_all_active_subjects',[SubjectsController::class,'get_all_active_subjects'])->name('subjects.get_all_active_subjects');
+
+
 
     });
 
@@ -237,6 +247,9 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/get_subject/{id}',[CurrencyController::class,'get_subject'])->name('currency.get_issue');
 
         Route::get('/sync',[CurrencyController::class,'sync'])->name('currency.sync');
+        Route::get('/get_all_active_currency',[CurrencyController::class,'get_all_active_currency'])->name('currency.get_all_active_currency');
+
+        
 
     });
 

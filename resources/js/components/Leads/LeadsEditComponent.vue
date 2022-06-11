@@ -32,36 +32,38 @@
 											</div>
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Select Status</label>
-                                                <select  :value="response_details.lead_status" class="form-select border" id="lead_status" name="lead_status"  @change="lead_status($event)"  @blur="onChangeLeadStatus" >
+                                                <select class="form-select border" id="lead_status" name="lead_status"  @change="lead_status($event)"  @blur="onChangeLeadStatus" >
                                                     <option selected disabled>Choose...</option>
-                                                    <option  value="Paid">Paid</option>
-                                                    <option  value="Un-Paid">Un-Paid</option>
-                                                    <option  value="Followup">Followup</option>
-													<option  value="Transfer-Paid">Transfer Paid</option>
+                                                    <option :selected="response_details.lead_status == 'Paid' ? 'selected' :''" value="Paid">Paid</option>
+                                                    <option :selected="response_details.lead_status == 'Un-Paid' ? 'selected' :''"  value="Un-Paid">Un-Paid</option>
+                                                    <option :selected="response_details.lead_status == 'Followup' ? 'selected' :''"  value="Followup">Followup</option>
+													<option :selected="response_details.lead_status == 'Transfer-Paid' ? 'selected' :''" value="Transfer-Paid">Transfer Paid</option>
                                                 </select>
 												<span v-if="errorss.lead_status">{{errorss.lead_status[0]}}</span>
 											</div>
 
 											<div class="col-md-4" v-if="issue_view">
 											  <label for="validationCustom01" class="form-label">Select Issue</label>
-												<select  :value="response_details.lead_issue_id" class="form-select border" id="issue" name="lead_issue_id"   @change="onChangeIssue" >
+												<select  v-model="form.lead_issue_id" class="form-select border" id="issue" name="lead_issue_id" >
 													<option selected disabled value="">Choose...</option>
-													<option  value="5">Client's payment merchant is not working</option>
-													<option  value="4">Price Issue</option>
-													<option  value="3">Can't be done</option>
-													<option  value="2">Trust Issues</option>
-													<option  value="1">Otherse</option>							
+													<option  v-for="(links, index) in all_issues"
+                                            :key="index" :value="links.id">{{links.issue}}</option>
 												</select>
 												<span v-if="errorss.lead_issue_id">{{errorss.lead_issue_id[0]}}</span>
-											</div>
 
+											</div>
+									
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Website Url</label>
-											  <input type="text" :value="response_details.url" class="form-control" placeholder="Enter website url"  id="url"  name="url"   @change="onChangeUrl" >
+											  <!-- <input type="text" v-model="form.url" class="form-control" placeholder="Enter website url"  id="url"  name="url" value="" > -->
+												<select  v-model="form.url" class="form-select border" id="url" name="url" >
+													<option selected disabled value="">Choose...</option>
+													<option  v-for="(links, index) in all_website"
+                                           		 :key="index" :value="links.id" :selected="links.id ==   form.url ? 'selected' : ''">{{links.name}}</option>
+												</select>
+
 												 <span v-if="errorss.url">{{errorss.url[0]}}</span>
 											</div>
-
-
 								<!--End Second Row-->
 
 		
@@ -73,13 +75,12 @@
 
 											<!--End Fifth Row-->
 
-											<div class="col-12">
-											  <label for="validationCustom01" class="form-label">Attachments</label>
-												<div class="form-group mb-0">
-											<!-- class="dropify"  -->
-											<input id="demo1" class="dropify" type="file" name="files[]" multiple @change="processFile($event)">
-										</div>
+											<div class="col-12 upload_led_doc">
+											<div class="form-group mb-0">
+													 <input name="files" @change="processFile($event)"  id="multi_file_upload_lead" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple>
+											</div>
 										</div>	
+												
 											
 											<div class="col-12">
 											  <button class="btn btn-primary pull-right" type="submit">Submit form</button>
@@ -112,13 +113,25 @@ export default {
 		issue_view  :false,
 		success_msg :"",
 		success     :false,
-        response_details: {}
+        response_details: {},
+				all_issues:[],
+		all_website:[],
     };
   },
   mounted(){
 	  alert();
   },
   methods: {
+	select_all_active_issues(){
+      axios.get(this.$hostname+'issue/select_all_active_issues').then((response)=>{
+		  this.all_issues = response.data;
+	  })
+    },
+	get_active_website(){
+  		axios.get(this.$hostname+'websites/get_active_website').then((response)=>{
+		  this.all_website = response.data;
+	    })
+	},
     onChangeFirstName(e){
         this.form.first_name = e.target.value;
     },
@@ -186,7 +199,7 @@ export default {
 		if(event.target.value == 'Un-Paid'){
 
 			this.issue_view = true;
-
+				this.select_all_active_issues();
 		}else{
 
 			this.issue_view = false;
@@ -207,7 +220,8 @@ export default {
    
   },
  mounted(){
-   
+	   	  this.get_active_website();
+
             const headers = {'Content-Type': 'multipart/form-data'};
             axios.get(this.$hostname+'leads/fetch_lead/'+this.lead_id,null,{headers}).then((response)=>{
                 this.response_details = response.data;
@@ -218,6 +232,9 @@ export default {
                 this.form.phone_number = response.data.phone_number;
                 this.form.lead_status= response.data.lead_status;
                 this.form.lead_issue_id= response.data.lead_issue_id;
+				if(this.form.lead_status =='Un-Paid'){
+						this.select_all_active_issues();
+				}
                 this.form.url= response.data.url;
                 this.form.description= response.data.description;
                 if(response.data.lead_status == 'Un-Paid'){

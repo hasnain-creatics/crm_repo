@@ -29,7 +29,7 @@ class WebsiteController extends Controller
     public function get_website(Website $website){
 
 
-        $data = $website->get();
+        $data = $website->paginate(5);
 
         return response()->json($data);
 

@@ -110,9 +110,13 @@
                                                             
                                                         </select>
                                                     </div> 
-                                                     
+                                                  
                                                 </div>
-
+                                                <div class="is_qa form-group col-md-3 d-block" style="margin-top: 35px;">
+                                                        <label for="is_qa" >QA</label>
+                                                        <input type="checkbox" id="is_qa" name="is_qa" >
+                                                    </div> 
+                                                    
 
                                                 <div class="input-group">
                                                     <div class="form-group col-md-6">
@@ -307,9 +311,12 @@ $(document).on('change','#designation',function(){
                 html +="<option value="+data['data'][i].id+">"+data['data'][i].name+"</option>";
             }
             $('.assignTo').removeClass('d-none').addClass('d-block');
-            $('#assigned_to').html(html);
+            $('#assigned_to').html(html);            
+            $('.is_qa').removeClass('d-block').addClass('d-none');
         }else{
             $('.assignTo').removeClass('d-block').addClass('d-none');
+            $('.is_qa').removeClass('d-none').addClass('d-block');
+
         }
     }
   });
@@ -347,7 +354,7 @@ $(document).on('change',"input[name='email']",function(){
 $(document).on('click','#lead',function(){
 
    lead_checkes('{{url("admin/user/fetch_leads")}}');
-
+           
 });
 
 

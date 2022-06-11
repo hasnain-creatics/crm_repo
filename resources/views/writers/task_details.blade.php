@@ -16,10 +16,10 @@
 
                 </div>
                 <div class="card-body">
-                  <task-details-component task_id="{{$id}}"></task-details-component>
+                  <task-details-component task_id="{{$id}}" role="{{Auth::user()->roles[0]->name}}"></task-details-component>
                 </div>
             </div>
-            <!-- <modal-component></modal-component> -->
+       
         </div>
     </div>
 @endsection

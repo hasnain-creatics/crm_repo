@@ -200,6 +200,8 @@ export default {
   },
   async mounted() {
     this.data_method();
+    // this.interval = setInterval(() =>this.data_method(), 5000);
+    
   },
 };
 </script>

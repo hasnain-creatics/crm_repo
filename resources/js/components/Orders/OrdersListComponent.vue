@@ -340,6 +340,7 @@ export default {
   },
   mounted() {
     this.dataTables(this.filtered_url);
+    this.interval = setInterval(() =>this.dataTables(this.filtered_url), 5000);
   },
 };
 </script>

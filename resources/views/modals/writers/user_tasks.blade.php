@@ -4,7 +4,7 @@
 			<div class="modal-dialog modal-lg modal-dialog-centered text-center" role="document">
 				<div class="modal-content modal-content-demo">
 					<div class="modal-header">
-						<h6 class="modal-title">Task Details / ORDER-{{$id}}</h6><button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
+						<h6 class="modal-title">Task Details / {{$order_status}} / ORDER-{{$id}}</h6><button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
 					</div>
              
 					<div class="modal-body">
@@ -18,17 +18,21 @@
                     <div class="col-sm-12">
 
                     @if($lead_manager_admin == true)
-                        <div class="form-group col-md-12"> 
-                            <div class="input-group">
-                                <!-- <input type="text" name="" id="" class="form-control" placeholder="Assign More"> -->
-                                <select id='all_writers' class="form-control select2" style='width: 200px;'   onChange='assign_writer(this,{{$id}})'>
-                                    <option value=""></option>
-                                    @foreach($users as $ukey=>$uvalue)
-                                        <option value="{{$uvalue->id}}">{{$uvalue->name}} ({{$uvalue->order_assigns_count}})</option>
-                                    @endforeach
-                                </select>
+                        @if($order_status == 'Ready to QA' || $order_status == 'QA In Progress' || $order_status == 'QA Approved'  || $order_status == 'QA Rejected')
+                        @else
+                            <div class="form-group col-md-12"> 
+                                <div class="input-group">
+                                    <!-- <input type="text" name="" id="" class="form-control" placeholder="Assign More"> -->
+                                    <select id='all_writers' class="form-control select2" style='width: 200px;'   onChange='assign_writer(this,{{$id}})'>
+                                        <option value=""></option>
+                                        @foreach($users as $ukey=>$uvalue)
+                                            <option value="{{$uvalue->id}}">{{$uvalue->name}} ({{$uvalue->order_assigns_count}})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        @endif
+                      
                     @endif
                         <div class="form-group col-md-12"> 
                         <div class="input-group">

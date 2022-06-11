@@ -47,7 +47,33 @@ class UserController extends Controller
                                      DB::raw('CONCAT(assl.first_name," ",assl.last_name) AS lead_name')
             
             );
-                            
+            $data = $data->with('roles');
+
+            $data = $data->leftJoin('users as assu','users.assigned_to','=','assu.id');
+ 
+            $data = $data->leftJoin('users as assl','users.lead_id','=','assl.id');       
+
+            
+            if($this->is_admin() != true){
+
+                // $data = $data->orWhere('users.id',Auth::user()->id);
+
+                if(Auth::user()->roles[0]->type == 'manager'){
+
+                    $data = $data->orWhere('users.assigned_to',Auth::user()->id);
+
+                }else{
+                    
+                    if(Auth::user()->is_lead){
+
+                        $data = $data->orWhere('users.lead_id',Auth::user()->id);
+     
+                    }
+                }
+              
+            }
+
+
            if(isset($_GET['role']) && !empty($_GET['role'])){
 
                $role = $_GET['role'];
@@ -56,12 +82,7 @@ class UserController extends Controller
 
            }
 
-           $data = $data->with('roles');
-
-           $data = $data->leftJoin('users as assu','users.assigned_to','=','assu.id');
-
-           $data = $data->leftJoin('users as assl','users.lead_id','=','assl.id');       
-
+         
            if(isset($_GET['status']) && !empty($_GET['status'])){
        
                $status = $_GET['status'];
@@ -92,25 +113,7 @@ class UserController extends Controller
 
             //    $data->orWhere(['users.assigned_to'=>Auth::user()->id]);
 
-            if($this->is_admin() != true){
-
-                $data = $data->where('users.id',Auth::user()->id);
-
-                if(Auth::user()->roles[0]->type == 'manager'){
-
-                    $data = $data->orWhere('users.assigned_to',Auth::user()->id);
-
-                }else{
-                    
-                    if(Auth::user()->is_lead){
-
-                        $data = $data->orWhere('users.lead_id',Auth::user()->id);
-     
-                    }
-                }
-              
-            }
-
+         
 
         //    }
 
@@ -197,7 +200,7 @@ class UserController extends Controller
         
         // }
         
-        $data = $data->get();
+        $data = $data->where('name','!=','Admin')->get();
         
         return response()->json($data,200);
 
@@ -403,7 +406,8 @@ class UserController extends Controller
      */
     public function update(UserAddRequest $request,User $user)
     {
-            Artisan::call('cache:forget spatie.permission.cache');
+        Artisan::call('cache:forget spatie.permission.cache');
+
         $validated = $request->validated();
         
         $user_update = $user;
@@ -447,6 +451,8 @@ class UserController extends Controller
         $user_update->is_lead = NULL;
 
         $user_update->lead_id = NULL;
+        
+        $user_update->is_qa = NULL;
 
         if($request->is_lead){
 
@@ -458,6 +464,10 @@ class UserController extends Controller
 
             $user_update->lead_id = $request->lead_id;
 
+        }
+
+        if($request->is_qa){
+            $user_update->is_qa = 1;
         }
 
         $user_update->save();
@@ -473,6 +483,17 @@ class UserController extends Controller
         DB::table('model_has_roles')->where('model_id',$user_update->id)->delete();
     
         $user_update->assignRole($request->designation);
+
+        if(!isset($request->assigned_to)){
+
+          $self_assign_manager =   $user->find($user_update->id);
+
+          $self_assign_manager->assigned_to = $user_update->id;
+
+          $self_assign_manager->save();
+          
+        }
+
 
         // return  redirect()->back()->with('success', 'User save successfully!');   
         return  redirect()->route('user.index')->with('success', 'User save successfully!');    

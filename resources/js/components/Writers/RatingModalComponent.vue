@@ -1,5 +1,8 @@
 <template>
-  
+  <div>
+
+      rating modals
+  </div>
 </template>
 
 <script>

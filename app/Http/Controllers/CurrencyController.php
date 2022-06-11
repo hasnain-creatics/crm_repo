@@ -46,10 +46,18 @@ class CurrencyController extends Controller
     {
         return view('currency.add');
     }
+    public function get_all_active_currency(Currency $currency){
+
+        $result = $currency->get();
+
+        return response()->json($result);
+
+
+    }
 
     public function get_all_subjects(Currency $currency){
 
-        $result = $currency->get();
+        $result = $currency->paginate(5);
 
         return response()->json($result);
 

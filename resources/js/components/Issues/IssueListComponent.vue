@@ -19,6 +19,20 @@
                                         </tr>
                                     </tbody>
                                 </table>
+                                
+                                 <ul class="pagination">
+                                            <li
+                                            v-for="(links, index) in page_links"
+                                            :key="index"
+                                            class="paginate_button page-item"
+                                            :data-url="links.label"
+                                            @click="page_links_method(links.url)"
+                                            :class="current_page == links.label ? 'active' : ''"
+                                            >
+                                            <i class="page-link" v-html="links.label"></i>
+                                            </li>
+                                        </ul>
+                               
                                 </div>
 </template>
 
@@ -28,11 +42,24 @@ export default {
     return {
       results:[],
       edit_: '',
-      perm_: ''
+      perm_: '',
+      
+      page_links: "",
+      url: this.$hostname + "issue/issues?page=1",
+      current_page : 1,
+      total_record: 0,
     }
   },
   props: ['edit_issue','delete_issue'],
     methods:{
+
+    async page_links_method(ele) {
+
+        this.url = ele
+
+        this.fetch_urgent_record(this.url);
+
+    },
         deleteIssue(ele){
             event.preventDefault(); // prevent form submit
             // var forms = event.target.form; // storing the form
@@ -65,13 +92,26 @@ export default {
               }
             });
 
+        },
+        async fetch_urgent_record(ele){
+            
+            const response = await fetch(ele);
+            
+            const data = await response.json();
+       
+            this.results = data.data;
+
+            this.page_links = data.links;
+
+            this.current_page = data.current_page;
+
+            this.total_record = data.total;
         }
     },
+    
     async created() {
-        const response = await fetch(this.$hostname+"issue/issues");
-            const data = await response.json();
-            this.results = data;
-        }
+       this.fetch_urgent_record(this.url)
+ }
  }
 </script>
 

@@ -21,9 +21,16 @@ class IssueController extends Controller
          
     }
 
+    public function select_all_active_issues(){
+
+        $issues = Issue::where('status','ACTIVE')->get();
+
+        return response()->json($issues);
+        
+    }
     public function get_all_issues(){
 
-        $issues = Issue::get();
+        $issues = Issue::paginate(5);
 
         return response()->json($issues);
 

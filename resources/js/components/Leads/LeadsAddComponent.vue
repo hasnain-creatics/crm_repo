@@ -48,11 +48,8 @@
 											  <label for="validationCustom01" class="form-label">Select Issue</label>
 												<select  v-model="form.lead_issue_id" class="form-select border" id="issue" name="lead_issue_id" >
 													<option selected disabled value="">Choose...</option>
-													<option  value="5">Client's payment merchant is not working</option>
-													<option  value="4">Price Issue</option>
-													<option  value="3">Can't be done</option>
-													<option  value="2">Trust Issues</option>
-													<option  value="1">Otherse</option>							
+													<option  v-for="(links, index) in all_issues"
+                                            :key="index" :value="links.id">{{links.issue}}</option>
 												</select>
 												<span v-if="errorss.lead_issue_id">{{errorss.lead_issue_id[0]}}</span>
 
@@ -60,7 +57,13 @@
 
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Website Url</label>
-											  <input type="text" v-model="form.url" class="form-control" placeholder="Enter website url"  id="url"  name="url" value="" >
+											  <!-- <input type="text" v-model="form.url" class="form-control" placeholder="Enter website url"  id="url"  name="url" value="" > -->
+												<select  v-model="form.url" class="form-select border" id="url" name="url" >
+													<option selected disabled value="">Choose...</option>
+													<option  v-for="(links, index) in all_website"
+                                           		 :key="index" :value="links.id">{{links.name}}</option>
+												</select>
+
 												 <span v-if="errorss.url">{{errorss.url[0]}}</span>
 											</div>
 
@@ -111,11 +114,22 @@ export default {
 		issue_view:false,
 		success_msg: "",
 		success:false,
-		all_issues:[]
+		all_issues:[],
+		all_website:[],
     };
   },
   methods: {
-
+	
+    select_all_active_issues(){
+      axios.get(this.$hostname+'issue/select_all_active_issues').then((response)=>{
+		  this.all_issues = response.data;
+	  })
+    },
+	get_active_website(){
+  		axios.get(this.$hostname+'websites/get_active_website').then((response)=>{
+		  this.all_website = response.data;
+	    })
+	},
     register() {
 		
 	  const headers = {
@@ -157,7 +171,7 @@ export default {
 			if(event.target.value == 'Un-Paid'){
 
 				this.issue_view = true;
-
+					this.select_all_active_issues();
 			}else{
 
 				this.issue_view = false;
@@ -175,6 +189,9 @@ export default {
 
   	}
   },
+  mounted(){
+	  this.get_active_website();
+  }
  
 };
 </script> 

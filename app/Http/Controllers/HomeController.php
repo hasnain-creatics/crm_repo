@@ -49,11 +49,7 @@ class HomeController extends Controller
         
         $users = new User();
         
-        $result['user_rating'] = round(collect($users->where('id',Auth::user()->id)
-                                                     ->with('user_ratings')
-                                                     ->first()
-                                                     ->user_ratings
-                                                     )->avg('rating'));
+       
         return view('dashboard.index',$result);
     }
 
@@ -80,7 +76,7 @@ class HomeController extends Controller
 
     public function writer_urgent_tasks(){
 
-       $data = $this->task_details()->where('sale_orders.order_status','!=','Completed')->where('sale_orders.is_urgent',1);
+       $data = $this->task_details()->where('sale_orders.order_status','!=','Delivered')->where('sale_orders.is_urgent',1);
 
        $data = $data->paginate(4);
 
@@ -92,7 +88,7 @@ class HomeController extends Controller
 
     public function writer_new_tasks(){
 
-        $data = $this->task_details()->where('sale_orders.order_status','Pending');
+        $data = $this->task_details('unassigned')->where('sale_orders.order_status','New')->orWhere('sale_orders.order_status',NULL);
  
         $data = $data->paginate(4);
  
@@ -146,11 +142,11 @@ class HomeController extends Controller
 
         $task = $this->task_details();
 
-        $result['urgent_count'] = $task->where('sale_orders.order_status','!=','Completed')->where('sale_orders.is_urgent',1)->count();
+        $result['urgent_count'] = $task->where('sale_orders.order_status','!=','Delivered')->where('sale_orders.is_urgent',1)->count();
         
-        $result['new_count']    = $task->where('sale_orders.order_status','Pending')->count();
-
-        $result['unassigned']    = $this->task_details('unassigned')->where('sale_orders.order_status','New')->orWhere('sale_orders.order_status',NULL)->count();
+        $result['new_count']    = $this->task_details('unassigned')->where('sale_orders.order_status','New')->count();
+        // task_details('unassigned')->where('sale_orders.order_status','New')
+        $result['unassigned']    = $this->task_details('unassigned')->where('sale_orders.order_status','New')->count();
 
         $result['in_progress']  = $task->where('sale_orders.order_status','In Progress')->count();
 

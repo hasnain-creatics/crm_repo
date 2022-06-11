@@ -96,6 +96,41 @@ class OrdersController extends Controller
     
                             // $data = $data->leftJoin('lead_transfers lt','lt.lead_id','=','leads.id');
     
+
+                            if($this->is_admin() != true){
+    
+                                // $data = $data->where('leads.transfered_id',Auth::user()->id);
+
+                                if(Auth::user()->roles[0]->type == 'manager'){
+
+                       
+                                    $data = $data->orWhere('users.assigned_to',Auth::user()->id);
+
+                                }
+                                else{
+                                    
+                                    if(Auth::user()->is_lead){
+                                      
+                                        $data = $data->orWhere('users.lead_id',Auth::user()->id);
+                     
+                                    }
+                                }
+                              
+                            }
+
+                            if($_GET['status'] =='delivered'){
+
+                                $data = $data->where('sale_orders.order_status','Delivered');
+
+                            }
+
+                            if($_GET['status'] == 'ready_to_delivered'){
+
+                                $data = $data->where('sale_orders.order_status','QA Approved');
+
+                            }
+                            
+
                             if(isset($_GET['order_id']) && !empty($_GET['order_id'])){
        
                                 $order_id = $_GET['order_id']; 
@@ -136,42 +171,8 @@ class OrdersController extends Controller
                         
                             }
     
-                                if($this->is_admin() != true){
-    
-                                    // $data = $data->where('leads.transfered_id',Auth::user()->id);
-    
-                                    if(Auth::user()->roles[0]->type == 'manager'){
-    
-                                        $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
-                                        $data = $data->orWhere('users.assigned_to',Auth::user()->id);
-    
-                                    }
-                                    else{
-                                        
-                                        if(Auth::user()->is_lead){
-                                            $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
-                                            $data = $data->orWhere('users.lead_id',Auth::user()->id);
-                         
-                                        }else{
-                                            $data = $data->where('sale_orders.created_by_user_id',Auth::user()->id);
-                                        }
-                                    }
-                                  
-                                }
                          
 
-                                    if($_GET['status'] =='delivered'){
-
-                                        $data = $data->where('sale_orders.order_status','Delivered');
-
-                                    }
-
-                                    if($_GET['status'] =='ready_to_delivered'){
-
-                                        $data = $data->where('sale_orders.order_status','QA Approved');
-
-                                    }
-                                    
                       
 
                 $data = $data->orderBy('sale_orders.id','DESC')->get();          
@@ -644,8 +645,11 @@ class OrdersController extends Controller
                 $statuses->title = 'New';
               
                 $statuses->order = $lead_id;
+
+                $statuses->created_by = Auth::user()->id;
     
                 $statuses->save(); 
+                
             }
            
 
@@ -661,5 +665,14 @@ class OrdersController extends Controller
         return response($data, 200)->header('Content-Type', 'text/plain');
     }
 
+    public function order_full_details($id){
+            
+    
+        $task_details = [];
+        
+        return view('writers.task_details',compact('task_details','id'));
+
+
+    }
 
 }
