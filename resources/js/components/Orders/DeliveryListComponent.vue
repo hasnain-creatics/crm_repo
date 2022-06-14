@@ -291,10 +291,15 @@ export default {
 
        this.filter.payment_status="";
 
-      
        this.filter.date_start="";
 
        this.filter.date_end="";
+
+
+       this.filter.date_start="";
+
+       this.filter.date_end="";
+       
 
        this.dataTables(this.filter_url);
 

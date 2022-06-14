@@ -271,10 +271,10 @@ $(document).ready(function(){
               required:true,
             },
             alternate_phone_number:{
-              required:true,
+              required:false,
             },
             salary:{
-              required:true,
+              required:false,
             },
             // city_id:{
             //   required:true,

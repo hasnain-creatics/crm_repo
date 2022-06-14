@@ -39,21 +39,21 @@
                                                     
                                                     <div class="form-group col-md-4">
                                                                 <label for="" class="form-label">First Name</label>
-                                                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="first_name">
+                                                                <input type="text" class="form-control @error('name') is-invalid @enderror" name="first_name"  value="{{ old('first_name') }}">
                                                                 @error('first_name')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
                                                             </div>
                                                     <div class="form-group col-md-4">
                                                                 <label for="" class="form-label">Last Name</label>
-                                                                <input type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name">
+                                                                <input type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" value="{{ old('last_name') }}">
                                                                 @error('last_name')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
                                                             </div>  
                                                     <div class="form-group col-md-4">
                                                                 <label for="" class="form-label @error('email') is-invalid @enderror">Email</label>
-                                                                <input type="text" class="form-control" name="email">
+                                                                <input type="text" class="form-control" name="email" value="{{ old('email') }}">
                                                                 @error('email')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
@@ -64,18 +64,18 @@
                                                 <div class="input-group">
                                                     <div class="form-group col-md-4">
                                                         <label for="" class="form-label">Nickname</label>
-                                                        <input type="text" id="nickname" class="form-control" name="nickname">
+                                                        <input type="text" id="nickname" class="form-control" name="nickname" value="{{ old('nickname') }}">
                                                     </div>
                                                     <div class="form-group col-md-4">
                                                         <label for="" class="form-label">Password</label>
-                                                        <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" name="password">
+                                                        <input type="password" id="password" class="form-control @error('password') is-invalid @enderror" name="password" value="{{ old('password') }}">
                                                         @error('password')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                     <div class="form-group col-md-4">
                                                         <label for="" class="form-label">Confirm Password</label>
-                                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"  name="password_confirmation">
+                                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"  name="password_confirmation" value="{{ old('password_confirmation') }}">
                                                         @error('password_confirmation')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -113,22 +113,22 @@
                                                   
                                                 </div>
                                                 <div class="is_qa form-group col-md-3 d-block" style="margin-top: 35px;">
-                                                        <label for="is_qa" >Make this user QA</label>
-                                                        <input type="checkbox" id="is_qa" name="is_qa" >
+                                                        <label for="is_qa" >QA</label>
+                                                        <input type="checkbox" id="is_qa" name="is_qa" value="{{ old('is_qa') }}">
                                                     </div> 
                                                     
 
                                                 <div class="input-group">
                                                     <div class="form-group col-md-6">
                                                         <label for="" class="form-label">Phone Number</label>
-                                                        <input type="number" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number">
+                                                        <input type="number" value="{{ old('phone_number') }}" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number">
                                                         @error('phone_number')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label for="" class="form-label">Alterante Phone Number</label>
-                                                        <input type="number" class="form-control @error('alternate_phone_number') is-invalid @enderror" name="alternate_phone_number">
+                                                        <input type="number" class="form-control @error('alternate_phone_number') is-invalid @enderror" name="alternate_phone_number" value="{{ old('alternate_phone_number') }}">
                                                         @error('alternate_phone_number')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -138,7 +138,7 @@
                                                 <div class="input-group">
                                                     <div class="form-group col-md-6">
                                                         <label for="" class="form-label">Salary</label>
-                                                        <input type="number" class="form-control  @error('salary') is-invalid @enderror" name="salary">
+                                                        <input type="number" class="form-control  @error('salary') is-invalid @enderror" name="salary" value="{{ old('salary') }}">
                                                         @error('salary')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                         @enderror
@@ -146,7 +146,6 @@
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label for="" class="form-label">City</label>
-                                        
                                                         <select name="city_id" id="city_id" class="form-select  @error('alternate_phone_number') is-invalid @enderror" tabindex="-1" id="city_id" aria-hidden="true">
                                                             
                                                         </select>
@@ -169,7 +168,7 @@
                                                         <div class="wd-200 mg-b-30">
                                                             <div class="input-group">
                                                          
-                                                                <input class="form-control datepicker fc-datepicker hasDatepicker @error('dob') is-invalid @enderror" name="dob"  type="date" id="dp1650702357798">
+                                                                <input class="form-control datepicker fc-datepicker hasDatepicker @error('dob') is-invalid @enderror" name="dob"  type="date" value="{{ old('dob') }}" id="dp1650702357798">
                                                                 @error('dob')
                                                                     <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
@@ -232,7 +231,7 @@ $(document).ready(function(){
            language: "de"
         });
 
-    all_designations("{{route('fetch_all_designation')}}")
+   all_designations("{{route('fetch_all_designation')}}")
     
     all_cities("{{route('fetch_cities')}}")
   
@@ -281,10 +280,10 @@ $(document).ready(function(){
               required:true,
             },
             alternate_phone_number:{
-              required:true,
+              required:false,
             },
             salary:{
-              required:true,
+              required:false,
             },
             // city_id:{
             //   required:true,

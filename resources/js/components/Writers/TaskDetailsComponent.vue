@@ -357,11 +357,11 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-12">
+                <div class="col-12 ">
                   <!-- Timeline Area-->
                   <div class="apland-timeline-area" v-for="prog in order_details.order_statuses" :key="prog.id">
                     <!-- Single Timeline Content-->
-                    <div class="single-timeline-area">
+                    <div class="single-timeline-area" >
                       <div class="timeline-date wow fadeInLeft" data-wow-delay="0.1s" style="
                           visibility: visible;
                           animation-delay: 0.1s;
@@ -372,16 +372,18 @@
                         </p>
                       </div>
                       <div class="row">
-                        <div class="col-12 col-md-12 col-lg-12">
+                        <div class="col-12 col-md-12 col-lg-12" >
                           <div class="
                               single-timeline-content
                               d-flex
                               wow
-                            " data-wow-delay="0.3s" style="
+                            " data-wow-delay="0.3s" 
+                             style="
                               visibility: visible;
                               animation-delay: 0.3s;
                               animation-name: fadeInLeft;
-                            ">
+                           
+                            " :id="prog.title.replace(/\s+/g, '-').toLowerCase()" >
                             <div class="timeline-icon">
                               <i class="fa fa-address-card" aria-hidden="true"></i>
                             </div>
@@ -389,8 +391,8 @@
                               <b style="font-size:15px;">
                                 <h6>{{ prog.title }}</h6>
                               </b>
-                               <b style="font-size:10px; color:lightcoral">
-                                  <h6>Created by: {{ prog.status_first_name }} {{ prog.status_last_name }},  Created at: {{ moment(prog.created_at).format("Y-M-D H:m")  }}</h6>
+                               <b style="font-size:10px; ">
+                                  <h6>Created by: {{ prog.status_first_name }} {{ prog.status_last_name }},  Updated at: {{ moment(prog.created_at).format("Y-M-D H:m")  }}</h6>
                               
                               </b>
                             </div>
@@ -1474,4 +1476,22 @@ export default {
 .checked {
   color: red;
 }
+
+
+
+
+#new{font-size:8px;padding:5px;background:#00FFFF;border-radius:5px; box-shadow:0px 0px 12px 0px #00FFFF;}
+#pending{font-size:8px;color:#000000;padding:5px;background:rgb(253, 245, 129);border-radius:5px; box-shadow:0px 0px 12px 0px #f1c40f;}
+
+#in-progress{font-size:8px;color:#000000;padding:5px;background:#E9E4D4;border-radius:5px; box-shadow:0px 0px 12px 0px #E9E4D4;}
+#ready-to-qa {font-size:8px;color:#000000;padding:5px;background:#A9A9A9;border-radius:5px; box-shadow:0px 0px 12px 0px #A9A9A9;}
+#qa-in-progress {font-size:8px;color:#000000;padding:5px;background:#FFC0CB;border-radius:5px; box-shadow:0px 0px 12px 0px 	#FFC0CB;}
+#qa-approved {font-size:8px;color:#000000;padding:5px;background:#CBC3E3;border-radius:5px; box-shadow:0px 0px 12px 0px 	#CBC3E3;}
+#delivered {font-size:8px;color:#000000;padding:5px;background:#d4af37 ;border-radius:5px; box-shadow:0px 0px 12px 0px 	#d4af37;}
+#completed {font-size:8px;color:#000000;padding:5px;background:#00FF00 ;border-radius:5px; box-shadow:0px 0px 12px 0px 	#00FF00;}
+#failed {font-size:8px;color:#FFFFFF;padding:5px;background:#FF00FF ;border-radius:5px; box-shadow:0px 0px 12px 0px 	#FF00FF;}
+#qa-rejected {font-size:8px;color:#FFFFFF;padding:5px;background:red ;border-radius:5px; box-shadow:0px 0px 12px 0px 	red;}
+
+
+
 </style>

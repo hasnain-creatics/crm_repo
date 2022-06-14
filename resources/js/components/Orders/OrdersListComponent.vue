@@ -325,7 +325,7 @@ export default {
                     //  return clmn_visible == false ? data : "<i class='fa fa-eye' style='cursor:pointer' onClick='assigned_users_details("+row.id+")'></i>";
                       //  row.order_status.replace(/\s+/g, '-').toLowerCase();
               
-                    return "<span class='"+(row.order_status.replace(/\s+/g, '-').toLowerCase())+"'>"+row.order_status+"</span>";
+                    return "<span class='"+(row.order_status.replace(/\s+/g, '-').toLowerCase())+"' onClick='order_status_details("+row.id+")' style='cursor:pointer'>"+row.order_status+"</span>";
   
                   }},
                   { data: "amount_received", name: "amount_received" },
@@ -340,7 +340,7 @@ export default {
   },
   mounted() {
     this.dataTables(this.filtered_url);
-    this.interval = setInterval(() =>this.dataTables(this.filtered_url), 5000);
+    this.interval = setInterval(() =>this.dataTables(this.filtered_url), 10000);
   },
 };
 </script>

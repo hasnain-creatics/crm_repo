@@ -143,7 +143,7 @@ class GlobalDatatables
                 $btn .= "&nbsp;&nbsp;<i class='fa fa-info-circle' aria-hidden='true' onclick='transferLeadDetails(".$row->id.")' style='cursor:pointer' title='Lead Details'></i>";
 
             }
-
+            $btn .= "&nbsp;&nbsp;<i class='fa fa-shopping-cart' aria-hidden='true' onclick='redirect_lead(".$row->id.")' style='cursor:pointer' title='Make Order'></i>";
             return $btn;
             
         })->rawColumns(['action','lead_status','lead_id','issue','created_at','url'])->make(true);

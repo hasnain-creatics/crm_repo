@@ -74,7 +74,7 @@
 
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Select Currency</label>
-											  <select class="form-select border" @blur="currencyRates" @change="currencyRates" id="currency" name="currency" >
+											  <select class="form-select border" @change="currencyRates" id="currency" name="currency" >
 												<option selected disabled value="">Choose...</option>
 											    <option v-for="currency in all_currency" :selected="(form.currency_id == currency.id ? 'selected' : '')" :key="currency.id" :data-rate="currency.rate"   :value="currency.id" >{{currency.currency}}</option>
 											  </select>
@@ -84,20 +84,20 @@
 									<!--End Third Row-->
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Order Amount</label>
-											  <input type="number"  @change="change_amount"   class="form-control" placeholder="Enter Order Amount" id="order_amount"  name="order_amount" :value="form.amount" >
+											  <input type="number"  @keyup="change_amount"   class="form-control" placeholder="Enter Order Amount" id="order_amount"  name="order_amount" :value="form.amount" >
 											 <span  :class="'error'" v-if="errorss.amount">{{errorss.amount[0]}}</span>
 											</div>
 
 											<div class="col-md-4" v-if=partial>
 											  <label for="validationCustom01" class="form-label">Received Amount</label>
-											  <input type="number"  @change="change_receive_amount"  :value="form.amount_received" class="form-control" placeholder="Enter Received Amount" id="Received"  name="Received" value="" >
-											  		 <span  :class="'error'" v-if="errorss.amount_received">{{errorss.amount_received[0]}}</span>
+											  <input type="number"  @keyup="change_receive_amount"  :value="form.amount_received" class="form-control" placeholder="Enter Received Amount" id="Received"  name="Received"  >
+											  <span  :class="'error'" v-if="errorss.amount_received">{{errorss.amount_received[0]}}</span>
 											</div>
 
 												<div class="col-md-12">
 											  <label for="validationCustom01" class="form-label">Amount in Dollar</label>
-											  <input type="text" class="form-control"  @change="change_amount_dollar" :value="(form.amount/currency_rate).toFixed(2)"  id="amount_doller"  name="amount_doller"  :readonly="true">
-											  		 <span  :class="'error'" v-if="errorss.amount_doller">{{errorss.amount_doller[0]}}</span>
+												<input type="text" class="form-control" @change="change_amount_dollar" :value="form.dollar_amount"  :readonly="true" >
+											  	<span  :class="'error'" v-if="errorss.amount_doller">{{errorss.amount_doller[0]}}</span>
 											</div>
 
 										<!--End Forth Row-->
@@ -106,7 +106,7 @@
 
 										<div class="col-md-6">
 											  <label for="validationCustom01" class="form-label">Notes <span class="">*</span></label>
-											  <textarea style="resize: none;"  @change="change_notes"   rows="5" name="Notes" id="Notes" :value="form.notes"  cols="50" class="form-control">												</textarea>
+											  <textarea style="resize: none;"  @change="change_notes"   rows="5" name="Notes" id="Notes" :value="form.notes"  cols="50" class="form-control"></textarea>
 												  		 <span  :class="'error'" v-if="errorss.notes">{{errorss.notes[0]}}</span>
 											</div>
 
@@ -123,7 +123,7 @@
 											  <label for="validationCustom01" class="form-label">Website</label>
 											  <select name="" class="form-select border" @change="customerWebsite"id="">
 												  	<option value=""></option>
-													  <option :value="web.name" v-for="web in websites" :key="web.id" :selected="web.id == form.website ? 'selected' :''">
+													  <option :value="web.name" v-for="web in websites" :key="web.id" :selected="web.name == form.website ? 'selected' :''">
 														  {{web.name}}
 													  </option>
 											  </select>
@@ -192,7 +192,9 @@ export default {
 				is_urgent : "",
 				files : "", 
 				invoice_files : "", 
-				id: this.id
+				id: this.id,
+				dollar_amount: 0,
+
 		
       }),
 		errorss:[],
@@ -247,13 +249,10 @@ export default {
 			this.form.payment_status == 'PARTIALLY PAID' ? this.partial = true : this.partial = true;
 
 			this.deadline = this.order.deadline;
-
-					for(var j =0; j<this.all_currency.length;j++){
-						if(this.form.currency_id == this.all_currency[j].id){
-							this.currency_rate =this.all_currency[j].rate;
-						}
-						
-					}
+			
+			this.currency_rate = this.order.data.currency.rate;
+							
+			this.form.dollar_amount = isNaN((this.form.amount/this.currency_rate).toFixed(2)) == true ? '0' : (this.form.amount/this.currency_rate).toFixed(2) 		
 
     },
 
@@ -409,12 +408,17 @@ export default {
 
 	},
 	async change_amount(e){
-
 		this.form.amount = e.target.value;
-
-	},
+ 		this.form.dollar_amount = isNaN((this.form.amount/this.currency_rate).toFixed(2)) == true ? '0' : (this.form.amount/this.currency_rate).toFixed(2);
 	
+	},
 	async change_receive_amount(e){
+
+		if(parseFloat(this.form.amount) < parseFloat(e.target.value)){
+			alert('receive amount must be less then or equal to the order amount');
+			e.target.value = 0;	
+		}
+
 
 		this.form.amount_received = e.target.value;
 
@@ -465,7 +469,7 @@ export default {
 				
 				setTimeout(function(){
 
-				window.location.href = redirect_url;
+					window.location.href = redirect_url;
 					
 			
 				},1000);

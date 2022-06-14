@@ -59,15 +59,15 @@
 										<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Deadline</label>
 											  <input type="datetime-local"  @change="change_deadline"  class="form-control"  id="deadline"  name="deadline" >
-											
+												<span  :class="'error'" v-if="errorss.deadline">{{errorss.deadline[0]}}</span>
 											</div>
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Select Payment Status</label>
 											  <select class="form-select border"  @change="change_payment_status"  id="payment_status" name="payment_status" >
 												<option selected disabled value="">Choose...</option>
-												<option  value="Paid">Paid</option>
-												<option  value="UnPaid">UnPaid</option>
-												<option  value="Partially Paid">Partially Paid</option>
+												<option  value="PAID">Paid</option>
+												<option  value="UNPAID">UnPaid</option>
+												<option  value="PARTIALLY PAID">Partially Paid</option>
 													
 																								
 											  </select>
@@ -97,10 +97,10 @@
 											</div>
 
 												<div class="col-md-12">
-											  <label for="validationCustom01" class="form-label">Amount in Dollar</label>
-											  <input type="text" class="form-control"  @change="change_amount_dollar" :value="(form.amount/currency_rate).toFixed(2)"  id="amount_doller"  name="amount_doller"  :readonly="true">
-											  		 <span  :class="'error'" v-if="errorss.amount_doller">{{errorss.amount_doller[0]}}</span>
-											</div>
+														<label for="validationCustom01" class="form-label">Amount in Dollar</label>
+														<input type="text" class="form-control"  @change="change_amount_dollar" :value="form.dollar_amount"  id="amount_doller"  name="amount_doller"  :readonly="true">
+														<span  :class="'error'" v-if="errorss.amount_doller">{{errorss.amount_doller[0]}}</span>
+												</div>
 
 										<!--End Forth Row-->
 
@@ -197,6 +197,8 @@ export default {
 			files : "", 
 			invoice_files : "", 
 			lead_id : this.lead_id,	
+			dollar_amount: 0,
+
       }),
 		errorss:[],
 		issue_view:false,
@@ -328,33 +330,24 @@ export default {
   	async customerWebsite(e){
 
   		this.form.website = e.target.value;
-		//   console.log(this.form)
-		// this.lead_name = this.form.customer_name;
-		// this.lead_email = this.form.customer_email;
-		console.log(this.form);
-  	},
+	
+	},
 
 	async currencyRates(e){
 	
 		this.currency_rate = e.target.selectedOptions[0].getAttribute("data-rate");
 		
 		this.form.currency_id = e.target.value;
-	
+
+		this.form.dollar_amount = isNaN((this.form.amount/this.currency_rate).toFixed(2)) == true ? '0' : (this.form.amount/this.currency_rate).toFixed(2) 
 	},	
 
 	async change_payment_status(e){
-
-		// const customers_name = this.form.customer_name;
 				
 		this.form.payment_status = e.target.value;
 	
-		this.form.payment_status == 'Partially Paid' ? this.partial = true : this.partial = false;
+		this.form.payment_status == 'PARTIALLY PAID' ? this.partial = true : this.partial = false;
 		
-		// this.lead_name = customers_name
-		// console.log(customers_name);
-		// this.form.customer_name = customers_name;
-		// return false;
-
 	},
 
 	async customer_type(e){
@@ -381,19 +374,21 @@ export default {
 	async change_deadline(e){
 
 		this.form.deadline = e.target.value;
-
+							
+			
 	},
 	async change_amount(e){
 
 		this.form.amount = e.target.value;
 
+		this.form.dollar_amount = isNaN((this.form.amount/this.currency_rate).toFixed(2)) == true ? '0' : (this.form.amount/this.currency_rate).toFixed(2) 	
+
 	},
 	
 	async change_receive_amount(e){
 
-
-
-		if(this.form.amount< e.target.value){
+		// console.log(parseFloat(this.form.amount) , parseFloat(e.target.value))
+		if(parseFloat(this.form.amount) < parseFloat(e.target.value)){
 			alert('receive amount must be less then or equal to the order amount');
 			e.target.value = 0;	
 		}

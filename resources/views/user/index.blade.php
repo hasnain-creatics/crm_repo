@@ -116,6 +116,23 @@
                                                    
     </div>
 </div>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+										<div id="liveToast" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
+											<div class="toast-header bg-success text-white">
+												<strong class="me-auto" id="toast_title">User Status</strong>
+												<!-- <small>11 mins ago</small> -->
+												<button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close">
+													<span aria-hidden="true">×</span>
+												</button>
+												</div>
+												<div class="toast-body" id="toast_txt">
+												User Status Updated Successfully
+											</div>
+										</div>
+									</div>
+
+
 @endsection
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/5.0.7/sweetalert2.min.css">
@@ -216,28 +233,24 @@ function user_datatable(send_request){
             serverSide: true,
             ajax:send_request,
             destroy : true,
-            "order": [[ 1, "desc" ]], 
+            "order": [[ 0, "desc" ]], 
             columns: [
-                {data: 'id',       name: 'id'},
-                {data: 'profile_image',       name: 'profile_image'},
-                {data: 'name',       name: 'name'},
-                {data: 'email',     name: "email"},
-                // "[roles].name"
-                {data: 'roles',     render:function(data,type,row){
-                    if(row.is_qa == 1){
-                        return data[0].name + " <span style='font-size:10px;text-shadow:0px 0px 2px;'>(QA)</span>";
-                    }else{
-                     if(data[0]){
-                        return data[0].name;
-                     }else{
-                        return '-';
-                     }
-                    }
-                }},
-                {data: 'phone_number', name: "phone_number"},
-                {data: 'status',      name: "status"},
-                {data: 'assigned_name',      name: "assigned_name"},
-                {data: 'action',   name: 'action', orderable: false, searchable: false},
+                
+               
+                {data: 'id',
+       render: function (data, type, row, meta) {
+            return meta.row + 1;
+       }
+    },
+               // {data: 'id',       name: 'id'},
+                {data: 'profile_image',  "sortable": false,   name: 'profile_image'},
+                {data: 'name',   "sortable": false,         name: 'name'},
+                {data: 'email',    "sortable": false,      name: "email"},
+                {data: 'roles',    "sortable": false,      render:"[roles].name"},
+                {data: 'phone_number',  "sortable": false,    name: "phone_number"},
+                {data: 'status',     "sortable": false,      name: "status"},
+                {data: 'assigned_name',   "sortable": false,        name: "assigned_name"},
+                {data: 'action',   "sortable": false,     name: 'action', orderable: false, searchable: false},
             ],
             filter: false,
             sort: true
