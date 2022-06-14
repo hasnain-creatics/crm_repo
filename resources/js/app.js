@@ -79,6 +79,7 @@ Vue.component('rating-modal-component',require('./components/Writers/RatingModal
 
 Vue.component('dashboard-count-component',require('./components/Dashboard/DashboardCountComponent.vue').default);
 Vue.component('urgent-task-component',require('./components/Dashboard/UrgentTaskComponent.vue').default);
+Vue.component('sale-urgent-orders-component',require('./components/Dashboard/SaleUrgentOrdersComponent.vue').default);
 Vue.component('new-task-component',require('./components/Dashboard/NewTaskComponent.vue').default);
 Vue.component('inprogress-task-component',require('./components/Dashboard/InprogressTaskComponent.vue').default);
 Vue.component('feedback-task-component',require('./components/Dashboard/FeedbackTaskComponent.vue').default);

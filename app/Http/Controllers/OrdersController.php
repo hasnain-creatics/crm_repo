@@ -84,6 +84,7 @@ class OrdersController extends Controller
     }
 
     public function delivery(Request $request){
+        
         if ($request->ajax()) {
 
             $data = new Orders();
@@ -130,7 +131,6 @@ class OrdersController extends Controller
 
                             }
                             
-
                             if(isset($_GET['order_id']) && !empty($_GET['order_id'])){
        
                                 $order_id = $_GET['order_id']; 
@@ -171,17 +171,15 @@ class OrdersController extends Controller
                         
                             }
     
-                         
-
-                      
-
-                $data = $data->orderBy('sale_orders.id','DESC')->get();          
+                        $data = $data->orderBy('sale_orders.id','DESC')->get();          
     
     
                 return $this->table($data,'ready_to_delivery');   
             
         }
-           return view('orders.delivery');
+
+        return view('orders.delivery');
+
     }
 
     public function change_order_status(Request $request,$id){
@@ -442,7 +440,7 @@ class OrdersController extends Controller
 
     public function fetch_order($id=null,Orders $order){
         
-        $result = $order->find($id);
+        $result = $order->with('currency')->find($id);
         
         $data = [
 
@@ -485,24 +483,38 @@ class OrdersController extends Controller
      */
     public function store(Request $request,Orders $leads)
     {
+
         $rules['customer_name'] = 'required';
+
         $rules['customer_email'] = 'required';
-        $rules['customer_type'] = 'required';
-        $rules['title'] = 'required';
+
+        $rules['customer_type']  = 'required';
+
+        $rules['title']          = 'required';
+
         $rules['word_count'] = 'required';
+
         $rules['subject_id'] = 'required';
+
         $rules['deadline'] = 'required';
+
         $rules['payment_status'] = 'required';
+
         $rules['currency_id'] = 'required';
+
         $rules['amount'] = 'required';
+
         $rules['notes'] = 'required';
+
         $rules['additional_notes'] = 'required';
+
         $rules['website'] = 'required';
+
         $rules['lead_id'] = '';
-      
 
         $change_status = true;
-        if($request->payment_status == 'Partially Paid'){
+
+        if($request->payment_status == 'PARTIALLY PAID'){
 
             $rules['amount_received'] = 'required';
            
@@ -522,7 +534,9 @@ class OrdersController extends Controller
             $order_updated = $leads;
 
             if(isset($request->id)){
+
                 $change_status = false;
+
                 $order_updated = $leads->find($request->id);
             
             }else{
@@ -547,11 +561,18 @@ class OrdersController extends Controller
 
               $order_updated->is_urgent = $request->is_urgent ? 1 : 0;
 
-           
               $order_updated['subject_id'] = (int)$request->subject_id;
-              $order_updated['order_status'] = 'New';
+            
+                if(isset($request->id)){
+            
+                }else{
+
+                    $order_updated['order_status'] = 'New';
+
+                }
                 
             }
+
             $order_updated->save();
             
             $lead_id = $order_updated->id;
@@ -597,7 +618,6 @@ class OrdersController extends Controller
                 }
             
             }
-
             
             if ($request->file('invoice_files')) {
                 
@@ -626,7 +646,6 @@ class OrdersController extends Controller
                     $leads_files->save();
                     
                     $leads_documents = new OrderDocuments();
-                
                 
                     $leads_docs_array = ['document_id' =>$leads_files->id,'sale_order_id'=>$lead_id]; 
         
@@ -671,6 +690,26 @@ class OrdersController extends Controller
         $task_details = [];
         
         return view('writers.task_details',compact('task_details','id'));
+
+
+    }
+
+    public function order_status_details($id,Orders $order){
+        
+                                $result = $order->with(['order_statuses'=>function($query){
+                                    $query->select('statuses.order','statuses.title','statuses.id as status_status_id',
+                                                    'users.id as status_user_id',
+                                                    'users.first_name as status_first_name',
+                                                    'users.last_name as status_last_name','statuses.created_at');
+                                    $query->leftJoin('users','statuses.created_by','users.id');
+                                    // $query->select('statuses.created_by','statuses.id','statuses.order');
+                                    $query->orderBy('statuses.id','desc');
+
+                                },
+                                ]);
+
+                                $result = $result->find($id);
+                                return view('modals.orders.order_status_details',compact('result','id'));
 
 
     }

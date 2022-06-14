@@ -61,4 +61,8 @@ class Orders extends Model
         return $this->hasOne(User::class,'id','created_by_user_id');
         
     }
+
+    public function currency(){
+        return $this->belongsTo(Currency::class,'currency_id','id');
+    }
 }

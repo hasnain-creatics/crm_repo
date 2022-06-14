@@ -113,7 +113,7 @@
                                                   
                                                 </div>
                                                 <div class="is_qa form-group col-md-3 d-block" style="margin-top: 35px;">
-                                                        <label for="is_qa" >QA</label>
+                                                        <label for="is_qa" >Make this user QA</label>
                                                         <input type="checkbox" id="is_qa" name="is_qa" >
                                                     </div> 
                                                     
@@ -146,6 +146,7 @@
                                                     </div>
                                                     <div class="form-group col-md-6">
                                                         <label for="" class="form-label">City</label>
+                                        
                                                         <select name="city_id" id="city_id" class="form-select  @error('alternate_phone_number') is-invalid @enderror" tabindex="-1" id="city_id" aria-hidden="true">
                                                             
                                                         </select>
@@ -231,7 +232,7 @@ $(document).ready(function(){
            language: "de"
         });
 
-   all_designations("{{route('fetch_all_designation')}}")
+    all_designations("{{route('fetch_all_designation')}}")
     
     all_cities("{{route('fetch_cities')}}")
   
@@ -312,10 +313,10 @@ $(document).on('change','#designation',function(){
             }
             $('.assignTo').removeClass('d-none').addClass('d-block');
             $('#assigned_to').html(html);            
-            $('.is_qa').removeClass('d-block').addClass('d-none');
+
         }else{
             $('.assignTo').removeClass('d-block').addClass('d-none');
-            $('.is_qa').removeClass('d-none').addClass('d-block');
+
 
         }
     }

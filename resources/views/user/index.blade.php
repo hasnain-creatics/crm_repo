@@ -202,7 +202,13 @@ $(document).on('click','#filter',function(){
 })
 
 // href='".route('user.delete',$row->id)."' 
+// , 
 
+//                   render: function ( data, type, row ) {
+                      
+//                     return clmn_visible == false ? data : "<i class='fa fa-eye' style='cursor:pointer' onClick='assigned_users_details("+row.id+")'></i>";
+  
+//                   }
 
 function user_datatable(send_request){
         return  table = $('#users_data_table').DataTable({
@@ -216,7 +222,18 @@ function user_datatable(send_request){
                 {data: 'profile_image',       name: 'profile_image'},
                 {data: 'name',       name: 'name'},
                 {data: 'email',     name: "email"},
-                {data: 'roles',     render:"[roles].name"},
+                // "[roles].name"
+                {data: 'roles',     render:function(data,type,row){
+                    if(row.is_qa == 1){
+                        return data[0].name + " <span style='font-size:10px;text-shadow:0px 0px 2px;'>(QA)</span>";
+                    }else{
+                     if(data[0]){
+                        return data[0].name;
+                     }else{
+                        return '-';
+                     }
+                    }
+                }},
                 {data: 'phone_number', name: "phone_number"},
                 {data: 'status',      name: "status"},
                 {data: 'assigned_name',      name: "assigned_name"},

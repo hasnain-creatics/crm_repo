@@ -67,7 +67,7 @@ $.ajax({
 
         var html = "";
 
-        // html+="<option></option>";
+        html+="<option value=''></option>";
 
         for(i = 0; i<response.length;i++){
 
@@ -95,14 +95,14 @@ function lead_checkes(request_url,lead=null){
 
         $('#assignLead').removeClass('d-block').addClass('d-none');
 
-      console.log('lead')
-      $('.is_qa').removeClass('d-none');
+    //   console.log('lead')
+    //   $('.is_qa').removeClass('d-none');
       
     }else{
         
 
-        $('.is_qa').addClass('d-none');
-        $('#is_qa').prop('checked',false);
+        // $('.is_qa').addClass('d-none');
+        // $('#is_qa').prop('checked',false);
 
         $('#assignLead').removeClass('d-none').addClass('d-block');
 
@@ -746,6 +746,31 @@ function OrderFullDetails(ele){
     //     }
     
     // });
+
+
+
+}
+
+function order_status_details(ele){
+
+  $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/orders/order_status_details/'+ele,
+    
+        dataType: "html",
+    
+        success:function(response){
+    
+            $('#all-modals').html(response);
+
+            $('#order_status_details').modal('show');
+            
+        }
+    
+    });
+
 
 
 

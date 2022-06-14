@@ -41,6 +41,8 @@ class UserController extends Controller
                                      'users.designation',
 
                                      'users.is_lead',
+
+                                     'users.is_qa',
             
                                      DB::raw('CONCAT(assu.first_name," ",assu.last_name) AS assigned_name'),
 
@@ -467,7 +469,9 @@ class UserController extends Controller
         }
 
         if($request->is_qa){
+
             $user_update->is_qa = 1;
+
         }
 
         $user_update->save();

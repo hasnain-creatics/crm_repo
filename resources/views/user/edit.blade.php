@@ -116,7 +116,7 @@
                                                      
                                                 </div>
                                                 <div class="is_qa form-group col-md-3 d-block" style="margin-top: 35px;">
-                                                        <label for="is_qa" >QA</label>
+                                                        <label for="is_qa" >Make this user QA</label>
                                                         <input type="checkbox" id="is_qa" name="is_qa" {{@$result->is_qa == 1?'checked':''}} >
                                                     </div> 
                                                     
@@ -224,15 +224,7 @@ $(document).ready(function(){
     
     all_cities("{{route('fetch_cities')}}","{{$result->city_id}}");
    
-    var checked_value = "{{$result->is_lead}}";
-
-    if(checked_value){
-
-     $('input[name="is_lead"]').prop('checked',true);   
-     
-         $('#assignLead').removeClass('d-block').addClass('d-none');
-     
-    }
+    
 
     setTimeout(function(){lead_checkes('{{url("admin/user/fetch_leads")}}',"{{$result->lead_id}}");},1000);
 
@@ -312,16 +304,26 @@ function manager_designation(id=null){
                     }
                     $('.assignTo').removeClass('d-none').addClass('d-block');
                     $('#assigned_to').html(html);
-                    $('.is_qa').removeClass('d-block').addClass('d-none');
+                  //  $('.is_qa').removeClass('d-block').addClass('d-none');
+                    if(id){
+                       $('#assigned_to').val(id).trigger('change');
+
+                       var checked_value = "{{$result->is_lead}}";
+
+                            if(checked_value){
+
+                            $('input[name="is_lead"]').prop('checked',true);   
+                            
+                                $('#assignLead').removeClass('d-block').addClass('d-none');
+                            
+                            }
+                    }
                 }else{
                     $('.assignTo').removeClass('d-block').addClass('d-none');
-                    $('#assignLead').removeClass('d-block').addClass('d-none');
-                    $('.is_qa').removeClass('d-none').addClass('d-block');
+                    //$('#assignLead').removeClass('d-block').addClass('d-none');
+                //    $('.is_qa').removeClass('d-none').addClass('d-block');
                 }
-                if(id){
-                    $('#assigned_to').val(id).trigger('change');
-
-            }
+               
             }
            
 

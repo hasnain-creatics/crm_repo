@@ -52,6 +52,8 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
 
     Route::get('/dashboard/writer_feedback_tasks', [App\Http\Controllers\HomeController::class, 'writer_feedback_tasks'])->name('dashboard.writer_feedback_tasks');
 
+    Route::get('/dashboard/sale_urgent_orders', [App\Http\Controllers\HomeController::class, 'sale_urgent_orders'])->name('dashboard.sale_urgent_orders');
+    
     Route::group(['prefix'=>'roles'],function(){
 
         Route::get('/', [RolesController::class,'index']);
@@ -139,8 +141,8 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::post('/add_feedback',[OrdersController::class,'store_feedback'])->name('orders.store_feedback');
 
         Route::get('/order_full_details/{id}',[OrdersController::class,'order_full_details'])->name('orders.order_full_details');
- 
 
+        Route::get('/order_status_details/{id}',[OrdersController::class,'order_status_details'])->name('orders.order_status_details');
 
     });
 
