@@ -8,9 +8,10 @@
         <h4 class="page-title mb-0 text-primary"></h4>
     </div>
     <div class="page-rightheader">
-        <div class="btn-list">
+        <div class="btn-list"> <button class="btn btn-secondary" onclick='orderMessages("{{$id}}")' style='cursor:pointer' title='Order Messages'>Messages</button> 
             <a href="{{route('orders.home')}}" class="btn btn-primary btn-pill" >
-                <i class="fa fa-arrow-left"></i> Back</a>
+           
+            <i class="fa fa-arrow-left"></i> Back</a>
 
         </div>
     </div>

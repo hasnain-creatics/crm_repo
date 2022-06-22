@@ -78,6 +78,7 @@ Vue.component('rating-modal-component',require('./components/Writers/RatingModal
 // dashboard
 
 Vue.component('dashboard-count-component',require('./components/Dashboard/DashboardCountComponent.vue').default);
+Vue.component('dashboard-table-component',require('./components/Dashboard/DashboardTableComponent.vue').default);
 Vue.component('urgent-task-component',require('./components/Dashboard/UrgentTaskComponent.vue').default);
 Vue.component('sale-urgent-orders-component',require('./components/Dashboard/SaleUrgentOrdersComponent.vue').default);
 Vue.component('new-task-component',require('./components/Dashboard/NewTaskComponent.vue').default);
@@ -85,9 +86,17 @@ Vue.component('inprogress-task-component',require('./components/Dashboard/Inprog
 Vue.component('feedback-task-component',require('./components/Dashboard/FeedbackTaskComponent.vue').default);
 Vue.component('required-qa-component',require('./components/Dashboard/RequiredQAComponent.vue').default);
 Vue.component('unassigned-component',require('./components/Dashboard/UnassignedComponent.vue').default);
+
+Vue.component('todays-deliverable-component',require('./components/Dashboard/TodaysDeliverableComponent.vue').default);
+Vue.component('monthly-deliverable-component',require('./components/Dashboard/MonthlyDeliverableComponent.vue').default);
+
+
 Vue.component('modal-component',require('./components/Writers/ModalComponent.vue').default);
 
 
+Vue.component('chat-messages', require('./components/ChatMessages.vue').default);
+Vue.component('chat-form', require('./components/ChatForm.vue').default);
+Vue.component('chat-box', require('./components/ChatBox.vue').default);
 
 
 
@@ -99,7 +108,33 @@ Vue.component('modal-component',require('./components/Writers/ModalComponent.vue
  */
  Vue.prototype.$hostname = 'http://localhost/crm_updated/crm_2/admin/';
  
-  
+//  this.$hostname+'websites';
 const app = new Vue({
     el: '#app',
+    //Store chat messages for display in this array.
+    data: {
+      messages: []
+  },
+  //Upon initialisation, run fetchMessages(). 
+  created() {
+      this.fetchMessages();
+  },
+  methods: {
+      fetchMessages() {
+          //GET request to the messages route in our Laravel server to fetch all the messages
+          axios.get('http://localhost/crm_updated/crm_2/admin/messages').then(response => {
+              //Save the response in the messages array to display on the chat view
+              this.messages = response.data;
+          });
+      },
+      //Receives the message that was emitted from the ChatForm Vue component
+      addMessage(message) {
+          //Pushes it to the messages array
+          this.messages.push(message);
+          //POST request to the messages route with the message data in order for our Laravel server to broadcast it.
+          axios.post('http://localhost/crm_updated/crm_2/admin/messages', message).then(response => {
+              console.log(response.data);
+          });
+      }
+  }  
 });

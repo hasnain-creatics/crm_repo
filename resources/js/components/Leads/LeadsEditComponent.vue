@@ -8,18 +8,18 @@
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">First Name</label>
 											  <input type="text" class="form-control" :value="response_details.first_name" placeholder="Enter First Name" id="first_name" name="first_name" @change="onChangeFirstName" >
-											  <span v-if="errorss.first_name">{{errorss.first_name[0]}}</span>
+											  <span class="error" v-if="errorss.first_name">{{errorss.first_name[0]}}</span>
 											</div>
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Last Name</label>
 											  <input type="text" class="form-control"  :value="response_details.last_name" placeholder="Enter Last Name" id="last_name"  name="last_name"  @change="onChangeLastName" >
-							  				  <span v-if="errorss.last_name">{{errorss.last_name[0]}}</span>
+							  				  <span class="error" v-if="errorss.last_name">{{errorss.last_name[0]}}</span>
 											</div>
 
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Email Address</label>
 											  <input type="email" class="form-control"  :value="response_details.email"  placeholder="Enter email Address" id="email"  name="email"  @change="onChangeEmail" >
-												<span v-if="errorss.email">{{errorss.email[0]}}</span>
+												<span class="error" v-if="errorss.email">{{errorss.email[0]}}</span>
 											</div>
 
 											<!--End First Row-->
@@ -27,7 +27,7 @@
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Phone Number</label>
 											  <input type="text" class="form-control"  :value="response_details.phone_number"  placeholder="Enter Phone Number" id="phone_number"  name="phone_number"  @change="onChangePhone" >
-												  <span v-if="errorss.phone_number">{{errorss.phone_number[0]}}</span>
+												  <span class="error" v-if="errorss.phone_number">{{errorss.phone_number[0]}}</span>
 											
 											</div>
 											<div class="col-md-4">
@@ -39,7 +39,7 @@
                                                     <option :selected="response_details.lead_status == 'Followup' ? 'selected' :''"  value="Followup">Followup</option>
 													<option :selected="response_details.lead_status == 'Transfer-Paid' ? 'selected' :''" value="Transfer-Paid">Transfer Paid</option>
                                                 </select>
-												<span v-if="errorss.lead_status">{{errorss.lead_status[0]}}</span>
+												<span class="error" v-if="errorss.lead_status">{{errorss.lead_status[0]}}</span>
 											</div>
 
 											<div class="col-md-4" v-if="issue_view">
@@ -49,7 +49,7 @@
 													<option  v-for="(links, index) in all_issues"
                                             :key="index" :value="links.id">{{links.issue}}</option>
 												</select>
-												<span v-if="errorss.lead_issue_id">{{errorss.lead_issue_id[0]}}</span>
+												<span class="error" v-if="errorss.lead_issue_id">{{errorss.lead_issue_id[0]}}</span>
 
 											</div>
 									
@@ -62,7 +62,7 @@
                                            		 :key="index" :value="links.id" :selected="links.id ==   form.url ? 'selected' : ''">{{links.name}}</option>
 												</select>
 
-												 <span v-if="errorss.url">{{errorss.url[0]}}</span>
+												 <span class="error" v-if="errorss.url">{{errorss.url[0]}}</span>
 											</div>
 								<!--End Second Row-->
 
@@ -70,7 +70,7 @@
 								<div class="col-md-12">
 											  <label for="validationCustom01" class="form-label">Description<span class="required">*</span></label>
 											  <textarea  :value="response_details.description"  style="resize: none;" rows="5" name="description" id="description"   @change="onChangeDescription"  cols="50" class="form-control"></textarea>
-                                              <span v-if="errorss.description">{{errorss.description[0]}}</span>
+                                              <span class="error" v-if="errorss.description">{{errorss.description[0]}}</span>
 											</div>
 
 											<!--End Fifth Row-->

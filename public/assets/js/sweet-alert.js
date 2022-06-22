@@ -187,6 +187,7 @@ function userDelete(ele){
 		  	swal('Congratulations!', 'Data is delete successfully', 'success');
 			  	setTimeout(function(){
 					window.location.href = main_url+'/user/delete/'+ele;
+					// $('#users_data_table').DataTable().ajax.reload();
 			  	},1000);
 			    
 		  } else {

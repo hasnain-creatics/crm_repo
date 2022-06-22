@@ -11,6 +11,7 @@ use DB;
 use App\Models\Status;
 use Validator;
 use App\Models\OrderAssigns;
+use App\Models\Sale_Order_Failed;
 class OrdersController extends Controller
 {
 
@@ -42,29 +43,8 @@ class OrdersController extends Controller
                 'feedback'=>$request->feedback
 
             ]);
-            if($save_feedback){
-
-                $orders = new Orders();
-
-                $orders_update = $orders->find($request->order_id);
-
-                $orders_update->order_status = 'Feedback';
-                
-                $orders_update->save();
-
-                $statuses = new Status();
-
-                $statuses->type = 'task';
-               
-                $statuses->title = 'Feedback';
-              
-                $statuses->order = $request->order_id;
-    
-                $statuses->save(); 
-            }
-
         }
-            
+            return response()->json(['status'=>'success','message'=>'feedback added successfully']);
     }
 
     public function order_timline($id){
@@ -128,6 +108,16 @@ class OrdersController extends Controller
                             if($_GET['status'] == 'ready_to_delivered'){
 
                                 $data = $data->where('sale_orders.order_status','QA Approved');
+
+                            }
+                            if($_GET['status'] == 'failed'){
+
+                                $data = $data->where('sale_orders.order_status','Failed');
+
+                            }
+                            if($_GET['status'] == 'completed'){
+
+                                $data = $data->where('sale_orders.order_status','Completed');
 
                             }
                             
@@ -474,6 +464,63 @@ class OrdersController extends Controller
 
     }
 
+
+    public function failed_reason(Request $request,$id){
+
+        $order_failed = new Sale_Order_Failed();
+        $data['status'] = 'success';
+        $data['message'] = 'reason addess successfully';
+        $data['title'] = 'Failed';
+        if(!empty(trim($request->reason))){
+
+            $order_failed->reason = $request->reason;
+
+            $order_failed->order_id = $id;
+
+            $order_failed->created_by = Auth::user()->id;
+
+            $order_failed->save();
+
+            if ($request->file('files')) {
+                
+                $file = $request->file('files');
+    
+                for($i=0;$i<count($file);$i++){
+    
+                    $lead_file_name = 'order-data-'.date('YmdHis').'.'.$file[$i]->getClientOriginalExtension();
+    
+                    $original_file_name = $file[$i]->getClientOriginalExtension();
+    
+                    $path = $file[$i]->storeAs("orders_files/order_{$id}", $lead_file_name);
+            
+                    $leads_files          =  new Documents();
+            
+                    $leads_files->name = 'failed files';
+    
+                    // $leads_files->original_name = $file[$i]->getClientOriginalName();
+    
+                    $leads_files->file_type = $file[$i]->getClientOriginalExtension();
+                    
+                    $leads_files->url = url("storage/app/orders_files/failed_files/order_{$id}/{$lead_file_name}");
+                    
+                    $leads_files->created_at = date('Y-m-d');
+        
+                    $leads_files->save();
+                    
+                    $leads_documents = new OrderDocuments();
+              
+                    $leads_docs_array = ['document_id' =>$leads_files->id,'document_name'=>'failed document by sale user','sale_order_id'=>$id,'doc_status'=>'Failed']; 
+        
+                    $leads_documents->create($leads_docs_array);
+                    
+                }
+            
+            }
+        }
+
+        return response()->json($data);
+
+    }
     
     /**
      * Store a newly created resource in storage.
@@ -511,6 +558,7 @@ class OrdersController extends Controller
         $rules['website'] = 'required';
 
         $rules['lead_id'] = '';
+        $rules['dollar_amount'] ='required';
 
         $change_status = true;
 
@@ -686,9 +734,22 @@ class OrdersController extends Controller
 
     public function order_full_details($id){
             
-    
         $task_details = [];
         
+        $order = new Orders();
+        
+        $check_order_status = $order->find($id);
+
+        if($check_order_status->order_status !='QA Approved' && 
+           $check_order_status->order_status !='Delivered' && 
+           $check_order_status->order_status !='Completed' 
+           ){
+        
+            return redirect(route('delivery.index'))->with('message', 'Only writers can see this order details');
+        
+        }
+
+
         return view('writers.task_details',compact('task_details','id'));
 
 

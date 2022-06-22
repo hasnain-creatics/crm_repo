@@ -318,7 +318,7 @@ export default {
                   { data: "created_at", name: "created_at" },
                   { data: "deadline", name: "deadline" },
                   { data: "word_count", name: "word_count" },
-                  { data: "amount", name: "amount" },
+                  { data: "dollar_amount", name: "dollar_amount" },
                   { data: "payment_status", name: "payment_status" },
                   { data: "order_status", render: function ( data, type, row ) {
 
@@ -340,7 +340,7 @@ export default {
   },
   mounted() {
     this.dataTables(this.filtered_url);
-    this.interval = setInterval(() =>this.dataTables(this.filtered_url), 10000);
+    // this.interval = setInterval(() =>this.dataTables(this.filtered_url), 10000);
   },
 };
 </script>
@@ -353,9 +353,18 @@ export default {
     word-wrap:break-word; 
     
 }
-.new{font-size:8px;padding:5px;background:lightgreen;border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
-.in-progress, .pending{font-size:8px;color:#eee;padding:5px;background:rgb(67, 112, 67);border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.new{font-size:8px;padding:5px;background:#D3D3D3;border-radius:5px; box-shadow:0px 0px 12px 0px #D3D3D3;}
+.in-progress, .pending{font-size:8px;color:#eee;padding:5px;background:#ffde73;border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
 .qa-in-progress{font-size:8px;color:rgb(23, 19, 19);padding:5px;background:rgb(160, 179, 201);border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
 .qa-approved{font-size:8px;color:rgb(253, 253, 253);padding:5px;background:rgb(152, 166, 179);border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.ready-to-qa {font-size:8px;color:#000000;padding:5px;background:rgb(253, 238, 162);border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.qa-in-progress {font-size:8px;color:#ebebeb;padding:5px;background:#00C851;border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.qa-approved {font-size:8px;color:#ebebeb;padding:5px;background:#33b5e5;border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.delivered {font-size:8px;color:#ebebeb;padding:5px;background:#007E33;border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.completed {font-size:8px;color:#ebebeb;padding:5px;background:#007E33;border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.failed {font-size:8px;color:#FFFFFF;padding:5px;background:#ff4444;border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+.qa-rejected {font-size:8px;color:#FFFFFF;padding:5px;background:rgb(222 , 94 , 94) ;border-radius:5px; box-shadow:0px 0px 12px 0px lightgray;}
+
+
 </style>
 

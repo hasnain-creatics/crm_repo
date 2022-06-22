@@ -22,7 +22,7 @@
                                       <option :value="'INACTIVE'">INACTIVE</option>
 
                                   </select>
-
+                        <span :class="'error'">{{status}}</span>
                     </div>
                       <br><br><br><br><br><br>
                       
@@ -47,6 +47,7 @@ export default {
                 message: ''
             }),
            name: '',
+           status: '',
            message: '',
            success: '',
            alerts: false,

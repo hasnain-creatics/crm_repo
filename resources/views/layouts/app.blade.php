@@ -30,6 +30,57 @@
 						<div class="navbar navbar-expand-lg navbar-collapse responsive-navbar p-0">
 							<div class="collapse navbar-collapse" id="navbarSupportedContent-4">
 								<div class="d-flex order-lg-2">
+								
+								
+									
+							@if(Auth::user()->roles[0]->name =='Admin')
+								
+									<div class="dropdown country-selector d-flex">
+												
+													<span class="header-avatar1">
+														
+														<span class="fs-14 font-weight-semibold  btn-animation">
+
+														
+														<button  class="btn btn-success pull-right upload-btn-glbl" style="height:30px; width:auto;margin-top:10px"  onClick="upload_modal_method('<?=Request::segment(2)?>')">
+														<i class="fa fa-upload "></i> Upload</button>
+														
+														</span>
+													</span>
+												
+											
+											</div>
+
+          									<div class="dropdown country-selector d-flex">
+												
+													<span class="header-avatar1">
+														
+														<span class="fs-14 font-weight-semibold btn-animation">
+														<button type="button" class="btn btn-primary pull-right watch-btn-glbl" style="height:30px; width:auto;margin-top:10px"  onClick="video_listing('<?=Request::segment(2)?>')">
+														<i class="fa fa-youtube-play"></i> Tutorial</button>
+															
+													</span>
+											
+											
+											</div>
+										@elseif(Auth::user()->roles[0]->name !='Admin')	
+											<div class="dropdown country-selector d-flex">
+												<a href="" class="">
+													<span class="header-avatar1">
+														
+														<span class="fs-14 font-weight-semibold">
+														<a href="{{route('orders.add')}}" class="btn btn-primary pull-right" style="height:30px; width:auto;margin-top:10px" >
+														<i class="fa fa-youtube-play"></i> Watch</a>
+														
+														</span>
+													</span>
+												</a>
+											
+											</div>
+									
+									  @endif
+								
+								
 
 									<div class="dropdown header-notify d-flex">
 										<a class="nav-link icon" data-bs-toggle="dropdown">
@@ -119,11 +170,11 @@
 		<!--/app header-->
 
 	@yield('content')
-
-
+	
+	<!-- <chat-box></chat-box> -->
 	</div>
-</div>
 
+</div>
 <!-- End app-content-->
 @include('layouts.footer')
 
@@ -134,7 +185,7 @@
 
 
 <!-- Back to top -->
-<a href="#top" id="back-to-top"><i class="fe fe-chevron-up"></i></a>
+<!-- <a href="#top" id="back-to-top"><i class="fe fe-chevron-up"></i></a> -->
 
 <script src="{{asset('public')}}/js/app.js" ></script>
 
@@ -242,7 +293,7 @@
 <script src="{{asset('public')}}/assets/plugins/sweet-alert/sweetalert.min.js"></script>
 <script src="{{asset('public')}}/assets/js/sweet-alert.js"></script>
 <script type="text/javascript" src="{{asset('public')}}/assets/plugins/dist_file_upload/imageuploadify.min.js"></script>
-
+<script src="{{asset('public')}}/assets/plugins/form.js"></script>
 <script src="{{asset('public')}}/assets/js/custom.js"></script>
 <script src="{{asset('public')}}/assets/js/script.js"></script>
 
@@ -273,7 +324,7 @@ if($('.profile-dropdown .profile_drop_down_div').hasClass('d-block')){
 </script>
 <script type="text/javascript">
             $(document).ready(function() {
-				
+	
                 $('#task_documents_uploadd').imageuploadify();
                 $('#multi_file_upload_1').imageuploadify();
 				$('#multi_file_upload_2').imageuploadify();
@@ -282,7 +333,22 @@ if($('.profile-dropdown .profile_drop_down_div').hasClass('d-block')){
 				$('.upload_docs .imageuploadify-message').html("Upload Documents");
 				$('.upload_invoice .imageuploadify-message').html("Upload Order Invoice");
 				$('.upload_led_doc .imageuploadify-message').html("Upload Attachments");
-            })
+	
+					// if(order_message_start == true){
+					
+					// 	window.setInterval(function(){
+					// 	    fetch_all_messages(message_order_id,current_user);
+					// 	}, 5000);
+					// }
+
+
+            });
+
+			$(document).on('hide.bs.modal','#order_message_modal', function () {
+				// call_message(false);
+			});
+
+		
         </script>
 
 </body>

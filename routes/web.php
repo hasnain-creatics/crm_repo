@@ -11,6 +11,9 @@ use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Controllers\WriterController;
 use App\Http\Controllers\NoticeBoardController;
+use App\Http\Controllers\KnowledgeController;
+use App\Http\Controllers\OrderMessageController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -34,8 +37,18 @@ Route::get('/', function () {
 Auth::routes();
 
 
-Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
+Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
     
+    Route::get('/chat', [App\Http\Controllers\ChatsController::class, 'index']);
+
+
+    Route::get('/messages', [App\Http\Controllers\ChatsController::class, 'fetchMessages']);
+    
+    Route::get('/fetch_my_message/{id}', [App\Http\Controllers\ChatsController::class, 'fetch_my_message']);
+    
+    Route::post('/messages', [App\Http\Controllers\ChatsController::class, 'sendMessage']);
+
+
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     
     Route::get('/dashboard/countes', [App\Http\Controllers\HomeController::class, 'writer_dashboard_counters'])->name('dashboard.counts');
@@ -53,6 +66,10 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
     Route::get('/dashboard/writer_feedback_tasks', [App\Http\Controllers\HomeController::class, 'writer_feedback_tasks'])->name('dashboard.writer_feedback_tasks');
 
     Route::get('/dashboard/sale_urgent_orders', [App\Http\Controllers\HomeController::class, 'sale_urgent_orders'])->name('dashboard.sale_urgent_orders');
+
+    Route::get('/dashboard/today_deliverable', [App\Http\Controllers\HomeController::class, 'today_deliverable'])->name('dashboard.today_deliverable');
+
+    Route::get('/dashboard/monthly_deliverable', [App\Http\Controllers\HomeController::class, 'monthly_deliverable'])->name('dashboard.monthly_deliverable');
     
     Route::group(['prefix'=>'roles'],function(){
 
@@ -87,6 +104,8 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/get_users',[UserController::class,'get_users']);
 
         Route::get('/get_all_users',[UserController::class,'get_all_users']);
+
+        Route::get('/fetch_all_active_users',[UserController::class,'fetch_all_active_users']);
         
         Route::post('/check_email_exists',[UserController::class,'check_email_exists'])->name('check_email_exists');
 
@@ -143,6 +162,9 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/order_full_details/{id}',[OrdersController::class,'order_full_details'])->name('orders.order_full_details');
 
         Route::get('/order_status_details/{id}',[OrdersController::class,'order_status_details'])->name('orders.order_status_details');
+
+        Route::post('/failed_reason/{id}',[OrdersController::class,'failed_reason'])->name('orders.failed_reason');
+        // failed_reason
 
     });
 
@@ -292,6 +314,22 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
        
     });
 
+
+    Route::group(['prefix'=>'knowledge'],function(){
+
+
+        Route::get('/upload/{id}', [KnowledgeController::class, 'upload'])->name('knowledge.upload');
+        Route::get('/video_listing/{id}', [KnowledgeController::class, 'video_listing'])->name('knowledge.video_listing');
+        Route::get('/video_listing', [KnowledgeController::class, 'video_listing'])->name('knowledge.video_listing');
+        Route::get('/play_video/{id}', [KnowledgeController::class, 'play_video'])->name('knowledge.play_video');
+
+        Route::post('/',[KnowledgeController::class,'store'])->name('knowledge.add');
+
+        
+
+    });
+
+
     Route::group(['prefix'=>'writers'],function(){
 
         Route::get('/',[WriterController::class,'index'])->name('writers.index');
@@ -311,6 +349,7 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         Route::get('/fetch_all_writers',[WriterController::class,'fetch_all_writers'])->name('writers.fetch_all_writers');
         
         Route::post('/task_update/{id}',[WriterController::class,'task_update'])->name('writers.task_update');
+
         Route::post('/task_status_update/{id}',[WriterController::class,'task_status_update'])->name('writers.task_status_update');
 
         Route::post('/user_task_details_update/{id}',[WriterController::class,'user_task_details_update'])->name('writers.user_task_details_update');
@@ -321,6 +360,12 @@ Route::group(['prefix'=>'admin','middleware'=>'auth'],function(){
         
      });
 
+
+     Route::group(['prefix'=>'order_message'],function(){
+        Route::get('/order_message_list/{id}',[OrderMessageController::class,'order_message_list'])->name('order_message.order_message_list');
+        Route::post('/send',[OrderMessageController::class,'store'])->name('order_message.add');
+        Route::get('/fetch_messages/{id}',[OrderMessageController::class,'fetch_messages'])->name('order_message.fetch_messages');
+     });
 
 });
 // Route::view('/roles', [RolesController::class, 'index']);

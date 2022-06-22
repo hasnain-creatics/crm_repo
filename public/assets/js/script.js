@@ -1,3 +1,5 @@
+let order_message_start = false;
+let message_order_id = null;
 function readURL(input) {
   
     if (input.files && input.files[0]) {
@@ -708,15 +710,16 @@ $(document).on('click','#submit_feedback',function(){
     
         success:function(response){
     
-            // $('#all-modals').html(response);
-
-            // $('#add_order_feedback').modal('show');
-
-            swal('Congratulations!', "Feedback Added Successfully", 'Success');
-
-            setTimeout(function () {
-                location.reload(true);
-            }, 1000);
+           
+            if(response.status == 'success'){
+                swal('Congratulations!', "Feedback Added Successfully", 'success');
+                setTimeout(function () {
+                    swal.close();
+                    $('#add_order_feedback').modal('hide');
+                }, 1000);
+                
+            }
+           
 
 
         }
@@ -775,12 +778,385 @@ function order_status_details(ele){
 
 
 }
+function upload_modal_method(ele){
 
-function order_fail(ele){
+    $.ajax({
 
-    console.log(ele)
+        type: "get",
+    
+        url : main_url+'/knowledge/upload/'+ele,
+    
+        dataType: "html",
+        beforeSend:function(){
+        	$('.upload-btn-glbl').addClass('btn-loaders btn-icon');
+        },
+        success:function(response){
+            $('.upload-btn-glbl').removeClass('btn-loaders btn-icon');
+            $('#all-modals').html(response);
+
+            $('#knowledge_modal').modal('show');
+        }
+    
+    });
+    
+}
+
+
+
+function video_listing(ele){
+
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/knowledge/video_listing/'+ele,
+    
+        dataType: "html",
+
+        beforeSend:function(){
+        	$('.watch-btn-glbl').addClass('btn-loaders btn-icon');
+        },
+    
+        success:function(response){
+    
+            $('.watch-btn-glbl').removeClass('btn-loaders btn-icon');
+            $('#all-modals').html(response);
+
+            $('#video_list_modal').modal('show');
+        }
+    
+    });
+    
+}
+
+
+function play_video(ele){
+
+    $('.video-list-content').removeClass('active-video');
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/knowledge/play_video/'+ele,
+    
+        dataType: "json",
+    
+        beforeSend:function(){
+            $('.video-player-div').html('<div class="dimmer active"><div class="sk-circle"><div class="sk-circle1 sk-child"></div><div class="sk-circle2 sk-child"></div><div class="sk-circle3 sk-child"></div><div class="sk-circle4 sk-child"></div><div class="sk-circle5 sk-child"></div><div class="sk-circle6 sk-child"></div><div class="sk-circle7 sk-child"></div><div class="sk-circle8 sk-child"></div><div class="sk-circle9 sk-child"></div><div class="sk-circle10 sk-child"></div><div class="sk-circle11 sk-child"></div><div class="sk-circle12 sk-child"></div></div></div>');
+        },
+        success:function(response){
+            $('.video-link-'+ele).addClass('active-video');
+            var video_url = $('.video-played-src').attr('video-url-data');
+            var html =  '<video width="400" controls><source src="'+video_url+'/'+response.doc+'" type="video/mp4"></video><label for=""><h3>'+response.title+'</h3></label>';
+            $('.video-player-div').html(html);
+        }
+    
+    });
+    
+}
+
+
+
+
+$(document).on('click','#upload_video_btn',function(){
+
+    $('#course_video_upload').validate({
+          errorPlacement: function(label, element) {
+          label.addClass('arrow');
+          label.insertAfter(element);
+      },
+      wrapper: 'span',
+          rules: {
+              video_title: {
+                  required: true
+              },
+              
+          },
+          submitHandler: function (form) { 
+  
+              $('#course_video_upload').ajaxSubmit({
+  
+                    beforeSubmit:function(formData,formObject,formOptions){
+                        formData.push({
+                          name:'website',
+                          value:'https:youtube.com'
+                        });
+                      },
+                      beforeSend:function(){
+                          // $('.upload-btn-glbl').addClass('btn-loaders btn-icon');
+                      },
+                      uploadProgress:function(event,position,total,percentComplete){
+                        $('.progress-bar').css('width',percentComplete+'%');
+                        $('.progress-bar').html(percentComplete+'%');
+                      },
+                      success: function(response){
+                        
+                       if(response.status == 'success'){
+
+                           $('.progress-bar').css('width','2%');
+                            $('.progress-bar').html('0 %');
+                            $('#course_video_upload').trigger("reset");
+                            $('#knowledge_modal').modal('hide');
+                        
+                            swal('Congratulations!', 'Video Uploaded Successfully', 'success');
+
+                            setTimeout(function(){
+
+                                swal.close();
+
+                              //  video_listing(response.id);
+
+                            },1000);
+
+                        
+                       } 	
+                      }
+                    });
+            }
+      });
+  
+  });
+
+  function orderMessages(ele){
+    message_order_id = ele
+    order_message_start = true;
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/order_message/order_message_list/'+ele,
+    
+        dataType: "html",
+
+        beforeSend:function(){
+        	// $('.watch-btn-glbl').addClass('btn-loaders btn-icon');
+        },
+    
+        success:function(response){
+            
+            $('#all-modals').html(response);
+
+            $('#order_message_modal').modal('show');
+                // fetch_all_messages(message_order_id,current_user);
+               // window.setInterval(function(){
+                    fetch_all_messages(message_order_id,current_user);
+                //}, 10000);
+               
+        }
+    
+    });
+
+  }
+
+  function bytesToSize(bytes) {
+    var sizes = ['B', 'K', 'M', 'G', 'T', 'P'];
+    for (var i = 0; i < sizes.length; i++) {
+      if (bytes <= 1024) {
+        return bytes + ' ' + sizes[i];
+      } else {
+        bytes = parseFloat(bytes / 1024).toFixed(2)
+      }
+    }
+    return bytes;
+  }
+  
+$(document).on('click','#submit_message',function(){
+  
+    $('#send-message-form').validate({
+        errorPlacement: function(label, element) {
+        label.addClass('arrow');
+        label.insertAfter(element);
+    },
+    wrapper: 'span',
+        rules: {
+            'message': {
+                required: true
+            },
+          
+        },
+        submitHandler: function (form) { 
+            $('#send-message-form').ajaxSubmit({
+                  beforeSubmit:function(formData,formObject,formOptions){
+                    $('.files-error').addClass('d-none');
+                    $('.files-error').css('display','none');
+                    var total_size = 0;
+                    for(f = 0;f<formData.length;f++){
+                        if(formData[f].type == 'file'){
+                            total_size+=formData[f].value.size;
+                        }
+                    }   
+                    var orignal_file = bytesToSize(total_size);
+                    var size_check = orignal_file.split(' ');
+                    if(size_check[1]){
+                        if(size_check[1] == 'M'){
+                            if(size_check[0] > 50){
+                                $('.files-error').removeClass('d-none');
+                                $('.files-error').css('display','block');
+                                $('#file-error').css('display','block');
+                                $('#file-error').html('maximum 50 mb file you can post here, and you are trying '+orignal_file);
+                                return false;
+                            }
+                        }else if(size_check[1] == 'G'){
+                            $('.files-error').removeClass('d-none');
+                            $('.files-error').css('display','block');
+                            $('#file-error').css('display','block');
+                            $('#file-error').html('maximum 50 mb file you can post here, and you are trying '+orignal_file);
+                            return false;
+                        }
+                    }
+                    },
+                    beforeSend:function(){
+                        $('#submit_message').prop('disabled',true);
+                        $('.upload-btn-glbl').addClass('btn-loaders btn-icon');
+
+                    },
+                    uploadProgress:function(event,position,total,percentComplete){
+                      $('#submit_message').prop('disabled',true);
+                      $('.progress').removeClass('d-none');
+                      $('.progress-bar').css('width',percentComplete+'%');
+                      $('.progress-bar').html(percentComplete+'%');
+                    },
+                    success: function(response){
+                        $('#submit_message').prop('disabled',false);
+                        if(response.status == 'success'){
+                            $('.progress').addClass('d-none');
+                            $('.progress-bar').css('width','2%');
+                            $('.progress-bar').html('0 %');
+                            $('.send-message-form').trigger("reset");
+                            fetch_all_messages(response.order_id,response.user_id);
+
+                        } 	
+                    }
+                  });
+          }
+    });
+});
+
+
+
+function fetch_all_messages(ele,current_user){
+
+    $.ajax({
+        type: "get",
+
+        url : main_url+'/order_message/fetch_messages/'+ele,
+
+        dataType: "json",
+
+        beforeSend:function(){
+            // $('.video-player-div').html('<div class="dimmer active"><div class="sk-circle"><div class="sk-circle1 sk-child"></div><div class="sk-circle2 sk-child"></div><div class="sk-circle3 sk-child"></div><div class="sk-circle4 sk-child"></div><div class="sk-circle5 sk-child"></div><div class="sk-circle6 sk-child"></div><div class="sk-circle7 sk-child"></div><div class="sk-circle8 sk-child"></div><div class="sk-circle9 sk-child"></div><div class="sk-circle10 sk-child"></div><div class="sk-circle11 sk-child"></div><div class="sk-circle12 sk-child"></div></div></div>');
+            // console.log('wait....');
+        },
+        success:function(response){
+           
+            var html =  "";
+            var result = response.result;
+            for(i  = 0;i < result.length;i++){
+                if(result[i].sender_id == current_user){
+                    if(result[i].users){
+                        html +="<div class='float-end' style='width:100%';>";
+                            html +='<div class="message-feed right float-end">';
+                            html+='<small class="mf-date">'+result[i].users.first_name+'</small>';
+                            html +='<div class="float-end ps-2" style="margin-top:20px">';
+                            if(result[i].users.profile_image_id){
+                                html +='<img src="'+site_url+'/storage/app/'+result[i].users.profile_image_id+'" alt="" class="avatar avatar-md brround">';
+                            }else{
+                                html +='<img src="'+public_url+'/assets/images/no_image.jpg" alt="" class="avatar avatar-md brround">';
+                            }
+                            html +='</div>';
+                            if(result[i].order_message_documents){
+                                html +='<div class="media-body"><div class="mf-content" style="width:100%">'+result[i].message+'</div>';
+                                html +='<small sclass="mf-date">';
+                                for(j = 0;j<result[i].order_message_documents.length;j++){
+
+                                   html +=' <a href="'+result[i].order_message_documents[j].file_id+'"  target="_blank">'+result[i].order_message_documents[j].file_name+'</a>';
+                                }
+                                html +='</small>';
+                                html+='<small class="mf-date"><i class="fa fa-clock-o"></i>'+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
+                            }else{
+                                html +='<div class="media-body"><div class="mf-content">'+result[i].message+'</div><small class="mf-date"><i class="fa fa-clock-o"></i>'+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
+                            }
+                            html +='</div>';
+                        html +='</div>';
+                    }
+                }else{
+                    if(result[i].users){
+                        html +="<div class='float-start' style='width:100%';>";
+                            html +='<div class="message-feed media receivers float-start" >';
+                            html+='<small class="mf-date">'+result[i].users.first_name+'</small>';
+                            html +='<div class="float-end ps-2" style="margin-top:20px">';
+                            if(result[i].users.profile_image_id){
+                                html +='<img src="'+site_url+'/storage/app/'+result[i].users.profile_image_id+'" alt="" class="avatar avatar-md brround">';
+                            }else{
+                                html +='<img src="'+public_url+'/assets/images/no_image.jpg" alt="" class="avatar avatar-md brround">';
+                            }
+                            html +='</div>';
+                            if(result[i].order_message_documents){
+                                html +='<div class="media-body"><div class="mf-content" style="width:100%">'+result[i].message+'</div>';
+                                html +='<small sclass="mf-date">';
+                                for(j = 0;j<result[i].order_message_documents.length;j++){
+                                   html +=' <a href="'+result[i].order_message_documents[j].file_id+'" target="_blank">'+result[i].order_message_documents[j].file_name+'</a>';
+                                }
+                                html +='</small>';
+                                html+='<small class="mf-date"><i class="fa fa-clock-o"></i>'+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
+                            }else{
+                                html +='<div class="media-body"><div class="mf-content">'+result[i].message+'</div><small class="mf-date"><i class="fa fa-clock-o"></i>'+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
+                            }
+                            html +='</div>';
+                        html +="</div>";
+                    }
+                }
+            }
+            $('#ChatBody').html(html);
+            //    $("#ChatBody").animate({
+            //         scrollTop: $('#ChatBody')[0].scrollHeight - $('#ChatBody')[0].clientHeight
+            //     }, 1000);
+          
+            // $('#ChatBody').scrollTop($('#ChatBody').height())
+            // $("#ChatBody").animate({
+            //     scrollTop: $('#ChatBody')[0].scrollHeight - $('#ChatBody')[0].clientHeight
+            //   }, 1000);
+        }
+
+        });
+    
+}
+
+
+function select_users(ele){
+
+    let selected_user = ele;
+
+    $('.select_user').each(function(index){
+
+        $(this).removeClass('active');
+
+        if($(this).attr('data-user') == selected_user){
+            
+            $(this).addClass('active')
+             
+            $('.message_user_id').val($(this).attr('data-user'));
+
+        } 
+
+    });
 
 }
+
+$(document).on('click','.select_user',function(){
+
+    select_users($(this).attr('data-user'));
+    
+})
+
+// function call_message(order_message_start){
+//     if(order_message_start){
+//         window.setInterval(function(){
+//             fetch_all_messages(message_order_id,current_user);
+//         }, 8000);
+//     }
+// }
+    
 
 
 // add_feedback(this,".$row->id.")

@@ -306,7 +306,7 @@ $(document).on('change','#designation',function(){
     success:function(data){
         if(data['status'] == 'success'){
             var html = "";
-            html +="<option>Select Manager</option>";
+            html +="<option value=''>Select Manager</option>";
             for(i = 0;i<data['data'].length;i++){
                 html +="<option value="+data['data'][i].id+">"+data['data'][i].name+"</option>";
             }

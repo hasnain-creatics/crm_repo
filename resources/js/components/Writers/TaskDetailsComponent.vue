@@ -51,36 +51,51 @@
         <div class="row">
           <div class="col">
             <label for="">Task Status</label>
-             <select v-if="selected == 'Feedback' && (role == 'Admin' || role == 'Sale Manager' || role == 'Sale Agent')" class="form-select text-warnings"
+
+
+             <!-- <select v-if="selected == 'Re-pending' && (role == 'Admin' || role == 'Writer' || role == 'Writer Manager')" class="form-select text-warnings"
               @change="change_task_statement($event)">
-                <!-- <option disabled="disabled" :selected="selected == 'QA Approved' ? 'selected' : ''" :value="'QA Approved'">
-                QA Approved
+               <option :selected="selected == 'Re-pending' ? 'selected' : ''" :value="'Re-pending'">Re-pending</option>
+               <option :selected="selected == 'Pending' ? 'selected' : ''" :value="'Pending'">Pending</option>
+              
+            </select> -->
+          
+              <select v-if="selected == 'Completed' && (role == 'Admin' || role == 'Writer' || role == 'Writer Manager')" class="form-select text-warnings"
+              @change="change_task_statement($event)">
+               <option :selected="selected == 'Completed' ? 'selected' : ''" :value="'Completed'">Completed</option>
+              
+            </select>
+            <select v-else-if="selected == 'Delivered' && (role == 'Admin' || role == 'Writer' || role == 'Writer Manager')" class="form-select text-warnings"
+              @change="change_task_statement($event)">
+               <option :selected="selected == 'Delivered' ? 'selected' : ''" :value="'Delivered'">Delivered</option>
+              
+            </select>
+
+            <select v-else-if="selected == 'Failed' && (role == 'Admin' || role == 'Writer' || role == 'Writer Manager')" class="form-select text-warnings"
+              @change="change_task_statement($event)">
+              
+               <option :selected="selected == 'Failed' ? 'selected' : ''" :value="'Failed'">
+                Failed
               </option>
-              <option  disabled="disabled" :selected="selected == 'Delivered' ? 'selected' : ''" :value="'Delivered'">
-                Delivered
+              
+               <option :selected="selected == 'Re-pending' ? 'selected' : ''" :value="'Re-pending'">
+                Re-pending
               </option>
-               --> 
-               <!-- <option :selected="selected == 'Completed' ? 'selected' : ''" :value="'Completed'">
-                Completed
-              </option> -->
+            </select>
+
+           
+
+            <select v-else-if="selected == 'Feedback' && (role == 'Admin' || role == 'Sale Manager' || role == 'Sale Agent')" class="form-select text-warnings"
+              @change="change_task_statement($event)">
+              
                <option :selected="selected == 'Feedback' ? 'selected' : ''" :value="'Feedback'">
                 Feedback
               </option>
             </select>
 
            
-            <select v-else-if="selected == 'Failed' && (role == 'Admin' || role == 'Sale Manager' || role == 'Sale Agent')" class="form-select text-warnings"
+ <select v-else-if="selected == 'Failed' && (role == 'Admin' || role == 'Sale Manager' || role == 'Sale Agent')" class="form-select text-warnings"
               @change="change_task_statement($event)">
-                <!-- <option disabled="disabled" :selected="selected == 'QA Approved' ? 'selected' : ''" :value="'QA Approved'">
-                QA Approved
-              </option>
-              <option  disabled="disabled" :selected="selected == 'Delivered' ? 'selected' : ''" :value="'Delivered'">
-                Delivered
-              </option>
-               --> 
-               <!-- <option :selected="selected == 'Completed' ? 'selected' : ''" :value="'Completed'">
-                Completed
-              </option> -->
                <option :selected="selected == 'Failed' ? 'selected' : ''" :value="'Failed'">
                 Failed
               </option>
@@ -88,15 +103,7 @@
 
            <select v-else-if="selected == 'Completed' && (role == 'Admin' || role == 'Sale Manager' || role == 'Sale Agent')" class="form-select text-warnings"
               @change="change_task_statement($event)">
-                <!-- <option disabled="disabled" :selected="selected == 'QA Approved' ? 'selected' : ''" :value="'QA Approved'">
-                QA Approved
-              </option>
-              <option  disabled="disabled" :selected="selected == 'Delivered' ? 'selected' : ''" :value="'Delivered'">
-                Delivered
-              </option>
-              <option :selected="selected == 'Failed' ? 'selected' : ''" :value="'Failed'">
-                Failed
-              </option> -->
+    
                <option :selected="selected == 'Completed' ? 'selected' : ''" :value="'Completed'">
                 Completed
               </option>
@@ -244,7 +251,7 @@
         </div>
         <div class="card-body">
           <div class="row">
-            <div class="col-lg-2" v-for="task_doc in task_documents" :key="task_doc.id">
+            <div class="col-lg-2" v-for="(task_doc,index) in task_documents" :key="index">
               <a :href="task_doc.url" target="_blank">
                 <img :src="task_doc.url" v-if="
                   task_doc.file_type == 'jpg' ||
@@ -294,10 +301,8 @@
               </tr>
             </thead>
             <tbody v-if="role == 'Sale Manager' || role == 'Sale Agent'">
-              <tr v-for="doc in writer_documetns" :key="doc.sale_document_id" v-if="doc.doc_status == 'Sent'" >
+              <tr v-for="(doc,index) in writer_documetns" :key="index" v-if="doc.doc_status == 'Sent' || doc.doc_status == 'Failed'" >
                 <td>
-
-
                   <div v-if="doc.doc_status">
                     <!-- <input type="checkbox"  :value="doc.sale_document_id"  :id="'doc_id_'+doc.sale_document_id" v-model="form.select_files"></input> -->
                     {{ doc.doc_status }}
@@ -359,7 +364,7 @@
               <div class="row">
                 <div class="col-12 ">
                   <!-- Timeline Area-->
-                  <div class="apland-timeline-area" v-for="prog in order_details.order_statuses" :key="prog.id">
+                  <div class="apland-timeline-area" v-for="(prog, index) in order_details.order_statuses" :key="index">
                     <!-- Single Timeline Content-->
                     <div class="single-timeline-area" >
                       <div class="timeline-date wow fadeInLeft" data-wow-delay="0.1s" style="
@@ -382,8 +387,8 @@
                               visibility: visible;
                               animation-delay: 0.3s;
                               animation-name: fadeInLeft;
-                           
-                            " :id="prog.title.replace(/\s+/g, '-').toLowerCase()" >
+                            "
+                            :class="prog.title.replace(/\s+/g, '-').toLowerCase()">
                             <div class="timeline-icon">
                               <i class="fa fa-address-card" aria-hidden="true"></i>
                             </div>
@@ -392,7 +397,7 @@
                                 <h6>{{ prog.title }}</h6>
                               </b>
                                <b style="font-size:10px; ">
-                                  <h6>Created by: {{ prog.status_first_name }} {{ prog.status_last_name }},  Updated at: {{ moment(prog.created_at).format("Y-M-D H:m")  }}</h6>
+                                  <h6>Changed by: {{ prog.status_first_name }} {{ prog.status_last_name }},  Changed at: {{ moment(prog.created_at).format("Y-M-D H:m")  }}</h6>
                               
                               </b>
                             </div>
@@ -427,7 +432,7 @@
               <!-- <input type="text" name="" id="" class="form-control" placeholder="Assign More"> -->
               <select style='width: 200px;' class="form-select" @change="assign_writer($event, task_id)">
                 <option value=""></option>
-                <option v-for="writer in all_writers" :key="writer.id" :value="writer.id">
+                <option v-for="(writer,index) in all_writers" :key="index" :value="writer.id">
                   {{ writer.name }} ({{ writer.order_assigns_count }})
                 </option>
 
@@ -447,7 +452,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="assign in order_assigns" :key="assign.id">
+              <tr v-for="(assign,index) in order_assigns" :key="index">
                 <td>{{ assign.user_id }}</td>
 
                 <td>{{ assign.first_name }} {{ assign.last_name }}</td>
@@ -522,7 +527,7 @@
                 <td>{{ moment(assign.created_at).fromNow() }}</td>
                 <td>
                   <div>
-                    <b-button @click="modalShow(assign.user_id)" v-if="assign.status_id == 'QA Approved'"
+                    <b-button @click="modalShow(assign.user_id)" v-if="assign.status_id == 'QA Approved' && (lead_manager_admin || is_qa) "
                       v-b-modal.modal-1>Rating</b-button>
                   </div>
 
@@ -539,6 +544,26 @@
       </div>
 
     </div>
+<div v-if="myFailedModal">
+   <b-modal v-model="myFailedModal" id="modal-2" :title="'Kindly give a reason for fail this ORDER-'+task_id+'.'" ok-title="Submit" @ok="submit_reason()">
+      <div>
+
+          <label for="">
+            <b style="font-size:15px;">Reason</b>
+          </label>
+            <textarea name="" id="" cols="30" rows="5" class="form-control" v-model="reasons.reason"></textarea>
+            
+          <label for="">
+            <b style="font-size:15px;">Files</b>
+          </label>
+            <input type="file" class="form-control" multiple @change="processFileReasonDocumentUpload($event)">
+
+          
+            
+      </div>
+   </b-modal>
+</div>
+
     <div v-if="myModel">
 
       <b-modal id="modal-1" title="Add User Ratings" ok-title="Submit" @ok="submit_ratings()">
@@ -665,6 +690,7 @@ export default {
   data() {
     return {
       myModel: false,
+      myFailedModal :false,
       cchecked1: false,
       cchecked2: false,
       cchecked3: false,
@@ -710,10 +736,17 @@ export default {
           referencing: 0,
         },
       },
+      reasons: new Form({
+        reason: "",
+        files: [],
+        status: 'Failed',
+
+      }),
       all_writers: [],
       assign_writer_post: {},
       page_reload: false,
-      is_qa: false
+      is_qa: false,
+      reason_added: false,
     };
   },
 
@@ -725,18 +758,18 @@ export default {
     async modalShow(user_id) {
       this.ratings.user_id = user_id;
       this.cchecked1 = false,
-        this.cchecked2 = false,
-        this.cchecked3 = false,
-        this.cchecked4 = false,
-        this.ochecked1 = false,
-        this.ochecked2 = false,
-        this.ochecked3 = false,
-        this.ochecked4 = false,
-        this.rchecked1 = false,
-        this.rchecked2 = false,
-        this.rchecked3 = false,
-        this.rchecked4 = false,
-        this.myModel = true;
+      this.cchecked2 = false,
+      this.cchecked3 = false,
+      this.cchecked4 = false,
+      this.ochecked1 = false,
+      this.ochecked2 = false,
+      this.ochecked3 = false,
+      this.ochecked4 = false,
+      this.rchecked1 = false,
+      this.rchecked2 = false,
+      this.rchecked3 = false,
+      this.rchecked4 = false,
+      this.myModel   = true;
     },
     async assign_writer(e, ele) {
 
@@ -822,6 +855,29 @@ export default {
         // console.log(this.all_writers)
       });
     },
+
+    async submit_reason(){
+      
+      const headers = {
+        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+      };
+     await this.reasons
+        .post(this.$hostname + "orders/failed_reason/" + this.task_id, null, {
+          headers,
+        })
+        .then((response) => {
+          console.log(response.data.status)
+          if(response.data.status =='success')
+          {
+            this.reason_added = true; 
+            this.myFailedModal = false;
+            this.change_task_statement(response.data.title);
+          }
+
+        });
+    
+    },
+
     async submit_ratings() {
 
       this.ratings.order_id = this.task_id;
@@ -1021,6 +1077,16 @@ export default {
           this.fetch_writers();
         });
     },
+ 
+    async processFileReasonDocumentUpload(e) {
+
+      let file = e.target.files;
+
+      let reader = new FileReader();
+
+      this.reasons.files = e.target.files;
+
+    },
     async processFile123(e) {
       let file = e.target.files;
 
@@ -1057,57 +1123,65 @@ export default {
         this.form.title = e;
       }
 
+    if(this.form.title == 'Failed' && this.reason_added== false){
 
-      this.form.status = true;
+        this.myFailedModal = true;
 
-      const headers = {
-        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+    }
 
-        "Content-Type": "multipart/form-data",
-      };
+    if( this.myFailedModal == false){
 
+          this.form.status = true;
 
-      if (this.form.title == 'QA Approved') {
+          const headers = {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
 
-        if (this.form.select_files.length <= 0) {
-
-          alert('please select documents');
-
-          e.target.value = this.selected
-
-          return false;
-
-        }
-
-      }
+            "Content-Type": "multipart/form-data",
+          };
 
 
-      await this.form
-        .post(this.$hostname + "writers/task_status_update/" + this.task_id, null, {
-          headers,
-        })
-        .then((response) => {
+          if (this.form.title == 'QA Approved') {
 
-          if (response.data.stop_reload == false) {
-            swal(
-              response.data.alert_message,
-              response.data.message,
-              "success"
-            );
-            this.show_task_details();
-          } else {
+            if (this.form.select_files.length <= 0) {
 
-            e.target.value = response.data.title;
+              alert('please select documents');
 
-            swal(
-              response.data.alert_message,
-              response.data.message,
-              "error"
-            );
+              e.target.value = this.selected
+
+              return false;
+
+            }
 
           }
 
-        });
+
+          await this.form
+            .post(this.$hostname + "writers/task_status_update/" + this.task_id, null, {
+              headers,
+            })
+            .then((response) => {
+
+              if (response.data.stop_reload == false) {
+                swal(
+                  response.data.alert_message,
+                  response.data.message,
+                  "success"
+                );
+                this.show_task_details();
+              } else {
+
+                e.target.value = response.data.title;
+
+                swal(
+                  response.data.alert_message,
+                  response.data.message,
+                  "error"
+                );
+
+              }
+
+            });
+    }
 
     },
 
@@ -1304,7 +1378,7 @@ export default {
 
     this.show_task_details();
 
-    this.interval = setInterval(() => this.show_task_details(), 5000);
+    this.interval = setInterval(() => this.show_task_details(), 10000);
     
     // this.show_task_details();
 
@@ -1376,7 +1450,7 @@ export default {
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  background-color: #f1c40f;
+  background-color: #6b6b6b;
   content: "";
   top: 50%;
   right: 26px;
@@ -1395,7 +1469,7 @@ export default {
 .single-timeline-area .single-timeline-content {
   position: relative;
   z-index: 1;
-  padding: 30px 30px 25px;
+  padding: 10px 10px ;
   border-radius: 6px;
   margin-bottom: 15px;
   margin-top: 15px;
@@ -1415,7 +1489,7 @@ export default {
   transition-duration: 500ms;
   width: 30px;
   height: 30px;
-  background-color: #f1c40f;
+  background-color: #000000;
   -webkit-box-flex: 0;
   -ms-flex: 0 0 30px;
   flex: 0 0 30px;
@@ -1440,15 +1514,8 @@ export default {
   margin-bottom: 0;
 }
 
-.single-timeline-area .single-timeline-content:hover .timeline-icon,
-.single-timeline-area .single-timeline-content:focus .timeline-icon {
-  background-color: #020710;
-}
 
-.single-timeline-area .single-timeline-content:hover .timeline-text h6,
-.single-timeline-area .single-timeline-content:focus .timeline-text h6 {
-  color: #3f43fd;
-}
+
 
 /* 
    .modal-mask {
@@ -1480,17 +1547,17 @@ export default {
 
 
 
-#new{font-size:8px;padding:5px;background:#00FFFF;border-radius:5px; box-shadow:0px 0px 12px 0px #00FFFF;}
-#pending{font-size:8px;color:#000000;padding:5px;background:rgb(253, 245, 129);border-radius:5px; box-shadow:0px 0px 12px 0px #f1c40f;}
+.new{font-size:8px;padding:5px;background:#D3D3D3}
+.pending{font-size:8px;padding:5px;background:#616161; color:#ebebeb }
 
-#in-progress{font-size:8px;color:#000000;padding:5px;background:#E9E4D4;border-radius:5px; box-shadow:0px 0px 12px 0px #E9E4D4;}
-#ready-to-qa {font-size:8px;color:#000000;padding:5px;background:#A9A9A9;border-radius:5px; box-shadow:0px 0px 12px 0px #A9A9A9;}
-#qa-in-progress {font-size:8px;color:#000000;padding:5px;background:#FFC0CB;border-radius:5px; box-shadow:0px 0px 12px 0px 	#FFC0CB;}
-#qa-approved {font-size:8px;color:#000000;padding:5px;background:#CBC3E3;border-radius:5px; box-shadow:0px 0px 12px 0px 	#CBC3E3;}
-#delivered {font-size:8px;color:#000000;padding:5px;background:#d4af37 ;border-radius:5px; box-shadow:0px 0px 12px 0px 	#d4af37;}
-#completed {font-size:8px;color:#000000;padding:5px;background:#00FF00 ;border-radius:5px; box-shadow:0px 0px 12px 0px 	#00FF00;}
-#failed {font-size:8px;color:#FFFFFF;padding:5px;background:#FF00FF ;border-radius:5px; box-shadow:0px 0px 12px 0px 	#FF00FF;}
-#qa-rejected {font-size:8px;color:#FFFFFF;padding:5px;background:red ;border-radius:5px; box-shadow:0px 0px 12px 0px 	red;}
+.in-progress{font-size:8px;color:#000000;padding:5px;background:#ffde73;}
+.ready-to-qa {font-size:8px;color:#000000;padding:5px;background:rgb(253, 238, 162);}
+.qa-in-progress {font-size:8px;color:#ebebeb;padding:5px;background:#00C851;}
+.qa-approved {font-size:8px;color:#ebebeb;padding:5px;background:#33b5e5;}
+.delivered {font-size:8px;color:#ebebeb;padding:5px;background:#007E33;}
+.completed {font-size:8px;color:#ebebeb;padding:5px;background:#007E33;}
+.failed {font-size:8px;color:#FFFFFF;padding:5px;background:#ff4444;}
+.qa-rejected {font-size:8px;color:#FFFFFF;padding:5px;background:rgb(222 , 94 , 94) ;}
 
 
 

@@ -10,7 +10,7 @@
             <div class="col-md-4">
                 <label for="validationCustom01" class="form-label">Name</label>
                 <input type="text" class="form-control" id="validationCustom01" v-model="form.name">
-                <span  :class="'error'">{{ name }}</span>
+                <span  :class="'error'">{{name}}</span>
 
             </div>
             <div class="col-md-4">
@@ -24,7 +24,7 @@
                     <option :value="'INACTIVE'">INACTIVE</option>
 
                 </select>
-
+              <span  :class="'error'">{{status}}</span>
 
             </div><br><br><br><br><br><br>
             <div class="col-12">
@@ -59,15 +59,26 @@ export default {
             this.form.status = e.target.value;
         },
         submitDetails() {
+             if(this.form.name == ""){
+        this.name = 'Website name field is required'
+      }else if(this.form.status == ""){
+          this.status = 'Status name field is required'
+      }else{
+
+
             const url = this.$hostname+'websites';
             this.form.post(this.$hostname+'websites/add').then((response)=>{
-
+                if(response.data.status == 'error'){
+              this.name = response.data.message;
+            }else{
                 this.message = response.data.message;
                 this.alerts = true;
                	setTimeout(function(){
 					window.location.href = url;
 				},1000);
+            }
             });
+        }
         }
 
     }

@@ -7,18 +7,18 @@
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">First Name</label>
 											  <input type="text" class="form-control" v-model="form.first_name" placeholder="Enter First Name" id="first_name" name="first_name" >
-											  <span v-if="errorss.first_name">{{errorss.first_name[0]}}</span>
+											  <span class="error" v-if="errorss.first_name">{{errorss.first_name[0]}}</span>
 											</div>
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Last Name</label>
 											  <input type="text" class="form-control"  v-model="form.last_name" placeholder="Enter Last Name" id="last_name"  name="last_name" value="" >
-							  				  <span v-if="errorss.last_name">{{errorss.last_name[0]}}</span>
+							  				  <span class="error" v-if="errorss.last_name">{{errorss.last_name[0]}}</span>
 											</div>
 
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Email Address</label>
 											  <input type="email" class="form-control"  v-model="form.email"  placeholder="Enter email Address" id="email"  name="email" value="" >
-												<span v-if="errorss.email">{{errorss.email[0]}}</span>
+												<span class="error" v-if="errorss.email">{{errorss.email[0]}}</span>
 											</div>
 
 											<!--End First Row-->
@@ -26,7 +26,7 @@
 											<div class="col-md-4">
 											  <label for="validationCustom01" class="form-label">Phone Number</label>
 											  <input type="text" class="form-control"  v-model="form.phone_number"  placeholder="Enter Phone Number" id="phone_number"  name="phone_number" value="" >
-												  <span v-if="errorss.phone_number">{{errorss.phone_number[0]}}</span>
+												  <span class="error" v-if="errorss.phone_number">{{errorss.phone_number[0]}}</span>
 											
 											</div>
 																					<div class="col-md-4">
@@ -51,7 +51,7 @@
 													<option  v-for="(links, index) in all_issues"
                                             :key="index" :value="links.id">{{links.issue}}</option>
 												</select>
-												<span v-if="errorss.lead_issue_id">{{errorss.lead_issue_id[0]}}</span>
+												<span class="error" v-if="errorss.lead_issue_id">{{errorss.lead_issue_id[0]}}</span>
 
 											</div>
 
@@ -64,7 +64,7 @@
                                            		 :key="index" :value="links.id">{{links.name}}</option>
 												</select>
 
-												 <span v-if="errorss.url">{{errorss.url[0]}}</span>
+												 <span class="error" v-if="errorss.url">{{errorss.url[0]}}</span>
 											</div>
 
 

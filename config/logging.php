@@ -54,6 +54,12 @@ return [
             'ignore_exceptions' => false,
         ],
 
+        'crm' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/crm/user_logs.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),

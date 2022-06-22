@@ -74,6 +74,7 @@ class WriterController extends Controller
                                     $query->orderBy('sale_order_documents.id','desc');
 
                                 },
+
                                 'sale_order_documents'=>function($query){
 
                                         $query->select('sale_order_documents.sale_order_id',
@@ -133,7 +134,6 @@ class WriterController extends Controller
                         
                                 }
                               
-
                                 $result = $result->find($id);
 
                                 $lead_manager_admin = false;
@@ -171,6 +171,7 @@ class WriterController extends Controller
             'message'=>'Order not found Successfully',
 
             'lead_manager_admin'=>$lead_manager_admin,
+
             'is_qa' =>$is_qa
         ];
 
@@ -178,6 +179,7 @@ class WriterController extends Controller
 
             
             $data = [
+
                 'data' => $result,
 
                 'deadline' =>date('Y-m-d\TH:i', strtotime($result->deadline)),
@@ -187,6 +189,7 @@ class WriterController extends Controller
                 'message'=>'Order found Successfully',
 
                 'lead_manager_admin'=>$lead_manager_admin,
+                
                 'is_qa' =>$is_qa
             ];
 
@@ -339,15 +342,14 @@ class WriterController extends Controller
     }
 
     public function fetch_all_writers(){
-        $writers = User::select('users.id',DB::raw('CONCAT(first_name," ",last_name) AS name','is_lead','lead_id'),)
+        $writers = User::select('users.id',DB::raw('CONCAT(users.first_name," ",users.last_name) AS name','users.is_lead','users.lead_id'),)
         ->whereHas('roles', function($q){
             $q->whereIn('name', ['Writer','Writer Manager']);
             })->withCount(['order_assigns'=>function($query){
                 $query->where('order_assigns.status_id', '!=', 'QA Approved');
                 $query->where('order_assigns.status_id', '!=', 'Completed');
-                $query->where('order_assigns.status_id', '!=', 'Revoke');
-                $query->where('order_assigns.status_id', '!=', 'Deleted');
-            }])->get();
+                $query->where('order_assigns.status_id', '!=', 'Delivered');
+                   }])->get();
             
             return response()->json($writers);
     }
@@ -523,13 +525,31 @@ class WriterController extends Controller
 
         $order_assignments = $order_assign->where('sale_order_id',$id)->get();
 
-        if(in_array($request->title, ['QA Approved','Ready to QA','QA Reject'])){
+        if(in_array($request->title, ['Ready to QA'])){
 
             if(count($order_assignments)>=1){
 
                 foreach($order_assignments as $keyy=>$valueese){
 
                     if($valueese->status_id != 'Ready to QA'){
+
+                     $ready_to_qa = false;
+
+                    }
+                
+                }
+            }
+
+        }else
+
+
+        if(in_array($request->title, ['QA Approved'])){
+
+            if(count($order_assignments)>=1){
+
+                foreach($order_assignments as $keyy=>$valueese){
+
+                    if($valueese->status_id != 'QA Approved'){
 
                      $ready_to_qa = false;
 

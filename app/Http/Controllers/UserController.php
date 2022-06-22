@@ -24,6 +24,19 @@ class UserController extends Controller
          
     }
 
+    public function fetch_all_active_users(){
+        $users = new User();
+        $active_users= $users->select('users.*')
+        ->whereHas('roles', function($q) {
+            $q->where('roles.name','!=', 'Admin');
+            })->where('users.status','ACTIVE')->get();
+        return response()->json([
+            'result'=>$active_users,
+            'status'=>'success',
+            'message'=>'users found successfully'
+        ]);
+    }
+
     public function index(Request $request){
 
         if ($request->ajax()) {
@@ -58,7 +71,7 @@ class UserController extends Controller
             
             if($this->is_admin() != true){
 
-                // $data = $data->orWhere('users.id',Auth::user()->id);
+                // $data = $data->where('users.email','!=','admin@admin.com');
 
                 if(Auth::user()->roles[0]->type == 'manager'){
 
@@ -141,13 +154,8 @@ class UserController extends Controller
 
     public function get_all_users(){
 
-
-
          $users = User::where('first_name','!=','NULL')->where('last_name','!=','NULL')->get();
        
-
-
-
          if(Auth::user()->roles[0]->name != 'Admin'){
       
             if(Auth::user()->roles[0]->type == 'manager'){

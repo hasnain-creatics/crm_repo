@@ -11,6 +11,13 @@
                    &nbsp;
                 <li class="nav-item">
                     <a class="nav-link"  href="#"  :class="delivered ? 'active' : ''"    @click="order_delivered()">Delivered</a>
+                </li>         &nbsp;
+                 <li class="nav-item">
+                    <a class="nav-link"  href="#"  :class="failed ? 'active' : ''"    @click="order_failed()">Failed</a>
+                </li>    
+                    &nbsp;
+                 <li class="nav-item">
+                    <a class="nav-link"  href="#"  :class="completed ? 'active' : ''"    @click="order_completed()">Completed</a>
                 </li>    
      
             </ul>
@@ -204,9 +211,12 @@ export default {
         payment_status:"",
         name:"",
         url:"",
+        status:"",
       },
       ready_to_delivered: true,
       delivered: false,
+      failed: false,
+      completed: false,
       more_filter : false,
       less_filter : true,
       less_filterbutton :false,
@@ -295,13 +305,18 @@ export default {
 
        this.filter.date_end="";
 
-
        this.filter.date_start="";
 
        this.filter.date_end="";
-       
 
-       this.dataTables(this.filter_url);
+       this.filter_array.status = this.filter.status
+
+       var u = new URLSearchParams(this.filter_array).toString();
+
+       this.filtered_url = this.filter_url+"?"+u;
+
+       this.dataTables(this.filtered_url);
+
 
     },
     add_button(){
@@ -327,12 +342,14 @@ export default {
 
 
     readyToDeliver(){
+      this.failed = false;
+      
       this.ready_to_delivered = true;
       
       this.delivered = false;
-
+      this.completed = false;
       this.filter_array.status = "ready_to_delivered"
-
+      this.filter.status = this.filter_array.status;
        var u = new URLSearchParams(this.filter_array).toString();
 
        this.filtered_url = this.filter_url+"?"+u;
@@ -345,11 +362,51 @@ export default {
     order_delivered(){
       
       this.ready_to_delivered = false;
-      
+       this.failed = false;
       this.delivered = true;
-      
+           this.completed = false;
       this.filter_array.status = "delivered"
+this.filter.status = this.filter_array.status;
+       var u = new URLSearchParams(this.filter_array).toString();
 
+       this.filtered_url = this.filter_url+"?"+u;
+
+       this.dataTables(this.filtered_url);
+
+    },
+    
+    order_failed(){
+      
+      this.ready_to_delivered = false;
+      
+      this.completed = false;
+      this.delivered = false;
+
+      this.failed = true;
+      
+      this.filter_array.status = "failed"
+this.filter.status = this.filter_array.status;
+       var u = new URLSearchParams(this.filter_array).toString();
+
+       this.filtered_url = this.filter_url+"?"+u;
+
+       this.dataTables(this.filtered_url);
+
+    },
+
+    
+    order_completed(){
+      
+      this.ready_to_delivered = false;
+      
+      this.delivered = false;
+
+      this.failed = false;
+
+      this.completed = true;
+      
+      this.filter_array.status = "completed"
+this.filter.status = this.filter_array.status;
        var u = new URLSearchParams(this.filter_array).toString();
 
        this.filtered_url = this.filter_url+"?"+u;

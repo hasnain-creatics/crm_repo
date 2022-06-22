@@ -185,7 +185,7 @@ class GlobalDatatables
 
             }
             
-            // $btn .= "&nbsp;&nbsp;<i class='fa fa-info-circle' aria-hidden='true' onclick='OrderProgress(".$row->id.")' style='cursor:pointer' title='Order Runtime Progress'></i>";
+            $btn .= "&nbsp;&nbsp;<i class='fa fa-comments' aria-hidden='true' onclick='orderMessages(".$row->id.")' style='cursor:pointer' title='Order Messages'></i>";
             
             return $btn;
             
@@ -243,23 +243,23 @@ class GlobalDatatables
             }
             
             $btn .= "&nbsp;&nbsp;<i class='fa fa-info-circle' aria-hidden='true' onclick='OrderFullDetails(".$row->id.")' style='cursor:pointer' title='Task Details'></i>";
-            
+            $btn .= "&nbsp;&nbsp;<i class='fa fa-comments' aria-hidden='true' onclick='orderMessages(".$row->id.")' style='cursor:pointer' title='Order Messages'></i>";
             return $btn;
             
         })->rawColumns(['action','created_at','deadline','order_status'])->make(true);
     }
 
     public function writers($data){
-
-
-            $all_writers = User::select('users.id',
+      
+        
+        $all_writers = User::select('users.id',
                         DB::raw('CONCAT(users.first_name," ",users.last_name) AS name'),'users.is_lead','users.lead_id')
                         ->whereHas('roles', function($q){
                             $q->whereIn('roles.name', ['Writer']);
             })->withCount(['order_assigns'=>function($query){
+                $query->where('order_assigns.status_id', '!=', 'QA Approved');
                 $query->where('order_assigns.status_id', '!=', 'Completed');
-                $query->where('order_assigns.status_id', '!=', 'Revoke');
-                $query->where('order_assigns.status_id', '!=', 'Deleted');
+                $query->where('order_assigns.status_id', '!=', 'Delivered');
             }])->get();
         return Datatables::of($data)->editColumn('order_status',function($row){
 
@@ -367,6 +367,17 @@ class GlobalDatatables
                 }
 
 
+                if($row->order_status == 'Re-pending'){
+
+                    $html .="<option value='Re-pending' selected >Re-pending</option>";
+
+                }else{
+
+                    $html .="<option value='Re-pending'>Re-pending</option>";
+
+                }
+
+
 
                 $html .="</select>";
 
@@ -409,7 +420,7 @@ class GlobalDatatables
 
             $btn = "";
             $btn .= "<a href='".route('writers.task_details',$row->id)."' class='fa fa-edit' aria-hidden='true' title='Edit'></a>&nbsp;";
-
+            $btn .= "&nbsp;&nbsp;<i class='fa fa-comments' aria-hidden='true' onclick='orderMessages(".$row->id.")' style='cursor:pointer' title='Order Messages'></i>";
             return $btn;
             
         })->rawColumns(['action','created_at','deadline','order_status','documents','assign_to','order_assigns'])->make(true);

@@ -18,7 +18,8 @@
 											 	<span  :class="'error'" v-if="errorss.customer_email">{{errorss.customer_email[0]}}</span>
 											</div>
 
-											<div class="col-md-4">
+											<div class="col-md-
+											4">
 											  <label for="validationCustom01" class="form-label">Select Customer Type</label>
 											  <select   @change="customer_type" class="form-select border" id="customer_type" name="customer_type" >
 												<option selected disabled value="">Choose...</option>
@@ -98,7 +99,7 @@
 
 												<div class="col-md-12">
 														<label for="validationCustom01" class="form-label">Amount in Dollar</label>
-														<input type="text" class="form-control"  @change="change_amount_dollar" :value="form.dollar_amount"  id="amount_doller"  name="amount_doller"  :readonly="true">
+														<input type="text" class="form-control"  :value="form.dollar_amount"  id="amount_doller"  name="amount_doller"  :readonly="true">
 														<span  :class="'error'" v-if="errorss.amount_doller">{{errorss.amount_doller[0]}}</span>
 												</div>
 
@@ -388,8 +389,8 @@ export default {
 	async change_receive_amount(e){
 
 		// console.log(parseFloat(this.form.amount) , parseFloat(e.target.value))
-		if(parseFloat(this.form.amount) < parseFloat(e.target.value)){
-			alert('receive amount must be less then or equal to the order amount');
+		if(parseFloat(this.form.dollar_amount) < parseFloat(e.target.value)){
+			alert('receive amount must be less then or equal to the order amount in dollar');
 			e.target.value = 0;	
 		}
 
@@ -423,7 +424,8 @@ export default {
 		  'Content-Type': 'multipart/form-data' 
 
 		  };
-	
+		this.form.dollar_amount = isNaN((this.form.amount/this.currency_rate).toFixed(2)) == true ? 0 : (this.form.amount/this.currency_rate).toFixed(2); 	
+
 		await this.form.post(this.$hostname+'orders/insert',null,{headers}).then((response)=>{
 
 			var redirect_url =this.$hostname+'orders';
@@ -458,9 +460,9 @@ export default {
 
 	async processFile(event) {
 
-    	let file = event.target.files;
+    	// let file = event.target.files;
 
-      	let reader = new FileReader();  
+      	// let reader = new FileReader();  
 
 		this.form.files = event.target.files;
 
@@ -468,9 +470,9 @@ export default {
 	  
 	async processInvoice(event) {
 
-    	let file = event.target.files;
+    	// let file = event.target.files;
 
-     	let reader = new FileReader();  
+     	// let reader = new FileReader();  
 
 		this.form.invoice_files = event.target.files;
 

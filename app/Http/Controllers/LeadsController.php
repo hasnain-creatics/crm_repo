@@ -435,10 +435,31 @@ class LeadsController extends Controller
 
     public function fetch_lead(Leads $lead,$id){
 
-        $lead_deatils= $lead->find($id);
+        if($this->is_admin() != true){
+
+            $lead = $lead->join('users','users.id','=','leads.created_by')->where('leads.transfered_id',Auth::user()->id);
+
+            if(Auth::user()->roles[0]->type == 'manager'){
+
+                $lead = $lead->orWhere('users.assigned_to',Auth::user()->id);
+
+            }else{
+                
+                if(Auth::user()->is_lead){
+
+                    $lead = $lead->orWhere('users.lead_id',Auth::user()->id);
+ 
+                }
+            }
+          
+        }
+        
+        $lead_deatils= $lead->select('leads.*')->find($id);
         
         if($lead_deatils){
+
             $status = 200;
+
         }else{
 
             $status = 404;

@@ -59,18 +59,21 @@ class HomeController extends Controller
         $data = new Orders();
 
         $data = $data->select('sale_orders.*')->with(['order_status','order_assigns']);
+
         if(!isset($unassigned)){
+
             if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type == 'manager' || Auth::user()->is_lead == 1){
     
                 $data = $data->whereIn('sale_orders.id',OrderAssigns::select('sale_order_id')->get()->toArray());
-            }  
-            else
-            {
-                $data = $data->whereIn('sale_orders.id',OrderAssigns::select('sale_order_id')
-                             ->where('user_id',Auth::user()->id)
-                             ->get()->toArray());
+           
+            }else{
+               
+                $data = $data->whereIn('sale_orders.id',OrderAssigns::select('sale_order_id')->where('user_id',Auth::user()->id)->get()->toArray());
+
             }
+
         } 
+
         return $data;
 
     }
@@ -129,10 +132,9 @@ class HomeController extends Controller
   
      }
 
- 
      public function writer_feedback_tasks(){
-
-        $data = $this->task_details()->where('sale_orders.order_status','Feedback');
+        // $task->count();
+        $data = $this->task_details()->join('order_feedback','order_feedback.order_id','sale_orders.id')->groupBy('order_feedback.order_id');
  
         $data = $data->paginate(4);
  
@@ -140,31 +142,42 @@ class HomeController extends Controller
     }
 
     public function sales_counters($month=null,$date=null){
-
-        $sale_result = $this->sales_result($month=null,$date=null)->get();
         
+        if(isset($month)){
+ 
+            $sale_result = $this->sales_result($month,null)->get();
+
+        }
+
+        if(isset($date)){
+  
+            $sale_result = $this->sales_result(null,$date)->get();
+
+        }
+
         $total_amount = collect([]);
 
         collect($sale_result)->each(function($row) use ($total_amount){
 
             $array = [];
             
-            $array['amount']     =$row->amount;
+            $array['amount']     = $row->dollar_amount;
 
             if($row->payment_status == 'PAID'){
 
-                $array['amount_received']    = $row->amount;
+                $array['amount_received']    = $row->dollar_amount;
 
             }else{
                 
-                $array['amount_received']    = $row->amount_received;
+                $array['amount_received']    = $row->dollar_amount;
+                
             }
 
-            $array['feedback']   =$row->feedback; 
-    
-                if($row->order_status == 'Delivered'){
+                $array['feedback']   = DB::table('order_feedback')->where('order_id',$row->id)->groupBy('order_id')->count(); 
 
-                $array[ 'deliveries'] = 1;
+                if($row->order_status != 'Delivered' && $row->order_status != 'Completed' && $row->order_status != 'Failed'){
+
+                   $array[ 'deliveries'] = 1;
 
                 }
 
@@ -179,37 +192,38 @@ class HomeController extends Controller
                 
         $today_sale = $this->task_details('todays_sales');
 
+        if($this->is_admin() != true){
+
+            $today_sale = $today_sale->join('users','users.id','=','sale_orders.created_by_user_id');
+
+            $auth = Auth::user();
+            $today_sale = $today_sale->where(function($query) use ($auth){
+               $query= $query->where('sale_orders.created_by_user_id',$auth->id);
+                if($auth->roles[0]->type == 'manager'){
+                    $query= $query->orWhere('users.assigned_to',$auth->id);
+                }else{
+                    if($auth->is_lead){
+                        $query= $query->orWhere('users.lead_id',$auth->id);
+                    }
+                }
+              
+            });
+           
+        }
+
         if(isset($date)){
 
-            $today_sale = $today_sale->whereDate('sale_orders.created_at', Carbon::today());
+            $today_sale = $today_sale->whereDate('sale_orders.deadline', Carbon::today());
 
         }
         
         if(isset($month)){
 
-            $today_sale = $today_sale->whereMonth('sale_orders.created_at', date('m'));
+            $today_sale = $today_sale->whereMonth('sale_orders.deadline', date('m'));
 
         }
 
-        if($this->is_admin() != true){
-
-            $today_sale = $today_sale->join('users','users.id','=','sale_orders.created_by_user_id');
-            
-            if(Auth::user()->roles[0]->type == 'manager'){
-
-                $today_sale = $today_sale->orWhere('users.assigned_to',Auth::user()->id);
-
-            }else{
-                
-                if(Auth::user()->is_lead){
-
-                    $today_sale = $today_sale->orWhere('users.lead_id',Auth::user()->id);
- 
-                }
-            }
-          
-        }
-       return $today_sale;
+        return $today_sale;
 
     }
 
@@ -227,17 +241,16 @@ class HomeController extends Controller
 
                     $result['in_progress']  = $task->where('sale_orders.order_status','In Progress')->count();
 
-                    $result['feedback']     = $task->where('sale_orders.order_status','Feedback')->count();
+                    $result['feedback']     = $task->join('order_feedback','order_feedback.order_id','sale_orders.id')->groupBy('order_feedback.order_id')->count();
 
-                    $result['ready_to_qa']   = $this->task_details('ready to qa')->where('sale_orders.order_status','Ready to QA')->count();
+                    $result['ready_to_qa']  = $this->task_details('ready to qa')->where('sale_orders.order_status','Ready to QA')->count();
                 
             }
-            
-            if(Auth::user()->roles[0]->name == 'Sale Agent' || Auth::user()->roles[0]->name =='Sale Manager'  ){
-
-                // sales_counters($month=null,$date=null){
+         
+            if(Auth::user()->roles[0]->name == 'Sale Agent' || Auth::user()->roles[0]->name =='Sale Manager' ){
+                
                 $sales_result = $this->sales_counters(null,true);
-            
+                
                 $result['todays_sale'] = $sales_result->sum('amount');
 
                 $result['todays_paid'] = $sales_result->sum('amount_received');
@@ -257,7 +270,6 @@ class HomeController extends Controller
 
                 $result['month_deliveries'] = $month_result->sum('deliveries');
    
-                
             }
         
             if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type === 'manager' || Auth::user()->is_lead == 1){
@@ -276,12 +288,43 @@ class HomeController extends Controller
 
 
     public function sale_urgent_orders(){
-
+        // if($row->order_status != 'Delivered' && $row->order_status != 'Completed' && $row->order_status != 'Failed'){
         if(Auth::user()->roles[0]->name == 'Sale Agent' || Auth::user()->roles[0]->name =='Sale Manager'){
 
             $sales_result =  $this->sales_result(null,null)
                                   ->where('sale_orders.order_status','!=','Delivered')
                                   ->where('sale_orders.is_urgent','=',1)->paginate(5);
+            return response()->json($sales_result);
+            
+     
+        }
+
+    }
+
+    
+
+    public function today_deliverable(){
+
+        if(Auth::user()->roles[0]->name == 'Sale Agent' || Auth::user()->roles[0]->name =='Sale Manager'){
+            // hereNotIn('book_price', [100,200])->get();
+     
+
+            $sales_result =  $this->sales_result(null,true)
+                                  ->whereNotIn('sale_orders.order_status',['Delivered','Completed','Failed'])->paginate(5);
+            return response()->json($sales_result);
+            
+     
+        }
+
+    }
+
+
+    public function monthly_deliverable(){
+
+        if(Auth::user()->roles[0]->name == 'Sale Agent' || Auth::user()->roles[0]->name =='Sale Manager'){
+
+            $sales_result =  $this->sales_result(true,null)
+                                  ->whereNotIn('sale_orders.order_status',['Delivered','Completed','Failed'])->paginate(5);
             return response()->json($sales_result);
             
      

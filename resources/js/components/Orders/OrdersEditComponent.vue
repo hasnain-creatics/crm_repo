@@ -96,7 +96,7 @@
 
 												<div class="col-md-12">
 											  <label for="validationCustom01" class="form-label">Amount in Dollar</label>
-												<input type="text" class="form-control" @change="change_amount_dollar" :value="form.dollar_amount"  :readonly="true" >
+												<input type="text" class="form-control" :value="form.dollar_amount"  :readonly="true" >
 											  	<span  :class="'error'" v-if="errorss.amount_doller">{{errorss.amount_doller[0]}}</span>
 											</div>
 
@@ -118,12 +118,11 @@
 											</div>
 
 											<!--End Fifth Row-->
-
 										<div class="col-md-6">
 											  <label for="validationCustom01" class="form-label">Website</label>
 											  <select name="" class="form-select border" @change="customerWebsite"id="">
 												  	<option value=""></option>
-													  <option :value="web.name" v-for="web in websites" :key="web.id" :selected="web.name == form.website ? 'selected' :''">
+													  <option :value="web.name" v-for="web in websites" :key="web.id" :selected="web.id == form.website ? 'selected' :''">
 														  {{web.name}}
 													  </option>
 											  </select>
@@ -414,7 +413,7 @@ export default {
 	},
 	async change_receive_amount(e){
 
-		if(parseFloat(this.form.amount) < parseFloat(e.target.value)){
+		if(parseFloat(this.form.dollar_amount) < parseFloat(e.target.value)){
 			alert('receive amount must be less then or equal to the order amount');
 			e.target.value = 0;	
 		}
@@ -441,7 +440,7 @@ export default {
 	},
 
   async orderCreate() {
-		
+			this.form.dollar_amount = isNaN((this.form.amount/this.currency_rate).toFixed(2)) == true ? '0' : (this.form.amount/this.currency_rate).toFixed(2) 		
 	  const headers = {
 		  
 		  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),

@@ -11,6 +11,15 @@
     </div>
 </div>
 <div class="row">
+                        @if(Session::has('message'))
+                        <div class="alert alert-danger">
+                            
+                            {{ Session::get('message') }}
+                            @php
+                                Session::forget('message');
+                            @endphp
+                        </div>
+                        @endif
     <div class="col-12">
         <div class="card">
             <div class="card-header">

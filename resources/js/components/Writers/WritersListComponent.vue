@@ -165,17 +165,29 @@ export default {
 
     reset_button(){
 
+       var filter_array = this.filter_array;    
+
        this.filter.order_id="";
+       
+       this.filter_array.order_id="";
 
-       this.filter.customer_email="";
+      if(this.new_tab){
 
-       this.filter.payment_status="";
+        this.filter_array.new_tab = "new";   
 
-      this.filter_array.new_tab = "new";    
+      }
+
+      if(this.all_tab){
+
+        this.filter_array.all_tab = "all";   
+
+      }
       
-      this.filter_array.all_tab = "";    
+      const u = new URLSearchParams(filter_array).toString();
 
-       this.dataTables(this.filter_url,this.visible);
+      this.filtered_url = this.filter_url+"?"+u;
+
+      this.dataTables(this.filtered_url,this.visible);
 
     },
     dataTables(search_url,clmn_visible){
