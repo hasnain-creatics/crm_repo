@@ -311,8 +311,7 @@ class GlobalDatatables
                     $html .="<option value='Ready to QA'>Ready to QA</option>";
 
                 }
-                if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type === 'manager' || Auth::user()->is_lead == 1){
-
+  
                     if($row->order_status == 'QA Approved'){
 
                         $html .="<option value='QA Approved' selected >QA Approved</option>";
@@ -322,7 +321,28 @@ class GlobalDatatables
                         $html .="<option value='QA Approved' >QA Approved</option>";
 
                     }
-                }
+
+                    if($row->order_status == 'QA Rejected'){
+
+                        $html .="<option value='QA Rejected' selected >QA Rejected</option>";
+
+                    }else{
+
+                        $html .="<option value='QA Rejected' >QA Rejected</option>";
+
+                    }
+
+
+                    if($row->order_status == 'QA In Progress'){
+
+                        $html .="<option value='QA In Progress' selected >QA In Progress</option>";
+
+                    }else{
+
+                        $html .="<option value='QA In Progress' >QA In Progress</option>";
+
+                    }
+
                    
                 if($row->order_status == 'Feedback'){
 

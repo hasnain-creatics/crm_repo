@@ -532,7 +532,8 @@
                   </div>
 
                   <div v-if="lead_manager_admin">
-                    <i class="fa fa-trash" title="remove task" style="cursor: pointer"
+                   
+                    <i v-if="((assign.status_id == 'New' || assign.status_id == 'Pending') && selected != 'Delivered') " class="fa fa-trash" title="remove task" style="cursor: pointer"
                       @click="delete_assigned_user(assign.assign_id)"></i>
 
                   </div>
@@ -769,8 +770,28 @@ export default {
       this.rchecked2 = false,
       this.rchecked3 = false,
       this.rchecked4 = false,
+
       this.myModel   = true;
+      
+      this.show_ratings(user_id,this.task_id)
     },
+
+    async show_ratings(user_id,order_id){
+
+      axios.get(this.$hostname + "writers/user_ratings/"+user_id+"/"+order_id).then((response) => {
+        if(response.data.status == 'success'){
+          this.ratings.rating.compliance_and_relevance = response.data.result.compliance_and_relevance;
+          this.ratings.rating.overall_quality_of_the_content = response.data.result.overall_quality_of_the_content;
+          this.ratings.rating.referencing = response.data.result.referencing;
+          this.ostars_rating(response.data.result.overall_quality_of_the_content);
+          this.cstars_rating(response.data.result.compliance_and_relevance);
+          this.rstars_rating(response.data.result.referencing);
+        }
+      });
+
+      
+    },
+
     async assign_writer(e, ele) {
 
       const _this = this;
@@ -822,12 +843,8 @@ export default {
 
                     swal('Congratulations!', response.message, response.success);
 
-                    // reload_page = 'yes';
                     _this.show_task_details();
-                    // setTimeout(function () {
-                    //   location.reload(true);
-                    // }, 1000);
-                    // $( "#lead_docs_table" ).load(window.location.href + " #lead_docs_table" );
+               
 
                   }
 
@@ -881,17 +898,24 @@ export default {
     async submit_ratings() {
 
       this.ratings.order_id = this.task_id;
-
       const headers = {
         "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
       };
-      if (this.ratings.rating) {
 
+      if (this.ratings.rating) {
+        
         await axios.post(this.$hostname + "writers/submit_ratings", this.ratings, { headers }).then((response) => {
 
           if (response.data.status == 'success') {
-
+            
+            this.ratings.rating.compliance_and_relevance = 0;
+           
+            this.ratings.rating.overall_quality_of_the_content = 0;
+            
+            this.ratings.rating.referencing = 0;
+         
             swal('Success!', response.data.message, response.data.status);
+
           }
         });
       } else {
@@ -906,18 +930,16 @@ export default {
     },
 
     async ostars_rating(ele) {
-
-      var rating = 0;
-      // this.ratings.rating = ele;
+      var orating = 0;
       if (ele == 1) {
-        rating = 1;
+        orating = 1;
         this.ochecked1 = true;
       } else {
         this.ochecked1 = false;
       }
 
       if (ele == 2) {
-        rating = 2
+        orating = 2
         this.ochecked1 = true;
         this.ochecked2 = true;
       } else {
@@ -925,7 +947,7 @@ export default {
       }
 
       if (ele == 3) {
-        rating = 3
+        orating = 3
         this.ochecked1 = true;
         this.ochecked2 = true;
         this.ochecked3 = true;
@@ -934,7 +956,7 @@ export default {
       }
 
       if (ele == 4) {
-        rating = 4
+        orating = 4
         this.ochecked1 = true;
         this.ochecked2 = true;
         this.ochecked3 = true;
@@ -944,23 +966,23 @@ export default {
       }
 
 
-      this.ratings.rating.overall_quality_of_the_content = rating;
+      this.ratings.rating.overall_quality_of_the_content = orating;
     },
 
     async cstars_rating(ele) {
 
 
       // this.ratings.rating = ele;
-      var rating = 0;
+      var crating = 0;
       if (ele == 1) {
-        rating = 1
+        crating = 1
         this.cchecked1 = true;
       } else {
         this.cchecked1 = false;
       }
 
       if (ele == 2) {
-        rating = 2
+        crating = 2
         this.cchecked1 = true;
         this.cchecked2 = true;
       } else {
@@ -968,7 +990,7 @@ export default {
       }
 
       if (ele == 3) {
-        rating = 3
+        crating = 3
         this.cchecked1 = true;
         this.cchecked2 = true;
         this.cchecked3 = true;
@@ -977,7 +999,7 @@ export default {
       }
 
       if (ele == 4) {
-        rating = 4
+        crating = 4
         this.cchecked1 = true;
         this.cchecked2 = true;
         this.cchecked3 = true;
@@ -986,15 +1008,15 @@ export default {
         this.cchecked4 = false;
       }
       // console.log(this.ratings.rating,rating);
-      this.ratings.rating.compliance_and_relevance = rating;
+      this.ratings.rating.compliance_and_relevance = crating;
     },
 
     async rstars_rating(ele) {
 
-      var rating = 0;
+      var rrating = 0;
       if (ele == 1) {
         this.rchecked1 = true;
-        rating = 1;
+        rrating = 1;
       } else {
         this.rchecked1 = false;
       }
@@ -1002,7 +1024,7 @@ export default {
       if (ele == 2) {
         this.rchecked1 = true;
         this.rchecked2 = true;
-        rating = 2;
+        rrating = 2;
       } else {
         this.rchecked2 = false;
       }
@@ -1011,7 +1033,7 @@ export default {
         this.rchecked1 = true;
         this.rchecked2 = true;
         this.rchecked3 = true;
-        rating = 3;
+        rrating = 3;
       } else {
         this.rchecked3 = false;
       }
@@ -1021,12 +1043,12 @@ export default {
         this.rchecked2 = true;
         this.rchecked3 = true;
         this.rchecked4 = true;
-        rating = 4;
+        rrating = 4;
       } else {
         this.rchecked4 = false;
       }
 
-      this.ratings.rating.referencing = rating;
+      this.ratings.rating.referencing = rrating;
       //  rating: {
       //           compliance_and_relevance: 0,
       //           overall_quality_of_the_content: 0,

@@ -245,7 +245,7 @@ export default {
 
 			this.form = this.order.data
 
-			this.form.payment_status == 'PARTIALLY PAID' ? this.partial = true : this.partial = true;
+			this.form.payment_status == 'PARTIALLY PAID' ? this.partial = true : this.partial = false;
 
 			this.deadline = this.order.deadline;
 			

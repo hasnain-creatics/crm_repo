@@ -938,9 +938,9 @@ $(document).on('click','#upload_video_btn',function(){
 
             $('#order_message_modal').modal('show');
                 // fetch_all_messages(message_order_id,current_user);
-               // window.setInterval(function(){
+                window.setInterval(function(){
                     fetch_all_messages(message_order_id,current_user);
-                //}, 10000);
+                }, 10000);
                
         }
     
@@ -1056,8 +1056,7 @@ function fetch_all_messages(ele,current_user){
                     if(result[i].users){
                         html +="<div class='float-end' style='width:100%';>";
                             html +='<div class="message-feed right float-end">';
-                            html+='<small class="mf-date">'+result[i].users.first_name+'</small>';
-                            html +='<div class="float-end ps-2" style="margin-top:20px">';
+                            html +='<div class="float-end ps-2">';
                             if(result[i].users.profile_image_id){
                                 html +='<img src="'+site_url+'/storage/app/'+result[i].users.profile_image_id+'" alt="" class="avatar avatar-md brround">';
                             }else{
@@ -1083,8 +1082,7 @@ function fetch_all_messages(ele,current_user){
                     if(result[i].users){
                         html +="<div class='float-start' style='width:100%';>";
                             html +='<div class="message-feed media receivers float-start" >';
-                            html+='<small class="mf-date">'+result[i].users.first_name+'</small>';
-                            html +='<div class="float-end ps-2" style="margin-top:20px">';
+                            html +='<div class="float-end ps-2">';
                             if(result[i].users.profile_image_id){
                                 html +='<img src="'+site_url+'/storage/app/'+result[i].users.profile_image_id+'" alt="" class="avatar avatar-md brround">';
                             }else{
@@ -1141,6 +1139,34 @@ function select_users(ele){
 
     });
 
+}
+
+
+function rating_details(){
+    
+    $.ajax({
+
+        type: "get",
+    
+        url : main_url+'/dashboard/rating_details/',
+    
+        dataType: "html",
+
+        beforeSend:function(){
+        	// $('.watch-btn-glbl').addClass('btn-loaders btn-icon');
+        },
+    
+        success:function(response){
+    
+            // $('.watch-btn-glbl').removeClass('btn-loaders btn-icon');
+            
+            $('#all-modals').html(response);
+
+            $('#ratings_modal').modal('show');
+        }
+    
+    });
+    
 }
 
 $(document).on('click','.select_user',function(){

@@ -70,6 +70,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
     Route::get('/dashboard/today_deliverable', [App\Http\Controllers\HomeController::class, 'today_deliverable'])->name('dashboard.today_deliverable');
 
     Route::get('/dashboard/monthly_deliverable', [App\Http\Controllers\HomeController::class, 'monthly_deliverable'])->name('dashboard.monthly_deliverable');
+
+    Route::get('/dashboard/rating_details', [App\Http\Controllers\HomeController::class, 'rating_details'])->name('dashboard.rating_details');
     
     Route::group(['prefix'=>'roles'],function(){
 
@@ -355,8 +357,11 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
         Route::post('/user_task_details_update/{id}',[WriterController::class,'user_task_details_update'])->name('writers.user_task_details_update');
    
         Route::post('/delete_assigned_user',[WriterController::class,'delete_assigned_user'])->name('writers.delete_assigned_user');
+        
+        Route::get('/user_ratings/{user_id}/{order_id}',[WriterController::class,'user_ratings'])->name('writers.user_ratings');
 
         Route::post('/submit_ratings',[WriterController::class,'submit_ratings'])->name('writers.submit_ratings');
+
         
      });
 

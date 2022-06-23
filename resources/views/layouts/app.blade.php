@@ -32,6 +32,19 @@
 								<div class="d-flex order-lg-2">
 								
 								
+								<div class="dropdown country-selector d-flex">
+												
+								<span class="header-avatar1">
+														
+														<span class="fs-14 font-weight-semibold">
+
+														
+														<span  class="btn pull-right " style="height:30px; width:auto;margin-top:10px"  onClick="rating_details()">
+														<i class="fa fa-star" style="color:red;"></i><i class="fa fa-star" style="color:red;"></i><i class="fa fa-star" style="color:red;"></i><i class="fa fa-star"></i><i class="fa fa-star"></i></span>
+														</span>
+													</span>
+											
+								</div>	
 									
 							@if(Auth::user()->roles[0]->name =='Admin')
 								
@@ -51,18 +64,18 @@
 											
 											</div>
 
-          									<div class="dropdown country-selector d-flex">
+										<div class="dropdown country-selector d-flex">
 												
-													<span class="header-avatar1">
+												<span class="header-avatar1">
+													
+													<span class="fs-14 font-weight-semibold btn-animation">
+													<button type="button" class="btn btn-primary pull-right watch-btn-glbl" style="height:30px; width:auto;margin-top:10px"  onClick="video_listing('<?=Request::segment(2)?>')">
+													<i class="fa fa-youtube-play"></i> Tutorial</button>
 														
-														<span class="fs-14 font-weight-semibold btn-animation">
-														<button type="button" class="btn btn-primary pull-right watch-btn-glbl" style="height:30px; width:auto;margin-top:10px"  onClick="video_listing('<?=Request::segment(2)?>')">
-														<i class="fa fa-youtube-play"></i> Tutorial</button>
-															
-													</span>
-											
-											
-											</div>
+												</span>
+										
+										
+										</div>
 										@elseif(Auth::user()->roles[0]->name !='Admin')	
 											<div class="dropdown country-selector d-flex">
 												<a href="" class="">

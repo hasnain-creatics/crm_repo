@@ -11,4 +11,10 @@ class UserRatings extends Model
     protected $table = 'user_ratings';
     protected $id = 'id';
     protected $fillable=['*'];
+
+    public function orders(){
+        return $this->hasOne(Orders::class,'id','order_id')->select('order_id','id');
+    }
+
+  
 }

@@ -383,6 +383,85 @@ class HomeController extends Controller
 
     }
 
+    public function rating_details(){
 
+                $order_ratings =  UserRatings::select(DB::raw('count(user_ratings.id) as user_rating_id, order_id'));
+
+                if($this->is_admin() != true){
+                    
+                //     $order_ratings = $order_ratings->join('users','users.id','=','user_ratings.user_id');
+        
+                //     if(Auth::user()->roles[0]->type == 'manager'){
+        
+                //         $order_ratings = $order_ratings->orWhere('users.assigned_to',Auth::user()->id);
+        
+                //     }else{
+                        
+                //         if(Auth::user()->is_lead){
+        
+                //             $order_ratings = $order_ratings->orWhere('users.lead_id',Auth::user()->id);
+                     
+         
+                //         }
+                //     }
+
+                    $order_ratings = $order_ratings->join('order_assigns','order_assigns.sale_order_id','=','user_ratings.order_id');
+
+                    $order_ratings = $order_ratings->where('order_assigns.user_id','=',Auth::user()->id);
+
+                }
+
+
+                $order_ratings = $order_ratings->groupBy('user_ratings.order_id')
+                      ->get(15);
+                $user_order_ratings = collect([]);
+                collect($order_ratings)->each(function($row) use ($user_order_ratings){
+                        $user_ratings['order_id'] = $row->order_id;
+                        $result = UserRatings::select('user_ratings.rating','user_ratings.order_id','users.id','users.first_name','users.last_name')
+                                                        ->leftJoin('users','users.id','=','user_ratings.user_id')
+                                                ->where('user_ratings.order_id',$row->order_id)
+                                                ->get();
+                        $result_record = [];
+                        $result_record['order_id'] =  $row->order_id;
+                        foreach($result as $key=>$value){
+                            $record = [];
+                            $record['user_ratings'] = $value->rating;
+                            $record['order_id'] = $value->order_id;
+                            $record['first_name'] = $value->first_name;
+                            $record['last_name'] = $value->last_name;
+                            $decode_ratings = json_decode($value->rating);
+                            $record['compliance_and_relevance'] = $decode_ratings->compliance_and_relevance;
+                            $record['overall_quality_of_the_content'] = $decode_ratings->overall_quality_of_the_content;
+                            $record['referencing'] = $decode_ratings->referencing;
+                            $result_record['results'][] =  $record;
+                        }
+                    $user_order_ratings->push($result_record);
+                });
+                $user_ratings = $user_order_ratings;
+                // echo '<pre>';
+                // print_r($user_ratings);die;
+
+        // $all_ratings = [];
+
+        // foreach($user_ratings as $key=>$value){
+
+        //     $ratings = [];
+
+        //     $json_record = json_decode($value->rating);
+
+        //     $ratings['compliance_and_relevance'] = $json_record->compliance_and_relevance;
+
+        //     $ratings['overall_quality_of_the_content'] = $json_record->overall_quality_of_the_content;
+
+        //     $ratings['referencing'] = $json_record->referencing;
+
+        //     $all_ratings[] = $ratings;
+
+        // }
+    
+        $data['user_ratings'] = $user_ratings;
+  
+        return view('modals.dashboard.rating_details',$data);
+    }
 
 }

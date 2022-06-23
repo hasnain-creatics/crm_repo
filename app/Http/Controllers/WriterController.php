@@ -15,6 +15,7 @@ use App\Models\UserOrderTaskDetails;
 use App\Models\Documents;
 use App\Models\Sale_Order_Documents as OrderDocuments;
 use Illuminate\Support\Facades\Artisan;
+use App\Models\UserRatings;
 class WriterController extends Controller
 {
 
@@ -511,14 +512,7 @@ class WriterController extends Controller
 
         }
         
-        if($title == "QA Approved"){
-
-            $order_documents->whereIn('id', $request->select_files)->update([
-                                                                            'doc_status'=>'Sent',
-                                                                            'updated_at'=>date('Y-m-d H:i:s')]);
-             
-         }
-
+       
         $order = new OrderAssigns();
       
         $order_assign = new OrderAssigns();
@@ -570,7 +564,15 @@ class WriterController extends Controller
         if($check_already_status[0]->title != $title){
 
             if($ready_to_qa == true){
-              
+
+                if($title == "QA Approved"){
+
+                    $order_documents->whereIn('id', $request->select_files)->update([
+                                                                                    'doc_status'=>'Sent',
+                                                                                    'updated_at'=>date('Y-m-d H:i:s')]);
+                     
+                 }
+        
                 $statuses->type = 'task';
        
                 $statuses->title = $request->title;
@@ -819,7 +821,9 @@ class WriterController extends Controller
          
                                 if(isset($_GET['new_tab']) && !empty($_GET['new_tab'])){
                               
-                                    $data = $data->whereNotIn('sale_orders.id',OrderAssigns::select('sale_order_id')->get()->toArray());
+                                    $data = $data->whereNotIn('sale_orders.id',OrderAssigns::select('sale_order_id')
+                                                                    ->get()
+                                                                    ->toArray())->where('sale_orders.order_status','=','New');
                                                   $data = $data->orderBy('sale_orders.id','DESC');    
                                     
                     
@@ -857,6 +861,21 @@ class WriterController extends Controller
 
     }
 
+    public function user_ratings($user_id,$order_id){
+        
+        $user_ratings = new UserRatings();
+        $result = $user_ratings->where(['user_id'=>$user_id,'order_id'=>$order_id])->first();
+        $data['status'] = 'error';
+        $data['message'] = 'ratings not found successfully';
+        $data['result'] = [];
+        if(isset($result)){
+            $data['status'] = 'success';
+            $data['message'] ='data found successfully';
+            $data['result'] = json_decode($result->rating);
+        }
+        return response()->json($data);
+
+    }
 
 
 

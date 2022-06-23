@@ -300,7 +300,7 @@ export default {
 
 				}catch(error){
 				
-					alert('no lead foung against this reference');
+					alert('no lead found against this reference');
 
 					this.form = {};
 

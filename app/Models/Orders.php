@@ -65,4 +65,8 @@ class Orders extends Model
     public function currency(){
         return $this->belongsTo(Currency::class,'currency_id','id');
     }
+
+    public function user_ratings(){
+        return $this->belongsTo(UserRatings::class,'order_id','id');
+    }
 }
