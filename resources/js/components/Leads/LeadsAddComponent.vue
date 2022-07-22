@@ -37,7 +37,7 @@
 												<option  value="Paid">Paid</option>
 												<option  value="Un-Paid">Un-Paid</option>
 												<option  value="Followup">Followup</option>
-												<option  value="Transfer-Paid">Transfer Paid</option>
+												
 														
 																								
 											  </select>

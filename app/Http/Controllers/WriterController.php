@@ -16,6 +16,8 @@ use App\Models\Documents;
 use App\Models\Sale_Order_Documents as OrderDocuments;
 use Illuminate\Support\Facades\Artisan;
 use App\Models\UserRatings;
+use App\Models\Notifications;
+use File;
 class WriterController extends Controller
 {
 
@@ -58,6 +60,8 @@ class WriterController extends Controller
                                         'sale_order_documents.doc_status',
 
                                         'sale_order_documents.id as sale_document_id',
+
+                                        'sale_order_documents.created_by as created_by',
                                         
                                         'documents.id',
 
@@ -65,12 +69,21 @@ class WriterController extends Controller
                                         
                                         'documents.url',
 
-                                        'documents.file_type'
+                                        'documents.file_type',
 
+                                        'documents.original_name',
+
+                                        'documents.created_at',
+
+                                        'users.first_name',
+
+                                        'users.last_name'
                                     );
                                     $query->where('sale_order_documents.document_name','!=',NULL);
 
                                     $query->join('documents','documents.id','=','sale_order_documents.document_id');
+
+                                    $query->leftJoin('users','users.id','=','sale_order_documents.created_by');
 
                                     $query->orderBy('sale_order_documents.id','desc');
 
@@ -86,16 +99,18 @@ class WriterController extends Controller
                                                         
                                                         'documents.url',
 
-                                                        'documents.file_type'
+                                                        'documents.file_type',
+
+                                                        'documents.original_name'
 
                                                     );
 
                                                     $query->where('sale_order_documents.document_name','=',NULL);
-
+                                                    $query->where('documents.name','!=','order invoices');
                                                     $query->join('documents','documents.id','=','sale_order_documents.document_id');
                                 }]);
 
-                                if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type === 'manager' || Auth::user()->is_lead == 1){
+                                if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type === 'manager' || Auth::user()->is_lead == 1 || Auth::user()->roles[0]->name == 'sale manager'  || Auth::user()->roles[0]->name == 'sale agent'){
 
                                     $result = $result->with('order_assigns',function($query) use ($user_id){
 
@@ -109,6 +124,7 @@ class WriterController extends Controller
                                                         'order_assigns.created_at',
                                                         'order_assigns.id as assign_id',
                                                         'order_assigns.completed'
+                                          
                                                     );
 
                                     });
@@ -200,91 +216,101 @@ class WriterController extends Controller
 
     }
 
-    public function user_task_details_update(Request $request,$id,OrderAssigns $order_assign){
+    public function task_details_update($request,$id){
+
+        $order_assign = new OrderAssigns(); 
+        $text = "User ";
+
+        $user_order_task_details = new UserOrderTaskDetails();
+
+        $order_assign_update = $order_assign->where([
+                                                        'user_id'=>$request->user_id,
+                                                    
+                                                        'sale_order_id'=>$id
+                                                    
+                                                    ])->first();
+
+        $check_is_qa = true;
+
+        $data['status'] = 'success';
+
+        $data['message'] = 'user task updated successfully';
+
+        $data['status_id'] = $request->status;
         
-            $text = "User ";
+        if($request->status == 'QA Approved'){
 
-            $user_order_task_details = new UserOrderTaskDetails();
+            if(Auth::user()->is_qa != 1){
+                
+                $check_is_qa = false;
+                
+                $data['status'] = 'error';
 
-            $order_assign_update = $order_assign->where([
-                                                            'user_id'=>$request->user_id,
-                                                        
-                                                            'sale_order_id'=>$id
-                                                        
-                                                        ])->first();
+                $data['message'] = 'Something went wrong';
 
-            $check_is_qa = true;
-
-            $data['status'] = 'success';
-
-            $data['message'] = 'user task updated successfully';
-
-            $data['status_id'] = $request->status;
-            
-            if($request->status == 'QA Approved'){
-
-                if(Auth::user()->is_qa != 1){
-                    
-                    $check_is_qa = false;
-                    
-                    $data['status'] = 'error';
-
-                    $data['message'] = 'Something went wrong';
-
-                    $data['status_id'] = $order_assign_update->status_id;
-
-                }
-                                        
-            }
-            if(isset($request->status) && $check_is_qa){
-
-                $text.="Status changed {$request->status}, ";
-
-                $user_order_task_details->status = $request->status;
-
-                $order_assign_update->status_id = $request->status;
+                $data['status_id'] = $order_assign_update->status_id;
 
             }
+                                    
+        }
+        if(isset($request->status) && $check_is_qa){
 
-            if(isset($request->completed)){
+            $text.="Status changed {$request->status}, ";
 
-                $completed = (int)$request->completed;
+            $user_order_task_details->status = $request->status;
 
-                if(!empty($request->completed) && $completed <=100 && $request->completed >= 0){
+            $order_assign_update->status_id = $request->status;
 
-                    $text.="Progress updated {$request->completed}%, ";
+        }
 
-                    $user_order_task_details->completed = $request->completed;
-                }
+        if(isset($request->completed)){
 
-                $order_assign_update->completed =   $completed;
+            $completed = (int)$request->completed;
 
+            if(!empty($request->completed) && $completed <=100 && $request->completed >= 0){
+
+                $text.="Progress updated {$request->completed}%, ";
+
+                $user_order_task_details->completed = $request->completed;
             }
 
-            $user_order_task_details->order_id = $id;
+            $order_assign_update->completed =   $completed;
 
-            $user_order_task_details->user_id = $request->user_id;
+        }
 
-            $user_order_task_details->text = $text;
-            
-            $user_order_task_details->created_by = Auth::user()->id;
+        $user_order_task_details->order_id = $id;
 
-            $user_order_task_details->save();
+        $user_order_task_details->user_id = $request->user_id;
 
-            $order_assign_update->save();
-            
-        // $order_assign->user_id = Auth::user()->id;
+        $user_order_task_details->text = $text;
+        
+        $user_order_task_details->created_by = Auth::user()->id;
 
-        // $order_assign->sale_order_id = $id;
+        // $user_order_task_details->save();
+        $this->save_notification($user_order_task_details,'user_task_status_changed');
 
-        // $status = new Status;
+        $order_assign_update->save();
 
-        // $count_status_already = $status->where(['order'=>$id])->orderBy('id','desc')->take(1)->first();
+        // $this->save_notification($order_assign_update,'user_task_status_changed');
+        
+    // $order_assign->user_id = Auth::user()->id;
 
-        // $order_assign->status_id = 'Pending';
+    // $order_assign->sale_order_id = $id;
 
-        // $order_assign->save();
-        return response()->json($data);
+    // $status = new Status;
+
+    // $count_status_already = $status->where(['order'=>$id])->orderBy('id','desc')->take(1)->first();
+
+    // $order_assign->status_id = 'Pending';
+
+    // $order_assign->save();
+    return response()->json($data);
+    }
+
+    public function user_task_details_update(Request $request,$id){
+
+        $this->task_details_update($request,$id);
+        
     }
 
 
@@ -356,48 +382,84 @@ class WriterController extends Controller
     }
 
     public function submit_ratings(Request $request){
-
-        $check_ratings = DB::table('user_ratings')->where([
+        $user_ratings = new UserRatings();
+        $check_ratings = $user_ratings->where([
             'user_id'=>$request->user_id,
             'order_id'=>$request->order_id
-        ])->get();
-        
-            if(isset($request->rating)){
-                $ratings = $request->rating;
-            }else{
-                $ratings = 0;
-            }
-        if(count($check_ratings)>=1){
-            $save_ratings = DB::table('user_ratings')->where([
-                'user_id'=>$request->user_id,
-                'order_id'=>$request->order_id
-            ])->update([
-                'user_id'=>$request->user_id,
-                'order_id'=>$request->order_id,
-                'rating'=>json_encode($ratings),
-                'updated_at'=>date('Y-m-d H:i:s'),
-                'updated_by'=>Auth::user()->id
-            ]);
+        ])->first();
+            
+        if(isset($request->rating)){
+            $ratings = $request->rating;
         }else{
-            $save_ratings = DB::table('user_ratings')->insert([
-                'user_id'=>$request->user_id,
-                'order_id'=>$request->order_id,
-                'rating'=>json_encode($ratings),
-                'created_at'=>date('Y-m-d H:i:s'),
-                'updated_at'=>date('Y-m-d H:i:s'),
-                'created_by'=>Auth::user()->id
-            ]);
+            $ratings = 0;
+        }
+        if($check_ratings){
+
+                $check_ratings->user_id     = $request->user_id;
+                $check_ratings->order_id    = $request->order_id;
+                $check_ratings->rating      = json_encode($ratings);
+                $check_ratings->updated_by  = Auth::user()->id;
+
+                $this->save_notification($check_ratings,'user_ratings_update');
+
+                return response()->json([
+                    'status'=>'success',
+                    'message'=>'Ratings saved successfully',
+                ]);
+
+        }else{
+
+                $user_ratings->user_id      = $request->user_id;
+                $user_ratings->order_id     = $request->order_id;
+                $user_ratings->rating       = json_encode($ratings);
+                $user_ratings->created_at   = date('Y-m-d H:i:s');
+                $user_ratings->updated_at   = date('Y-m-d H:i:s');
+                $user_ratings->created_by   = Auth::user()->id;
+
+                $this->save_notification($user_ratings,'user_ratings_add');
+
+                return response()->json([
+                    'status'=>'success',
+                    'message'=>'Ratings saved successfully',
+                ]);     
         }
 
       
-        if($save_ratings){
-            return response()->json([
-                'status'=>'success',
-                'message'=>'Ratings saved successfully',
-            ]);
-        }
+        // if($save_ratings){
+        //     return response()->json([
+        //         'status'=>'success',
+        //         'message'=>'Ratings saved successfully',
+        //     ]);
+        // }
+
+
 
     }
+
+    public function delete_doc($id){
+
+        $documents          =  new Documents();
+
+        $order_documents    = new OrderDocuments();
+
+        $check_document = $documents->find($id);
+
+        $document_path  = explode('storage/',$check_document->url)[1];
+
+        if(File::exists(storage_path($document_path))){
+
+            File::delete(storage_path($document_path));
+
+        }
+
+        $documents->find($id)->delete();
+
+        $order_documents->where('document_id',$id)->delete();
+
+        return response()->json(['status'=>'success','message'=>'document delete sucess']);
+        
+    }
+
 
     public function delete_assigned_user(Request $request,OrderAssigns $order_assign){
 
@@ -432,6 +494,9 @@ class WriterController extends Controller
 
         }
 
+
+        // check_user_assignments
+
         return response()->json($data);
 
     }
@@ -454,7 +519,7 @@ class WriterController extends Controller
 
             $order_assign->created_by = Auth::user()->id;
 
-            $order_assign->save();
+            $this->save_notification($order_assign,'task_assigned');
 
             $status->type = 'task';
 
@@ -480,6 +545,7 @@ class WriterController extends Controller
 
             }
 
+            // $notifications = 
 
         }
 
@@ -497,7 +563,6 @@ class WriterController extends Controller
 
         $order_documents = new OrderDocuments();
 
-
         $statuses = new Status();
 
         $check_already_status = $statuses->where('order',$id)->orderBy('id','desc')->take('1')->get();
@@ -506,11 +571,13 @@ class WriterController extends Controller
 
             $title = $request->title;
 
-        }else{
-
-            $title = $check_already_status[0]->title;
-
         }
+        
+        // else{
+
+        //     $title = $check_already_status[0]->title;
+
+        // }
         
        
         $order = new OrderAssigns();
@@ -518,6 +585,8 @@ class WriterController extends Controller
         $order_assign = new OrderAssigns();
 
         $order_assignments = $order_assign->where('sale_order_id',$id)->get();
+
+        $ratings = true;
 
         if(in_array($request->title, ['Ready to QA'])){
 
@@ -545,14 +614,29 @@ class WriterController extends Controller
 
                     if($valueese->status_id != 'QA Approved'){
 
-                     $ready_to_qa = false;
+                        $ready_to_qa = false;
+
+                    }
+
+                    $user_ratings = new UserRatings();
+
+                    $check_ratings = $user_ratings->where([
+
+                                                            'user_id'=>$valueese->user_id,
+                                                            'order_id'=>$valueese->sale_order_id
+
+                                                        ])->first();
+                    
+                    if(!$check_ratings && $ratings == true){
+                            
+                        $ratings = false;
 
                     }
                 
                 }
             }
-
         }
+
         $data['status'] = 'success';
 
         $data['alert_message'] = 'Congratulations';
@@ -561,18 +645,50 @@ class WriterController extends Controller
 
         $data['message'] = ['your task updated successfully'];
 
-        if($check_already_status[0]->title != $title){
+        // if($check_already_status[0]->title != $title){
+       
+            $count_users = count($order_assignments);
+
+            if($count_users == 1){
+                
+                $ready_to_qa = true;
+                $object = new \stdClass(); 
+                $object->user_id = $order_assignments[0]->user_id;
+                $object->status = $title;
+                if($title != 'Document Sending'){
+                    $this->task_details_update($object,$id);    
+                }
+                
+            }
+
 
             if($ready_to_qa == true){
 
-                if($title == "QA Approved"){
+                                 
+            
+                if($ratings == false){
+
+                    $data['status'] = 'error';
+    
+                    $data['alert_message'] = 'Alert';
+            
+                    $data['stop_reload'] = false;
+            
+                    $data['message'] = ['Please before approve the task submit the ratings under assign user card.'];
+            
+                    return response()->json($data);
+    
+                }
+
+                if($title == "QA Approved" || $title == 'Document Sending'){
 
                     $order_documents->whereIn('id', $request->select_files)->update([
                                                                                     'doc_status'=>'Sent',
                                                                                     'updated_at'=>date('Y-m-d H:i:s')]);
                      
                  }
-        
+    
+
                 $statuses->type = 'task';
        
                 $statuses->title = $request->title;
@@ -587,11 +703,17 @@ class WriterController extends Controller
 
                 $update_order_status->order_status = $request->title;
 
-                $update_order_status->save();
-
-                $statuses->save(); 
-            
+                if($title != 'Document Sending'){
+                    
+                    $update_order_status->save();
+                    
+                    $this->save_notification($statuses,'order_status_change');
+                }
+                
+                            
             }else{
+                
+                $data['status'] = 'error';
                 $data['title'] = $check_already_status[0]->title;
 
                 $data['alert_message'] = 'Alert';
@@ -602,7 +724,7 @@ class WriterController extends Controller
 
             }
         
-        }
+        // }
 
         return response()->json($data);
     }
@@ -691,17 +813,18 @@ class WriterController extends Controller
 
             $data['message'] = ['your documents uploaded successfully'];
 
-        
-
             $file = $request->file('files');
 
             for($i=0;$i<count($file);$i++){
-
-                $lead_file_name = 'task-data-'.date('YmdHis').'.'.$file[$i]->getClientOriginalExtension();
+                
+                // $lead_file_name = 'task-data-'.date('YmdHis').'.'.$file[$i]->getClientOriginalExtension();
+                $lead_file_name = $file[$i]->getClientOriginalName();
 
                 $original_file_name = $file[$i]->getClientOriginalExtension();
 
-                $path = $file[$i]->storeAs("task_files/order_{$id}", $lead_file_name);
+                $task_folder = date('YmsHis');
+
+                $path = $file[$i]->storeAs("task_files/order_{$id}/{$task_folder}", $lead_file_name);
         
                 $leads_files          =  new Documents();
         
@@ -709,29 +832,47 @@ class WriterController extends Controller
 
                 $leads_files->file_type = $file[$i]->getClientOriginalExtension();
                 
-                $leads_files->url = url("storage/app/task_files/order_{$id}/{$lead_file_name}");
+                $leads_files->url = url("storage/app/task_files/order_{$id}/{$task_folder}/{$lead_file_name}");
                 
-                $leads_files->created_at = date('Y-m-d');
+                $leads_files->created_at = date('Y-m-d H:i:s');
+
+                $leads_files->original_name = $file[$i]->getClientOriginalName();
     
                 $leads_files->save();
                 
                 $leads_documents = new OrderDocuments();
           
-                $leads_docs_array = ['document_name'=>$request->name,
-                                        'document_id' =>$leads_files->id,
-                                        'sale_order_id'=>$id,
-                                        'created_by'=>Auth::user()->id,
-                                        'created_at'=>date('Y-m-d H:i:s')
-                                    ]; 
+                if(Auth::user()->roles[0]->name == 'Sale Manager' || Auth::user()->roles['0']->name == 'Sale Agent'){
+              
+                    $leads_documents->doc_status = 'Sale Docs';
 
-                $leads_documents->create($leads_docs_array);
+                }
+
+                $leads_documents->document_name = $request->name;
+                $leads_documents->document_id = $leads_files->id;
+                $leads_documents->sale_order_id = $id;
+                $leads_documents->created_by = Auth::user()->id;
+                $leads_documents->save();
                 
-           
             }
 
-            return response()->json($data);
-            // return ['status'=>'success','message'=>'document saved successfully'];
+            $notifications       = new \App\Models\InternalNotifications();
+           
+            $created_at = date('d M Y H:i:s', strtotime(date('Y-m-d H:i:s')));
 
+            $notifications->data   =    json_encode([
+                                            "message"=>"{$this->full_name(Auth::user()->id)}, New document add on ORDER-{$id}",
+                                            "url"=>url("admin/writers/task_details/{$id}")
+                                        ]);
+
+            $notifications->save();
+
+            $ids = $this->send_all_writers_managers($notifications, Auth::user()->id);
+            
+            $this->alert_notify(null,null,$ids);
+
+            return response()->json($data);
+           
         }
 
 
@@ -788,19 +929,19 @@ class WriterController extends Controller
                         
                             }
 
-                            if(isset($_GET['customer_email'])&& !empty($_GET['customer_email'])){
+                            // if(isset($_GET['customer_email'])&& !empty($_GET['customer_email'])){
     
-                                $customer_email = $_GET['customer_email']; 
+                            //     $customer_email = $_GET['customer_email']; 
                 
-                                $data = $data->where('sale_orders.customer_email',$_GET['customer_email']);     
+                            //     $data = $data->where('sale_orders.customer_email',$_GET['customer_email']);     
                         
-                            }
+                            // }
 
-                            if(isset($_GET['payment_status'])&& !empty($_GET['payment_status'])){
+                            if(isset($_GET['deadline'])&& !empty($_GET['deadline'])){
     
-                                $status = $_GET['payment_status']; 
+                                $status = $_GET['deadline']; 
                 
-                                $data = $data->where('sale_orders.payment_status',$_GET['payment_status']);     
+                                $data = $data->whereDate('sale_orders.deadline',$_GET['deadline']);     
                         
                             }
                                 if($this->is_admin() != true){

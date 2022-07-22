@@ -15,15 +15,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name')->nullable();
-            $table->string('first_name')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('email')->nullable();
-            $table->string('designation')->nullable();
-            $table->string('phone_number')->nullable();
-            $table->string('alternate_phone_number')->nullable();
-            $table->string('salary')->nullable();
-            $table->string('city_id')->nullable();
+            $table->string('name',50)->nullable();
+            $table->string('first_name',50)->nullable();
+            $table->string('last_name',50)->nullable();
+            $table->string('email',50)->nullable();
+            $table->string('designation',20)->nullable();
+            $table->string('phone_number',20)->nullable();
+            $table->string('alternate_phone_number',20)->nullable();
+            $table->string('salary',20)->nullable();
+            $table->string('city_id',5)->nullable();
+            $table->integer('is_lead')->nullable();
+            $table->integer('lead_id')->nullable();
+            $table->string('city_id',5)->nullable();
+            $table->string('nickname',50)->nullable();
             $table->timestamp('dob')->nullable();
             $table->bigInteger('assigned_to')->nullable();
             $table->bigInteger('profile_image_id')->nullable();

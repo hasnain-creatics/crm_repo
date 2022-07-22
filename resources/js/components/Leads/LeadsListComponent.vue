@@ -291,6 +291,7 @@ export default {
     dataTables(search_url){
             // search_url = this.filtered_url;
             $(document).ready(function () {
+              
               $("#example1").DataTable({
                 processing: true,
                 serverSide: true,
@@ -298,7 +299,9 @@ export default {
                 destroy: true,
               "order": [[ 1, "desc" ]], 
                 columns: [
-                  { data: "id", name: "id" },
+                  { data: "id", render:function( data, type, row ){
+                        return type == 'export' ? meta.row + 1 : data;
+                  } },
                   { data: "lead_id", name: "lead_id" },
                   { data: "name", name: "name" },
                   { data: "email", name: "email" },

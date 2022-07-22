@@ -30,7 +30,19 @@
           />
         </div>
       </div>
-
+   <div class="col-md-4">
+        <div class="input-group mb-4">
+          <input
+            type="date"
+            v-model="filter.deadline"
+            class="form-control input-text"
+            name="deadline"
+            placeholder="Deadline"
+            aria-describedby="basic-addon2"
+            id="filter_deadline"
+          />
+        </div>
+      </div>
       </div>
       
      <div class="row">
@@ -70,9 +82,6 @@
           <th style="width:100px">Title</th>
           <th style="width:100px">Deadline</th>
           <th style="width:60px">Words</th>
-          <th style="width:100px">Notes</th>
-          <th style="width:100px">Additional Notes</th>
-          <th style="width:100px">Documents</th>
           <th style="width:100px">Status</th>
           <th style="width:70px">Assigned To</th>
           <th style="width:100px">Action</th>
@@ -95,11 +104,8 @@ export default {
   data() {
     return {
       filter: {
+        deadline: "",
         order_id:"",
-        customer_email:"",
-        payment_status:"",
-        name:"",
-        url:"",
         new_tab : this.show_tab ? true : false,
         all_tab : this.show_tab ? false : true,
       },
@@ -127,29 +133,39 @@ export default {
 
       }
 
-      filter_array.customer_email = "";
 
-      if(this.filter.customer_email){
 
-        filter_array.customer_email = this.filter.customer_email;
+      filter_array.deadline = "";
 
-      }
+      if(this.filter.deadline){
 
-      filter_array.payment_status = "";
-
-      if(this.filter.payment_status){
-
-        filter_array.payment_status = this.filter.payment_status;
+        filter_array.deadline = this.filter.deadline;
 
       }
 
-      filter_array.name = "";
+      // filter_array.customer_email = "";
 
-      if(this.filter.name){
+      // if(this.filter.customer_email){
+
+      //   filter_array.customer_email = this.filter.customer_email;
+
+      // }
+
+      // filter_array.payment_status = "";
+
+      // if(this.filter.payment_status){
+
+      //   filter_array.payment_status = this.filter.payment_status;
+
+      // }
+
+      // filter_array.name = "";
+
+      // if(this.filter.name){
           
-        filter_array.name = this.filter.name;
+      //   filter_array.name = this.filter.name;
 
-      }
+      // }
 
       filter_array.new_tab = this.new_tab == true ? 'new' : '';
 
@@ -170,6 +186,10 @@ export default {
        this.filter.order_id="";
        
        this.filter_array.order_id="";
+
+       this.filter.deadline="";
+       
+       this.filter_array.deadline="";
 
       if(this.new_tab){
 
@@ -216,12 +236,6 @@ export default {
                   
                   { data: "word_count", name: "word_count" },
 
-                  { data: "notes", name: "notes" },
-
-                  { data: "additional_notes", name: "additional_notes" },
-
-                  { data: "documents", name: "documents" },
-
                   { data: "order_status", name: "order_status" },
 
                   { data: "assign_to", 
@@ -231,9 +245,10 @@ export default {
                     return clmn_visible == false ? data : "<i class='fa fa-eye' style='cursor:pointer' onClick='assigned_users_details("+row.id+")'></i>";
   
                   }
+                  
                   },
                   
-                  {data: "action",name: "action",visible:clmn_visible,orderable: false,searchable: false}
+                  {data: "action",name: "action",orderable: false,searchable: false}
                   
                 ],
                 filter: false,

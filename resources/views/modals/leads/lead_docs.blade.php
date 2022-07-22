@@ -2,12 +2,12 @@
 			<div class="modal-dialog modal-lg modal-dialog-centered text-center" role="document">
 				<div class="modal-content modal-content-demo">
 					<div class="modal-header">
-						<h6 class="modal-title">User Details</h6><button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
+						<h6 class="modal-title">Lead Documents</h6><button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"><span aria-hidden="true">×</span></button>
 					</div>
              
 					<div class="modal-body">
 
-    <div class="table-responsive">
+    <div class="table-responsive" style="max-height:200px;">
                     <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap5 no-footer">
                       
                         <div class="row">

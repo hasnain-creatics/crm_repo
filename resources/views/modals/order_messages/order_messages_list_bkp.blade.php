@@ -106,6 +106,7 @@ $(document).ready(function(){
     alert();
     // console.log("fetch");
     // fetch_all_messages("{{$id}}");
+    
 }); 
 </script>
     

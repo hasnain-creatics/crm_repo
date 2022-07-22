@@ -11,7 +11,14 @@ use DB;
 use App\Models\Status;
 use Validator;
 use App\Models\OrderAssigns;
+use App\Mail\OrderMail;
 use App\Models\Sale_Order_Failed;
+use App\Models\OrderFeedback;
+use App\Models\OrderFeedbackDocuments;
+use Illuminate\Support\Facades\Mail;
+use App\Notifications\OrderPlaced;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Contracts\Mail\Mailable;
 class OrdersController extends Controller
 {
 
@@ -27,24 +34,94 @@ class OrdersController extends Controller
          
     }
 
-    public function add_feedback($id){
+    public function fetch_all_feedback($id){
+        
+        $order_feedback = new OrderFeedback();
 
-        $data['id'] = $id;
-        return view('modals.orders.add_feedback',$data);
+        $order_feedback = $order_feedback->with([
+                                                'orders',
+                                                'users',
+                                                'feedback_documents']);
+
+        $order_feedback = $order_feedback->where('order_id',$id);
+
+        $order_feedback = $order_feedback->get();
+
+        $data['result'] = $order_feedback;
+        
+        return response()->json($data);
 
     }
 
-    public function store_feedback(Request $request){
-        if(!empty($request->feedback)){
-            $save_feedback = DB::table('order_feedback')->insert([
-                'order_id'=>$request->order_id,
-                'created_by'=>Auth::user()->id,
-                'created_at'=>date('Y-m-d H:i:s'),
-                'feedback'=>$request->feedback
+    public function add_feedback($id){
 
-            ]);
+        $data['id'] = $id;
+
+     
+
+        return view('modals.orders.add_feedback',$data);
+
+    }
+    public function store_feedback(Request $request){
+
+        if(!empty($request->feedback)){
+
+            $order_feedback = new OrderFeedback();
+
+            $order_feedback->order_id = $request->order_id;
+            if($request->deadline){
+                $order_feedback->deadline = $request->deadline;
+            }
+            
+
+            $order_feedback->created_by = Auth::user()->id;
+
+            $order_feedback->feedback = $request->feedback;
+
+            // $save_feedback = $order_feedback->save();
+                // echo 'here';die;
+            $save_feedback = $this->save_notification($order_feedback,'order_feedback_added');
+            
+            if($request->deadline){
+            
+                $orders = new Orders();
+
+                $find_order_ = $orders->find($request->order_id);
+
+                $find_order_->deadline = $request->deadline;
+
+                $find_order_->save();
+
+            }
+
+            if ($request->file('files')) {
+                
+                $file = $request->file('files');
+    
+                for($i=0;$i<count($file);$i++){
+    
+                    $file_name = $file[$i]->getClientOriginalName();
+    
+                    $path = $file[$i]->storeAs("order_feedback_documents/order_{$request->order_id}", $file_name);
+
+                  $order_feedback_documents = new OrderFeedbackDocuments();
+
+                   $order_feedback_documents->file_name = $file_name;
+
+                   $order_feedback_documents->link = $path;
+
+                   $order_feedback_documents->created_by = Auth::user()->id;
+
+                   $order_feedback_documents->feedback_id =$order_feedback->id;
+
+                   $order_feedback_documents->save();
+
+                }
+            
+            }
         }
-            return response()->json(['status'=>'success','message'=>'feedback added successfully']);
+        
+        return response()->json(['status'=>'success','feedback added successfully','order_id'=>$request->order_id]);
     }
 
     public function order_timline($id){
@@ -172,6 +249,28 @@ class OrdersController extends Controller
 
     }
 
+    public function update_payment_status(Request $request,$id){
+
+        $orders = new Orders();
+
+        $order_find = $orders->find($id);
+
+        $order_find->amount_received = $request->payment;
+
+        $order_find->payment_status = 'PAID';
+
+        $order_find->save();
+
+        $data['status'] = 'success';
+        
+        $data['message'] = 'order payment updated successfully';
+
+        $data['id'] = $id;
+    
+        return response()->json($data);
+
+    }
+
     public function change_order_status(Request $request,$id){
 
         $status = new Status();
@@ -201,7 +300,52 @@ class OrdersController extends Controller
         $data['order_status'] = $request->title;
     
         return response()->json($data);
- 
+
+    }
+
+    public function delete_doc(Orders $order,$id){
+        $delete = DB::table('documents')->where('id',$id)->delete();
+        return response()->json(['status'=>'success','message'=>'document delete successfully','id'=>$id]);
+    }
+
+    public function all_docs(Orders $order,$id){
+
+        $result = $order->with([
+
+                                'sale_order_documents'=>function($query){
+
+                                        $query->select('sale_order_documents.sale_order_id',
+                                                        'sale_order_documents.id as  sale_order_document_id',
+                                                        'documents.id',
+
+                                                        'documents.name',
+                                                        
+                                                        'documents.url',
+
+                                                        'documents.file_type',
+
+                                                        'documents.original_name'
+
+                                                    );
+
+                                                    $query->where('sale_order_documents.document_name','=',NULL);
+                       
+                                                    $query->join('documents','documents.id','=','sale_order_documents.document_id');
+                                }]);
+
+                                $results = $result->find($id);
+                                
+                                $data['status']= 'success';
+                                $data['all_docs'] = [];
+                                $data['id'] = $id;
+                                
+                                if($results->sale_order_documents){
+                                    $data['status']= 'success';
+                                    $data['all_docs'] = $results->sale_order_documents;
+                                }
+
+
+                                return view('modals.orders.order_documents',$data);
 
     }
 
@@ -221,11 +365,11 @@ class OrdersController extends Controller
                         // $data = $data->leftJoin('lead_transfers lt','lt.lead_id','=','leads.id');
                         if($this->is_admin() != true){
                             
-                            $data = $data->where('sale_orders.created_by_user_id',Auth::user()->id);
+                              $data = $data->where('sale_orders.created_by_user_id',Auth::user()->id);
                  
                             if(Auth::user()->roles[0]->type == 'manager'){
 
-                                $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
+                                // $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
 
                                 $data = $data->orWhere('users.assigned_to',Auth::user()->id);
 
@@ -233,10 +377,12 @@ class OrdersController extends Controller
                             else{
                                 
                                 if(Auth::user()->is_lead){
-                                    $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
+                                    // $data = $data->orWhere('sale_orders.created_by_user_id',Auth::user()->id);
                                     $data = $data->orWhere('users.lead_id',Auth::user()->id);
                  
                                 }
+                                  
+                                
                             }
                           
                         }
@@ -553,13 +699,31 @@ class OrdersController extends Controller
 
         $rules['notes'] = 'required';
 
-        $rules['additional_notes'] = 'required';
+        $rules['additional_notes'] = '';
 
         $rules['website'] = 'required';
 
         $rules['lead_id'] = '';
+        
         $rules['dollar_amount'] ='required';
 
+        // $rules['issue'] = null;
+
+        // $rules['reason'] = null;
+        
+
+        if($request->payment_status == 'UNPAID'){
+
+            $rules['issue'] ='required';
+
+            if($request->issue == 'other'){
+
+                $rules['reason'] ='required';
+
+            }
+        }
+
+       
         $change_status = true;
 
         if($request->payment_status == 'PARTIALLY PAID'){
@@ -573,12 +737,27 @@ class OrdersController extends Controller
         if ( $validator->fails() ) 
         {
             $data = [
+
                 'success' => false, 
+
                 'message'=>$validator->errors()
+
             ];
 
         }else{
+            
+            if(!$request->id && !$request->file('invoice_files')){
 
+               return  $data = [
+
+                    'success' => false, 
+
+                    'message'=>['invoice_files'=>'Invoice files field required']
+
+                ];
+   
+            }
+           
             $order_updated = $leads;
 
             if(isset($request->id)){
@@ -618,11 +797,28 @@ class OrdersController extends Controller
                     $order_updated['order_status'] = 'New';
 
                 }
+
+                if($request->payment_status == 'PAID'){
+
+                    $order_updated['amount_received'] = $request->dollar_amount;
+
+                }
                 
             }
+        
 
-            $order_updated->save();
+            if(isset($request->id)){
+
+                // $this->save_notification($order_updated,'order_updated');
+                $order_updated->save();
+
+            }else{
+
+                $this->save_notification($order_updated,'new_order_added');
+
+            }
             
+
             $lead_id = $order_updated->id;
 
             $find_lead_id = $leads->find($lead_id);
@@ -637,7 +833,8 @@ class OrdersController extends Controller
 
                 for($i=0;$i<count($file);$i++){
 
-                    $lead_file_name = 'order-data-'.date('YmdHis').'.'.$file[$i]->getClientOriginalExtension();
+                    $lead_file_name = $file[$i]->getClientOriginalName();
+                    // $lead_file_name = 'order-data-'.date('YmdHis').'.'.$file[$i]->getClientOriginalExtension();
 
                     $original_file_name = $file[$i]->getClientOriginalExtension();
 
@@ -673,7 +870,9 @@ class OrdersController extends Controller
 
                 for($i=0;$i<count($file);$i++){
 
-                    $lead_file_name = 'order-invoice-data-'.date('YmdHis').'.'.$file[$i]->getClientOriginalExtension();
+                    // $lead_file_name = 'order-invoice-data-'.date('YmdHis').'.'.$file[$i]->getClientOriginalExtension();
+
+                    $lead_file_name = $file[$i]->getClientOriginalName();
 
                     $original_file_name = $file[$i]->getClientOriginalExtension();
 
@@ -717,6 +916,15 @@ class OrdersController extends Controller
     
                 $statuses->save(); 
                 
+                if($request->id){
+
+                }else{
+                    
+                    // Notification::route('mail', $request->customer_email)->notify(new OrderPlaced('ORDER-'.$lead_id));
+                                        
+                }
+
+
             }
            
 
@@ -730,6 +938,26 @@ class OrdersController extends Controller
         }
         
         return response($data, 200)->header('Content-Type', 'text/plain');
+    }
+    
+    public function order_upsell(Request $request,$id){
+    
+        if($request->segment(5)){
+
+            $data['upsell'] = 'upsell';
+            
+        }
+
+        $data['id'] = $id;
+
+        if(isset($upsell)){
+
+            $data['upsell']= $upsell;
+
+        }
+
+        return view('orders.edit',$data);
+
     }
 
     public function order_full_details($id){
@@ -775,4 +1003,9 @@ class OrdersController extends Controller
 
     }
 
+    public function destroy($id){
+        $orders = new Orders();
+        $orders->find($id)->delete();
+        return response()->json(['status'=>'success','message'=>'Order deleted successfully!']);
+    }
 }

@@ -18,100 +18,44 @@ class CreateAdminUserSeed extends Seeder
      */
     public function run()
     {
-        User::truncate();
 
-        User::create([
+        $permission_array = ['user-view',
+                             'user-add',
+                             'user-edit',
+                             'user-delete',
+                             'role-view',
+                             'role-add',
+                             'role-edit',
+                             'role-delete',
+                             'permission'];
+
+        $role = Role::createe(['name'=>'Admin']);
+        
+        foreach($permission_array as $perm_value){
+
+            $crate_permissions = Permission::create(['name'=>$perm_value]);
+
+            $role->syncPermissions($crate_permissions);
+        
+        }
+
+        $default_roles = ['Sale Manager',
+                          'Sale Agent',
+                          'Writer Manager',
+                          'Writer',
+                          'IT',
+                          'HR'];
+
+        foreach($default_roles as $default_value){
+
+            Role::create(['name'=>$default_value]);
+            
+        }
+        $user = User::create([
                 'name'=>'admin',
                 'email'=>'admin@admin.com',
                 'password'=>bcrypt('123456')
-        ])->assignRole(['Admin']);
-        // $user =[
-          
-        //     'first_name' => 'Sale Manager',
-        //     'last_name' => 'User',
-        //     'email' => 'sale_manager@management.com',
-        //     'password' => Hash::make('task1234567'),
-        //     'designation' => "administrator",
-        //     'status' => 'ACTIVE',
-        //     'remember_token' => Hash::make('task1234567'),
-        //     'created_at'    => date('Y-m-d'),
-        //     'updated_at'    => date('Y-m-d')
-        // ];
-
-        // $user = User::create($user);
-        // $user =[
-        //     'first_name' => 'Sale Agent',
-        //     'last_name' => 'User',
-        //     'email' => 'sale_agent@management.com',
-        //     'password' => Hash::make('task1234567'),
-        //     'designation' => "administrator",
-        //     'status' => 'ACTIVE',
-        //     'remember_token' => Hash::make('task1234567'),
-        //     'created_at'	=> date('Y-m-d'),
-        //     'updated_at'	=> date('Y-m-d')
-        // ];
-
-        // $user = User::create($user);
-        // $user =[
-           
-        //     'first_name' => 'Writer Manager',
-        //     'last_name' => 'User',
-        //     'email' => 'writer_manager@management.com',
-        //     'password' => Hash::make('task1234567'),
-        //     'designation' => "administrator",
-        //     'status' => 'ACTIVE',
-        //     'remember_token' => Hash::make('task1234567'),
-        //     'created_at'    => date('Y-m-d'),
-        //     'updated_at'    => date('Y-m-d')
-        // ];
-
-        // $user = User::create($user);
-
-        
-        // $user =[
-     
-        //     'first_name' => 'Writer',
-        //     'last_name' => 'User',
-        //     'email' => 'writer@management.com',
-        //     'password' => Hash::make('task1234567'),
-        //     'designation' => "administrator",
-        //     'status' => 'ACTIVE',
-        //     'remember_token' => Hash::make('task1234567'),
-        //     'created_at'	=> date('Y-m-d'),
-        //     'updated_at'	=> date('Y-m-d')
-        // ];
-
-        // $user = User::create($user);
-
-      
-        // $user =[
-        //             'first_name' => 'IT',
-        //     'last_name' => 'User',
-        //     'email' => 'it@management.com',
-        //     'password' => Hash::make('task1234567'),
-        //     'designation' => "administrator",
-        //     'status' => 'ACTIVE',
-        //     'remember_token' => Hash::make('task1234567'),
-        //     'created_at'	=> date('Y-m-d'),
-        //     'updated_at'	=> date('Y-m-d')
-        // ];
-
-        // $user = User::create($user);
-
-        // $user =[
-        
-        //     'first_name' => 'HR',
-        //     'last_name' => 'User',
-        //     'email' => 'hr@management.com',
-        //     'password' => Hash::make('task1234567'),
-        //     'designation' => "administrator",
-        //     'status' => 'ACTIVE',
-        //     'remember_token' => Hash::make('task1234567'),
-        //     'created_at'	=> date('Y-m-d'),
-        //     'updated_at'	=> date('Y-m-d')
-        // ];
-
-        // $user = User::create($user);
+        ])->assignRole(['admin']);
 
     }
 }

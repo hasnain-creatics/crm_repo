@@ -33,7 +33,8 @@ class UserEditRequest extends FormRequest
             'designation' => 'required',    
             'phone_number' => 'required',   
             'alternate_phone_number' => 'required', 
-            'salary' => 'required'
+            'salary' => 'required',
+            'deparment_id' => 'required'
         ];
     }
 
@@ -48,7 +49,8 @@ class UserEditRequest extends FormRequest
             'designation.required' => 'Designation Required!',
             'phone_number.required' => 'Phone No Required!',
             'alternate_phone_number.required' => 'Alternate Phone Required!',
-            'salary.required' => 'Salary Required!'
+            'salary.required' => 'Salary Required!',
+            'department_id.required' => 'Department Required!'
         ];
     }
 }

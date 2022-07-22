@@ -57,7 +57,7 @@ class CurrencyController extends Controller
 
     public function get_all_subjects(Currency $currency){
 
-        $result = $currency->paginate(5);
+        $result = $currency->paginate(10);
 
         return response()->json($result);
 
@@ -130,7 +130,52 @@ class CurrencyController extends Controller
         return response($data, 200)->header('Content-Type', 'text/plain');
     }
 
+    public function exchange_rate($currency){
+        
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://api.apilayer.com/fixer/latest?symbols={$currency}&base=USD",
+          CURLOPT_HTTPHEADER => array(
+            "Content-Type: text/plain",
+            "apikey: d3b81bac49506e92d745bffb3a2b1314"
+          ),
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "GET"
+        ));
+        
+        $response = json_decode(curl_exec($curl));
+        
+        curl_close($curl);
+        return $response;
+    }
+
     public function sync(){
+
+
+
+
+        foreach(Currency::get() as $curreny_key=>$currency_value){
+
+         
+            $rate = $this->exchange_rate($currency_value->code);
+            if($rate->success == 1){
+    
+              Currency::where('code',$currency_value->code)->update(['rate'=>$rate->rates->{$currency_value->code}]);
+            }
+           
+        }
+        return response()->json(['status'=>'success','message'=>'currency updated successfully']);
+        
+ 
+      
+        die;
+
 
         $response = Http::get('https://v6.exchangerate-api.com/v6/9fa637f28f55aa3b7ba056ea/latest/USD');
 
@@ -138,6 +183,7 @@ class CurrencyController extends Controller
 
         $currencies = [];
 
+        
         foreach(Currency::get() as $curreny_key=>$currency_value){
 
             $currencies[] = $currency_value->code;

@@ -46,7 +46,7 @@ class Orders extends Model
 
     public function order_assigns(){
 
-        return $this->hasMany(OrderAssigns::class,'sale_order_id');
+        return $this->hasMany(OrderAssigns::class,'sale_order_id','id');
 
     }
     

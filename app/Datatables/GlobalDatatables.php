@@ -57,7 +57,7 @@ class GlobalDatatables
         ->editColumn('status',function($row){
 
             return '<label class="switch">
-                <input type="checkbox" class="status_check_box "  data-set="'.$row->id.'" '.($row->status == 'ACTIVE' ? 'checked' : '').'>
+                <input '. (Auth::user()->roles[0]->name != 'Admin' ? "disabled" : "" ) .' type="checkbox" class="status_check_box "  data-set="'.$row->id.'" '.($row->status == 'ACTIVE' ? 'checked' : '').'>
                 <span class="slider round"></span>
               </label>';
 
@@ -83,6 +83,7 @@ class GlobalDatatables
             $btn.="</form>";
 
             return $btn;
+            
         })->rawColumns(['action','profile_image','status','name'])->make(true);
     }
 
@@ -148,7 +149,18 @@ class GlobalDatatables
             
         })->rawColumns(['action','lead_status','lead_id','issue','created_at','url'])->make(true);
     }
-
+    function custom_echo($x, $length)
+    {
+      if(strlen($x)<=$length)
+      {
+        return $x;
+      }
+      else
+      {
+        $y=substr($x,0,$length) . '...';
+        return $y;
+      }
+    }
     public function orders($data){
 
         return Datatables::of($data)->editColumn('created_at',function($row){
@@ -156,7 +168,8 @@ class GlobalDatatables
 
                 return date("d M Y H:i:s", strtotime($row->created_at));
                 
-        })->editColumn('order_status',function($row){
+        })
+        ->editColumn('order_status',function($row){
 
             return (isset($row->order_status) ? $row->order_status : '');
 
@@ -176,7 +189,8 @@ class GlobalDatatables
             endif;
        
             // $btn .= "&nbsp;&nbsp;<i class='fa fa-files-o' aria-hidden='true' onclick='leadDocs(".$row->id.")' style='cursor:pointer' title='Documents'></i>";
-
+            $btn .= "&nbsp;&nbsp;<i class='fa fa-files-o' aria-hidden='true' onclick='orderDocs(".$row->id.")' style='cursor:pointer' title='Order Documents'></i>";
+           
             if(Auth::user()->roles[0]->name == 'Admin' || Auth::user()->roles[0]->type == 'manager' || Auth::user()->is_lead){
 
                 // $btn .= "&nbsp;&nbsp;<i class='fa fa-exchange' aria-hidden='true' onclick='transferLead(".$row->id.")' style='cursor:pointer' title='Transfer Lead'></i>";
@@ -186,6 +200,15 @@ class GlobalDatatables
             }
             
             $btn .= "&nbsp;&nbsp;<i class='fa fa-comments' aria-hidden='true' onclick='orderMessages(".$row->id.")' style='cursor:pointer' title='Order Messages'></i>";
+
+            if($row->order_status == 'New')
+            {
+                $btn .= "&nbsp;&nbsp;<i class='fa fa-trash' aria-hidden='true' onclick='orderDelete(".$row->id.")' style='cursor:pointer' title='Delete'></i>";
+            }
+            //             
+            // $btn .= "&nbsp;&nbsp;<a href=".route('orders.order_upsell',$row->id)." title='Upsell'><i  class='fa fa-bell' aria-hidden='true'  style='cursor:pointer'></i></a>";
+
+            $btn .=" <i  class='fa fa-bell' aria-hidden='true'  style='cursor:pointer' onclick='upSell(".$row->id.")' title='Upsell Order'></i>";
             
             return $btn;
             
@@ -429,9 +452,13 @@ class GlobalDatatables
 
           })->editColumn('deadline',function($row){
 
-            return date("D M Y H:i:s", strtotime($row->deadline));
+            return date("d M Y H:i:s", strtotime($row->deadline));
             
-          })->editColumn('documents',function($row){
+          })->editColumn('additional_notes',function($row){
+            return $this->custom_echo($row->additional_notes,200);
+        })->editColumn('notes',function($row){
+            return $this->custom_echo($row->notes,200);
+        })->editColumn('documents',function($row){
 
             return 'documents';
          
@@ -443,6 +470,6 @@ class GlobalDatatables
             $btn .= "&nbsp;&nbsp;<i class='fa fa-comments' aria-hidden='true' onclick='orderMessages(".$row->id.")' style='cursor:pointer' title='Order Messages'></i>";
             return $btn;
             
-        })->rawColumns(['action','created_at','deadline','order_status','documents','assign_to','order_assigns'])->make(true);
+        })->rawColumns(['action','created_at','deadline','order_status','documents','assign_to','order_assigns','notes','additional_notes'])->make(true);
     }
 }

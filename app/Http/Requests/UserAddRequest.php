@@ -30,6 +30,7 @@ class UserAddRequest extends FormRequest
             $rules['password'] = 'required|confirmed|min:8';
             $rules['designation'] = 'required';    
             $rules['phone_number'] = 'required';   
+            $rules['department_id'] = 'required';   
          //   $rules['alternate_phone_number'] = 'required'; 
            // $rules['salary'] = 'required';
 
@@ -66,6 +67,7 @@ class UserAddRequest extends FormRequest
             'password.required' => 'This field is required',
             'designation.required' => 'This field is required',
             'phone_number.required' => 'This field is required',
+            'department_id.required' => 'This field is required',
           //  'alternate_phone_number.required' => 'This field is required',
             //'salary.required' => 'This field is required',
         ];

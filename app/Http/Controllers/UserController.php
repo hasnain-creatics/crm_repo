@@ -24,6 +24,30 @@ class UserController extends Controller
          
     }
 
+    public function fetch_all_sales_agent(User $users){
+
+        $sales_agents = $users->whereHas('roles',function($query){
+
+            $query->whereIn('name',['Sale Agent','Sale Manager']);
+
+        })->where('users.status','ACTIVE')->get();
+
+        $data['status'] = 'error';
+
+        $data['data'] = [];
+
+        if($sales_agents){
+
+            $data['status'] = 'success';
+
+            $data['data'] = $sales_agents;
+
+        }
+        
+        return response()->json($data);
+
+    }
+
     public function fetch_all_active_users(){
         $users = new User();
         $active_users= $users->select('users.*')
@@ -70,22 +94,30 @@ class UserController extends Controller
 
             
             if($this->is_admin() != true){
+                $data = $data->where('users.id','!=',Auth::user()->id);
 
-                // $data = $data->where('users.email','!=','admin@admin.com');
-
-                if(Auth::user()->roles[0]->type == 'manager'){
-
-                    $data = $data->orWhere('users.assigned_to',Auth::user()->id);
-
-                }else{
+                $data = $data->where(function($query){
                     
-                    if(Auth::user()->is_lead){
+                    if(Auth::user()->roles[0]->type == 'manager'){
 
-                        $data = $data->orWhere('users.lead_id',Auth::user()->id);
-     
+                        $query = $query->orWhere('users.assigned_to',Auth::user()->id);
+    
+                    }else{
+                        
+                        if(Auth::user()->is_lead){
+    
+                            $query = $query->orWhere('users.lead_id',Auth::user()->id);
+         
+                        }else{
+
+                            $query = $query->orWhere('users.lead_id',Auth::user()->id);
+
+                        }
                     }
-                }
-              
+                    
+
+                });
+           
             }
 
 
@@ -447,6 +479,8 @@ class UserController extends Controller
         $user_update->city_id = $request->city_id;
 
         $user_update->nickname = $request->nickname;
+
+        $user_update->department_id = $request->department_id;
 
         if(isset($request->assigned_to)){
 

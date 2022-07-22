@@ -54,7 +54,8 @@ class OrderMessageController extends Controller
 
             $order_message->message     = trim($request->message);
 
-            $order_message->save();
+            // $order_message->save();
+            $order_message_notify = $this->save_notification($order_message,'order_message_alert');
 
             if($request->file('files')){
 
@@ -68,7 +69,7 @@ class OrderMessageController extends Controller
 
                     $order_message_documents->order_id = $request->order_id;
 
-                    $order_message_documents->order_message_id = $order_message->id;
+                    $order_message_documents->order_message_id = $order_message_notify->id;
 
                     $order_message_documents->sender_id = Auth::user()->id;
 
@@ -81,11 +82,11 @@ class OrderMessageController extends Controller
                 }
     
             }
-
+            $this->alert_notify('my-message-channel','my-message-event');
             return response()->json(['status'=>'success','message'=>'message saved successfully!','order_id'=>$request->order_id,'user_id'=>Auth::user()->id]);
 
         }catch(Exception $e){
-            return response()->json(['status'=>'error','message'=>$e->message,'order_id'=>$request->order_id,'user_id'=>Auth::user()->id]);
+            return response()->json(['status'=>'error','message'=>$e->getMessage(),'order_id'=>$request->order_id,'user_id'=>Auth::user()->id]);
         }
           
     }

@@ -86,19 +86,34 @@ Vue.component('inprogress-task-component',require('./components/Dashboard/Inprog
 Vue.component('feedback-task-component',require('./components/Dashboard/FeedbackTaskComponent.vue').default);
 Vue.component('required-qa-component',require('./components/Dashboard/RequiredQAComponent.vue').default);
 Vue.component('unassigned-component',require('./components/Dashboard/UnassignedComponent.vue').default);
+Vue.component('pending-component',require('./components/Dashboard/PendingComponent.vue').default);
+Vue.component('qa-approved-component',require('./components/Dashboard/QaApprovedComponent.vue').default);
+Vue.component('qa-rejected-component',require('./components/Dashboard/QaRejectedComponent.vue').default);
 
 Vue.component('todays-deliverable-component',require('./components/Dashboard/TodaysDeliverableComponent.vue').default);
 Vue.component('monthly-deliverable-component',require('./components/Dashboard/MonthlyDeliverableComponent.vue').default);
+Vue.component('monthly-leads-component',require('./components/Dashboard/MonthlyLeadsComponent.vue').default);
+Vue.component('monthly-orders-component',require('./components/Dashboard/MonthlyOrdersComponent.vue').default);
+Vue.component('todays-leads-component',require('./components/Dashboard/TodaysLeadsComponent.vue').default);
+Vue.component('todays-orders-component',require('./components/Dashboard/TodaysOrdersComponent.vue').default);
 
 
 Vue.component('modal-component',require('./components/Writers/ModalComponent.vue').default);
+
+Vue.component('notifications-list-component',require('./components/Notifications/NotificationsListComponent.vue').default);
+
 
 
 Vue.component('chat-messages', require('./components/ChatMessages.vue').default);
 Vue.component('chat-form', require('./components/ChatForm.vue').default);
 Vue.component('chat-box', require('./components/ChatBox.vue').default);
 
+import VueToast from 'vue-toast-notification';
+// Import one of the available themes
+//import 'vue-toast-notification/dist/theme-default.css';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
+Vue.use(VueToast);
 
 /**
  * 
@@ -111,30 +126,4 @@ Vue.component('chat-box', require('./components/ChatBox.vue').default);
 //  this.$hostname+'websites';
 const app = new Vue({
     el: '#app',
-    //Store chat messages for display in this array.
-    data: {
-      messages: []
-  },
-  //Upon initialisation, run fetchMessages(). 
-  created() {
-      this.fetchMessages();
-  },
-  methods: {
-      fetchMessages() {
-          //GET request to the messages route in our Laravel server to fetch all the messages
-          axios.get('http://localhost/crm_updated/crm_2/admin/messages').then(response => {
-              //Save the response in the messages array to display on the chat view
-              this.messages = response.data;
-          });
-      },
-      //Receives the message that was emitted from the ChatForm Vue component
-      addMessage(message) {
-          //Pushes it to the messages array
-          this.messages.push(message);
-          //POST request to the messages route with the message data in order for our Laravel server to broadcast it.
-          axios.post('http://localhost/crm_updated/crm_2/admin/messages', message).then(response => {
-              console.log(response.data);
-          });
-      }
-  }  
 });

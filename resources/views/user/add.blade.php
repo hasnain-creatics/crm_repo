@@ -113,10 +113,17 @@
                                                   
                                                 </div>
                                                 <div class="is_qa form-group col-md-3 d-block" style="margin-top: 35px;">
-                                                        <label for="is_qa" >QA</label>
+                                                        <label for="is_qa" >Make this user QA</label>
                                                         <input type="checkbox" id="is_qa" name="is_qa" value="{{ old('is_qa') }}">
-                                                    </div> 
+                                                </div> 
                                                     
+                                                <div class="is_qa form-group col-md-3 d-block" style="margin-top: 35px;">
+                                                        <label for="is_qa" >Department</label>
+                                                        <!-- <input type="checkbox" id="department_id" name="department_id" value="{{ old('department_id') }}"> -->
+                                                        <select name="department_id" class="form-select" tabindex="-1" id="department_id"   aria-hidden="true">
+                                                            
+                                                        </select>
+                                                </div> 
 
                                                 <div class="input-group">
                                                     <div class="form-group col-md-6">
@@ -223,13 +230,14 @@
     
 
 $(document).ready(function(){
-
+    
+    fetch_departments("{{route('departments.active_departments')}}");
 
     $('.date_picker input').datepicker({
            format: "dd.mm.yyyy",
            todayBtn: "linked",
            language: "de"
-        });
+    });
 
    all_designations("{{route('fetch_all_designation')}}")
     
@@ -285,9 +293,9 @@ $(document).ready(function(){
             salary:{
               required:false,
             },
-            // city_id:{
-            //   required:true,
-            // }
+            department_id:{
+              required:true,
+            }
         },
         submitHandler: function (form) { // for demo
             form.submit();
@@ -322,7 +330,7 @@ $(document).on('change','#designation',function(){
   });
  
   lead_checkes('{{url("admin/user/fetch_leads")}}');
-    
+  
 
 });
 

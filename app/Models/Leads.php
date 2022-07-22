@@ -12,4 +12,5 @@ class Leads extends Model
     public function website_url(){
       return  $this->hasOne(Website::class,'id','url');
     }
+
 }

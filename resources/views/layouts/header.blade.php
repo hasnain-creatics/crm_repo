@@ -55,6 +55,9 @@
 
 		<!-- INTERNAL Select2 css -->
 		<link href="{{asset('public')}}/assets/plugins/select2/select2.min.css" rel="stylesheet" />
+		
+		<!-- owl.carousel css -->
+		<link href="{{asset('public')}}/assets/plugins/owlcarousel/owl.carousel.css" rel="stylesheet" />
 
 		<!-- Data table css -->
 		<!-- <link href="{{asset('public')}}/assets/plugins/datatables/DataTables/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
@@ -195,7 +198,25 @@ input:checked + .slider:before {
 .my-chat-trigger{
 	margin-top:16px;
 }
-	</style>
+
+.toaster-custom-mesg{
+    top:75;
+}
+
+
+.navbar-notice-number.badge{
+    position: absolute;
+    top: 3px !important;
+    right: 5px !important;
+    display: block !important;
+    padding: 3px 5px !important;
+    width: 1.7rem !important;
+    height: 1.7rem !important;
+    border-radius: 100% !important;
+    font-size: 11px !important;
+    line-height: 23px !important;
+}
+</style>
 	</head>
 
 	<body class="app sidebar-mini">

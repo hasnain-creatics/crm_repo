@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+
 <!--Page header-->
 <div class="page-header">
     <div class="page-leftheader">
@@ -116,21 +117,6 @@
                                                    
     </div>
 </div>
-
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-										<div id="liveToast" class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
-											<div class="toast-header bg-success text-white">
-												<strong class="me-auto" id="toast_title">User Status</strong>
-												<!-- <small>11 mins ago</small> -->
-												<button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close">
-													<span aria-hidden="true">×</span>
-												</button>
-												</div>
-												<div class="toast-body" id="toast_txt">
-												User Status Updated Successfully
-											</div>
-										</div>
-									</div>
 
 
 @endsection

@@ -37,7 +37,6 @@
                                                     <option :selected="response_details.lead_status == 'Paid' ? 'selected' :''" value="Paid">Paid</option>
                                                     <option :selected="response_details.lead_status == 'Un-Paid' ? 'selected' :''"  value="Un-Paid">Un-Paid</option>
                                                     <option :selected="response_details.lead_status == 'Followup' ? 'selected' :''"  value="Followup">Followup</option>
-													<option :selected="response_details.lead_status == 'Transfer-Paid' ? 'selected' :''" value="Transfer-Paid">Transfer Paid</option>
                                                 </select>
 												<span class="error" v-if="errorss.lead_status">{{errorss.lead_status[0]}}</span>
 											</div>

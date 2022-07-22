@@ -13,6 +13,7 @@ use DB;
 use Validator;
 use App\Models\UserOrderTaskDetails;
 use App\Models\Documents;
+use App\Models\Leads;
 use App\Models\Sale_Order_Documents as OrderDocuments;
 use App\Models\UserRatings;
 use Carbon\Carbon;
@@ -37,7 +38,8 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
-    {   
+    {  
+
         if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type === 'manager' || Auth::user()->is_lead == 1){
 
             $result['lead_manager_admin']     = true;
@@ -87,8 +89,36 @@ class HomeController extends Controller
        return response()->json($data);
 
     }
+    
+    public function sale_pending_orders(){
 
+        $data = $this->task_details()->where('sale_orders.order_status','Pending');
+ 
+        $data = $data->paginate(4);
+ 
+        return response()->json($data);
+ 
+    }
 
+    public function sale_qa_approved_orders(){
+
+        $data = $this->task_details()->where('sale_orders.order_status','QA Approved');
+ 
+        $data = $data->paginate(4);
+ 
+        return response()->json($data);
+ 
+    }
+
+    public function sale_qa_rejected_orders(){
+
+        $data = $this->task_details()->where('sale_orders.order_status','QA Rejected');
+ 
+        $data = $data->paginate(4);
+ 
+        return response()->json($data);
+ 
+    }
 
     public function writer_new_tasks(){
 
@@ -133,10 +163,20 @@ class HomeController extends Controller
      }
 
      public function writer_feedback_tasks(){
-        // $task->count();
-        $data = $this->task_details()->join('order_feedback','order_feedback.order_id','sale_orders.id')->groupBy('order_feedback.order_id');
- 
-        $data = $data->paginate(4);
+  
+        $feedback = $this->task_details()->select(DB::raw('count(order_feedback.id) as order_feedback_id,order_feedback.order_id as id'))
+                                     ->join('order_feedback','order_feedback.order_id','sale_orders.id')
+                                     ->groupBy('order_feedback.order_id')->get();
+
+        $array_order_id = [];
+
+        foreach($feedback as $key=>$value){
+            
+            $array_order_id[] = $value->id;
+
+        }
+
+        $data =  Orders::whereIn('id',$array_order_id)->paginate(4);
  
         return response()->json($data);
     }
@@ -156,7 +196,8 @@ class HomeController extends Controller
         }
 
         $total_amount = collect([]);
-
+        // echo '<pre>';
+        // print_r($sale_result);die;
         collect($sale_result)->each(function($row) use ($total_amount){
 
             $array = [];
@@ -184,7 +225,7 @@ class HomeController extends Controller
                 $total_amount->push($array);
                 
         });
-
+        
         return $total_amount;
     }
 
@@ -197,14 +238,23 @@ class HomeController extends Controller
             $today_sale = $today_sale->join('users','users.id','=','sale_orders.created_by_user_id');
 
             $auth = Auth::user();
+
             $today_sale = $today_sale->where(function($query) use ($auth){
+
                $query= $query->where('sale_orders.created_by_user_id',$auth->id);
+
                 if($auth->roles[0]->type == 'manager'){
+
                     $query= $query->orWhere('users.assigned_to',$auth->id);
+
                 }else{
+
                     if($auth->is_lead){
+
                         $query= $query->orWhere('users.lead_id',$auth->id);
+
                     }
+
                 }
               
             });
@@ -233,46 +283,135 @@ class HomeController extends Controller
             
             if(Auth::user()->roles[0]->name == 'Writer' || Auth::user()->roles[0]->name =='Writer Manager'  ){
                 
-                    $result['urgent_count'] = $task->where('sale_orders.order_status','!=','Delivered')->where('sale_orders.is_urgent',1)->count();
+                    $result['pending'] =  $this->task_details()->where('sale_orders.order_status','=','Pending')->count();
+
+                    $result['qa_approved'] = $this->task_details()->where('sale_orders.order_status','=','QA Approved')->count();
+
+                    $result['qa_rejected'] =  $this->task_details()->where('sale_orders.order_status','=','QA Rejected')->count();
+
+                    $result['urgent_count'] =  $this->task_details()->where('sale_orders.order_status','!=','Delivered')->where('sale_orders.is_urgent',1)->count();
                     
                     $result['new_count']    = $this->task_details('unassigned')->where('sale_orders.order_status','New')->count();
                     
                     $result['unassigned']   = $this->task_details('unassigned')->where('sale_orders.order_status','New')->count();
 
-                    $result['in_progress']  = $task->where('sale_orders.order_status','In Progress')->count();
+                    $result['in_progress']  = $this->task_details()->where('sale_orders.order_status','In progress')->count();
 
-                    $result['feedback']     = $task->join('order_feedback','order_feedback.order_id','sale_orders.id')->groupBy('order_feedback.order_id')->count();
+                    $result['feedback']     =       $this->task_details()->select(DB::raw('count(order_feedback.id) as order_feedback_id,order_feedback.order_id as id'))
+                    ->join('order_feedback','order_feedback.order_id','sale_orders.id')
+                    ->groupBy('order_feedback.order_id')->count(); 
 
                     $result['ready_to_qa']  = $this->task_details('ready to qa')->where('sale_orders.order_status','Ready to QA')->count();
                 
+            } 
+        
+            if(Auth::user()->roles[0]->name =='Admin'){
+
+                $lead_controller = new Leads();
+                
+                $todays_leads = User::whereHas('roles',function($q){
+                                                $q->whereIn('name',['Sale Manager','Sale Agent']);
+                                            })->withCount(['leads'=>function($q){
+                                                $q->whereDate('created_at',  Carbon::today());
+                                            }])->get();
+                                           
+                $result['todays_leads'] = collect($todays_leads)->sum('leads_count');
+                
+                $monthly_leads = User::whereHas('roles',function($q){
+                    $q->whereIn('name',['Sale Manager','Sale Agent']);
+                })->withCount(['leads'=>function($q){
+                    $q->whereMonth('created_at',  date('m'));
+                }])->get();
+               
+                $result['monthly_leads'] = collect($monthly_leads)->sum('leads_count');
+                          
+                $orders_controllers = new Orders();
+
+                $result['todays_orders'] = $orders_controllers->whereDate('created_at', Carbon::today())->count();
+
+                $result['monthly_orders'] = $orders_controllers->whereMonth('created_at', date('m'))->count();
+
             }
          
-            if(Auth::user()->roles[0]->name == 'Sale Agent' || Auth::user()->roles[0]->name =='Sale Manager' ){
+            if(Auth::user()->roles[0]->name == 'Sale Agent' || Auth::user()->roles[0]->name =='Sale Manager' ||  Auth::user()->roles[0]->name =='Admin' ){
                 
                 $sales_result = $this->sales_counters(null,true);
-                
-                $result['todays_sale'] = $sales_result->sum('amount');
 
-                $result['todays_paid'] = $sales_result->sum('amount_received');
+                $month_result = $this->sales_counters(true,null);
+               
+                if(Auth::user()->roles[0]->name != 'Admin'){
+
+                     $result['todays_sale'] = number_format($sales_result->sum('amount'),2);
+
+                     $result['todays_paid'] = number_format($sales_result->sum('amount_received'),2);
+
+                     $result['month_sale'] = $month_result->sum('amount');
+
+                     $result['month_paid'] = $month_result->sum('amount_received');
+
+                }else{
+
+                    $todays_saless = Orders::whereDate('created_at',  Carbon::today())->get();
+
+                    $today_sales = 0;
+    
+                    $today_sales_paid = 0;
+    
+                    foreach($todays_saless as $today_sales_key=>$today_sales_value){
+                        
+                        if($today_sales_value->payment_status == 'PAID' || $today_sales_value->payment_status == 'PARTIALLY PAID'){
+
+                            $today_sales_paid += $today_sales_value->amount_received;
+
+                        }
+                        
+                        $today_sales += $today_sales_value->dollar_amount;
+    
+                    }
+    
+                    $result['todays_sale'] = number_format($today_sales,2);
+    
+                    $result['todays_paid'] = number_format($today_sales_paid,2);
+
+     
+                    $monthly_saless = Orders::whereMonth('created_at',  date('m'))->get();
+    
+                    $month_sales = 0;
+    
+                    $month_sales_paid = 0;
+                    
+                    foreach($monthly_saless as $monthly_sales_key=>$monthly_sales_value){
+    
+                        if($monthly_sales_value->payment_status == 'PAID' || $monthly_sales_value->payment_status == 'PARTIALLY PAID'){
+
+                            $month_sales_paid += $monthly_sales_value->amount_received;
+
+                        }
+                        
+                        $month_sales += $monthly_sales_value->dollar_amount;
+                    }
+                
+                    $result['month_sale'] = number_format($month_sales,2);
+    
+                    $result['month_paid'] = number_format($month_sales_paid,2);
+    
+
+
+                    
+                }
 
                 $result['todays_feedback'] = $sales_result->sum('feedback');
 
                 $result['todays_deliveries'] = $sales_result->sum('deliveries');
 
-
-                $month_result = $this->sales_counters(true,null);
             
-                $result['month_sale'] = $month_result->sum('amount');
-
-                $result['month_paid'] = $month_result->sum('amount_received');
-
                 $result['month_feedback'] = $month_result->sum('feedback');
 
                 $result['month_deliveries'] = $month_result->sum('deliveries');
    
             }
         
-            if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type === 'manager' || Auth::user()->is_lead == 1){
+            if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type == 'manager' || Auth::user()->is_lead == 1){
 
                 $result['lead_manager_admin']     = true;
 
@@ -306,8 +445,6 @@ class HomeController extends Controller
     public function today_deliverable(){
 
         if(Auth::user()->roles[0]->name == 'Sale Agent' || Auth::user()->roles[0]->name =='Sale Manager'){
-            // hereNotIn('book_price', [100,200])->get();
-     
 
             $sales_result =  $this->sales_result(null,true)
                                   ->whereNotIn('sale_orders.order_status',['Delivered','Completed','Failed'])->paginate(5);
@@ -318,6 +455,67 @@ class HomeController extends Controller
 
     }
 
+
+    public function todays_leads(){
+        
+        if(Auth::user()->roles[0]->name == 'Admin'){
+
+            
+            $leads = User::whereHas('roles',function($q){
+                $q->whereIn('roles.name',['Sale Manager','Sale Agent']);
+            })->withCount(['leads'=>function($q){
+                $q->whereDate('created_at',  Carbon::today());
+            }])->with('roles',function($q){
+                $q->select('roles.name as user_role');
+            })->paginate(5);
+            // $leads = Leads::whereDate('created_at', Carbon::today())->paginate(5);
+
+            return response()->json($leads);
+     
+        }
+
+    }
+
+    public function monthly_leads(){
+
+        if(Auth::user()->roles[0]->name == 'Admin'){
+
+            $monthly_leads = User::whereHas('roles',function($q){
+                $q->whereIn('name',['Sale Manager','Sale Agent']);
+            })->withCount(['leads'=>function($q){
+                $q->whereMonth('created_at',  date('m'));
+            }])->with('roles',function($q){
+                $q->select('roles.name as user_role');
+            })->paginate(5);
+            return response()->json($monthly_leads);
+     
+        }
+
+    }
+
+    public function todays_orders(){
+
+        if(Auth::user()->roles[0]->name == 'Admin'){
+
+            $orders = Orders::whereDate('created_at', Carbon::today())->paginate(5);
+
+            return response()->json($orders);
+     
+        }
+
+    }
+
+    public function monthly_orders(){
+
+        if(Auth::user()->roles[0]->name == 'Admin'){
+
+            $orders = Orders::whereMonth('created_at', date('m'))->paginate(5);
+
+            return response()->json($orders);
+     
+        }
+
+    }
 
     public function monthly_deliverable(){
 

@@ -30,7 +30,16 @@
 
           <div class="row">
             <div class="col">{{ order_details.deadline }}</div>
-            <div class="col">{{ order_details.notes }}</div>
+            <div class="col">{{ 
+            
+                       new_notes
+
+
+                        
+            
+            }} 
+            <span v-if="new_notes_read" @click="read_more_notes">Read More</span> <span v-if="new_notes_less"  @click="read_less_notes">Read Less</span>
+            </div>
           </div>
 
           <div class="row">
@@ -39,9 +48,10 @@
           </div>
 
           <div class="row">
-            <div class="col">{{ order_details.additional_notes }}</div>
-            <div class="col">
-              {{ order_details.subjects ? order_details.subjects.name : "" }}
+            <div class="col">{{ new_additional_notes }}
+             <span v-if="new_additional_notes_read" @click="read_more_additional_notes">Read More</span> <span v-if="new_additional_notes_less"  @click="read_less_additional_notes">Read Less</span>
+            </div>
+            <div class="col">{{ order_details.subjects ? order_details.subjects.name : "" }}
             </div>
           </div>
         </div>
@@ -230,9 +240,9 @@
                 accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple />
             </div>
           </div>
-          <div class="col-lg-12" style="margin-top: 10px" v-if="selected != 'QA Approved' && selected != 'Delivered'">
+          <div class="col-lg-12" style="margin-top: 10px" >
             <button class="btn btn-primary" type="submit">
-              Submit Details
+              Uplaod Documents
             </button>
           </div>
         </div>
@@ -295,13 +305,15 @@
               <tr>
 
                 <th>Select</th>
+                <th>Uploaded By</th>
                 <th>File Name</th>
                 <th>Link</th>
+                <th>Date</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody v-if="role == 'Sale Manager' || role == 'Sale Agent'">
-              <tr v-for="(doc,index) in writer_documetns" :key="index" v-if="doc.doc_status == 'Sent' || doc.doc_status == 'Failed'" >
+              <tr v-for="(doc,index) in writer_documetns" :key="index" v-if="doc.doc_status == 'Sent' || doc.doc_status == 'Failed'  || doc.doc_status == 'Sale Docs'" >
                 <td>
                   <div v-if="doc.doc_status">
                     <!-- <input type="checkbox"  :value="doc.sale_document_id"  :id="'doc_id_'+doc.sale_document_id" v-model="form.select_files"></input> -->
@@ -313,16 +325,17 @@
                   </div>
 
                 </td>
+                <td>{{ doc.first_name }} {{ doc.last_name }}</td>
                 <td>{{ doc.document_name }}</td>
-                <td><a :href="doc.url">download link</a></td>
-                <td><i class="fa fa-trash"></i></td>
+                <td><a :href="doc.url"  target='_blank'>{{doc.original_name ? doc.original_name : 'download link'}}</a></td>
+                <td>{{ moment(doc.created_at).format("Y-M-D H:m")  }}</td>
+                <!-- <td>{{doc.created_at}}</td> -->
+                <td></td>
               </tr>
             </tbody>
              <tbody v-else>
               <tr v-for="doc in writer_documetns" :key="doc.sale_document_id" >
                 <td>
-
-
                   <div v-if="doc.doc_status">
                     <!-- <input type="checkbox"  :value="doc.sale_document_id"  :id="'doc_id_'+doc.sale_document_id" v-model="form.select_files"></input> -->
                     {{ doc.doc_status }}
@@ -333,14 +346,20 @@
                   </div>
 
                 </td>
+                 <td>{{ doc.first_name }} {{ doc.last_name }}</td>
                 <td>{{ doc.document_name }}</td>
-                <td><a :href="doc.url">download link</a></td>
-                <td><i class="fa fa-trash"></i></td>
+                <td><a :href="doc.url" target='_blank'>{{doc.original_name ? doc.original_name : 'download link'}}</a></td>
+                <td>{{ moment(doc.created_at).format("Y-M-D H:m")  }}</td>
+                             <!-- <td>{{doc.created_at}}</td> -->
+                <td></td>
               </tr>
             </tbody>
-          </table>
-        </div>
-      </div>
+          </table> 
+      
+        </div>  <br>
+            <button  v-if="is_qa && (selected == 'QA Approved'  || selected == 'Delivered'  || selected == 'Completed'   || selected == 'Failed') " class="resent_documents btn btn-danger text-left" @click="change_task_statement('Document Sending')" id="resent_documents">Send Documents</button>
+   
+          </div>
 
       <div class="card">
         <div class="card-header bg-secondary">
@@ -527,7 +546,7 @@
                 <td>{{ moment(assign.created_at).fromNow() }}</td>
                 <td>
                   <div>
-                    <b-button @click="modalShow(assign.user_id)" v-if="assign.status_id == 'QA Approved' && (lead_manager_admin || is_qa) "
+                    <b-button @click="modalShow(assign.user_id)" v-if="(assign.status_id == 'Ready to QA' || assign.status_id == 'QA Approved') && (lead_manager_admin || is_qa) "
                       v-b-modal.modal-1>Rating</b-button>
                   </div>
 
@@ -565,9 +584,23 @@
    </b-modal>
 </div>
 
+
+<div v-if="myPartialModal">
+   <b-modal v-model="myPartialModal" id="modal-2" :title="'Kindly add the remaing payment of ORDER-'+task_id+'.'" ok-title="Submit" @ok="submit_payment()">
+      <div>
+
+          <label for="">
+            <b style="font-size:15px;">Remaining Payment is ({{remaining_amount}}) </b>
+          </label>
+            <!-- <textarea name="" id="" cols="30" rows="5" class="form-control" v-model="reasons.reason"></textarea> -->
+            <input type="text" readonly class="form-control" :value="remaining_amount">
+      </div>
+   </b-modal>
+</div>
+
     <div v-if="myModel">
 
-      <b-modal id="modal-1" title="Add User Ratings" ok-title="Submit" @ok="submit_ratings()">
+      <b-modal v-model="myModel"  id="modal-1" title="Add User Ratings" ok-title="Submit" @ok="submit_ratings()">
 
         <div>
 
@@ -692,6 +725,7 @@ export default {
     return {
       myModel: false,
       myFailedModal :false,
+      myPartialModal :false,
       cchecked1: false,
       cchecked2: false,
       cchecked3: false,
@@ -743,11 +777,22 @@ export default {
         status: 'Failed',
 
       }),
+      order_payment: new Form({
+        payment : 0,
+      }),
       all_writers: [],
       assign_writer_post: {},
       page_reload: false,
       is_qa: false,
       reason_added: false,
+      check_partial_payment: false,
+      remaining_amount : 0,
+      new_additional_notes: "",
+      new_additional_notes_read: false ,
+      new_additional_notes_less: false,
+      new_notes: "",
+      new_notes_read:false,
+      new_notes_less: false,
     };
   },
 
@@ -774,6 +819,7 @@ export default {
       this.myModel   = true;
       
       this.show_ratings(user_id,this.task_id)
+
     },
 
     async show_ratings(user_id,order_id){
@@ -791,7 +837,32 @@ export default {
 
       
     },
+    
+    async submit_payment(){
+  
+        const headers = {
+          "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
+        };
+          await this.order_payment.post(this.$hostname + "orders/update_payment_status/" + this.task_id, null, {
+            headers,
+          })
+          .then((response) => {
+            // console.log(response.data.status)
+            if(response.data.status =='success')
+            {
 
+
+              // this.reason_added = true; 
+              // this.myFailedModal = false;
+              this.check_partial_payment = true;
+              this.myPartialModal = false;
+              this.change_task_statement('Delivered');
+
+            }
+
+          });
+      
+    },
     async assign_writer(e, ele) {
 
       const _this = this;
@@ -913,7 +984,9 @@ export default {
             this.ratings.rating.overall_quality_of_the_content = 0;
             
             this.ratings.rating.referencing = 0;
-         
+
+            // this.user_task_details_update();
+
             swal('Success!', response.data.message, response.data.status);
 
           }
@@ -923,12 +996,30 @@ export default {
       }
     },
     async editStatus(ele) {
-      this.edit_status = true;
-      this.edit_progress = false;
+      if(this.role =='Sale Manager' || this.role =='Sale Agent' ){
+        this.edit_status = false;
+        this.edit_progress = false;
+      }else{
+          
+        this.edit_status = true;
+        this.edit_progress = false;
+      }
+
       this.progress_id = ele;
       this.status_id = ele;
     },
-
+    async editProgress(ele) {
+            if(this.role =='Sale Manager' || this.role =='Sale Agent' ){
+              this.edit_progress = false;
+              this.edit_status = false;
+            }else{
+              this.edit_progress = true;
+              this.edit_status = false;
+            }
+       
+        this.progress_id = ele;
+        this.status_id = ele;
+      },
     async ostars_rating(ele) {
       var orating = 0;
       if (ele == 1) {
@@ -1055,20 +1146,65 @@ export default {
       //           referencing: 0,
       //         },
     },
-    async editProgress(ele) {
-      this.edit_progress = true;
-      this.edit_status = false;
-      this.progress_id = ele;
-      this.status_id = ele;
+    
+    async read_more_notes(){
+      this.new_notes_read = false;
+      this.new_notes_less = true;
+      this.new_notes =  this.order_details.notes;
     },
-    async show_task_details() {
 
+    async read_less_notes(){
+      this.new_notes_read = true;
+      this.new_notes_less = false;
+      this.new_notes =  this.order_details.notes;
+      this.check_notes_words(this.new_notes.split(" "));
+    },
+
+    async check_notes_words(notes_var){
+          if(notes_var.length >= 25){
+            this.new_notes = "";
+            for(var i = 0;i < notes_var.length;i++){
+                if(i <= 50){
+                  this.new_notes += notes_var[i]+" ";
+                }
+            }
+            this.new_notes_read = true;
+          }
+    },
+ 
+    async read_more_additional_notes(){
+      this.new_additional_notes_read = false;
+      this.new_additional_notes_less = true;
+      this.new_additional_notes =  this.order_details.additional_notes;
+    },
+
+    async read_less_additional_notes(){
+      this.new_additional_notes_read = true;
+      this.new_additional_notes_less = false;
+      this.new_additional_notes =  this.order_details.additional_notes;
+      this.check_additional_notes_words(this.new_additional_notes.split(" "));
+    },
+
+    async check_additional_notes_words(notes_var){
+       if(notes_var.length >= 25){
+            this.new_additional_notes = "";
+            for(var i = 0;i < notes_var.length;i++){
+                if(i <= 50){
+                  this.new_additional_notes += notes_var[i]+" ";
+                }
+            }
+            this.new_additional_notes_read = true;
+          }
+    },
+
+    async show_task_details() {
 
       await axios
 
         .get(this.$hostname + "writers/fetch_order/" + this.task_id)
 
         .then((response) => {
+
           this.order_details = response.data.data;
 
           this.lead_manager_admin = response.data.lead_manager_admin;
@@ -1076,27 +1212,70 @@ export default {
           this.selected = this.order_details.order_status;
 
           if (this.order_details.sale_order_documents) {
+
             this.task_documents = this.order_details.sale_order_documents;
+
           }
 
           if (this.order_details.sale_order_uploaded_document) {
-            this.writer_documetns =
-              this.order_details.sale_order_uploaded_document;
+
+            this.writer_documetns = this.order_details.sale_order_uploaded_document;
+
           }
 
           if (this.order_details.order_assigns) {
+
             this.order_assigns = this.order_details.order_assigns;
+
           }
 
           this.form.title = this.order_details.order_status.title;
 
-          // this.change_task_statement(this.form.title);
-
-
           this.is_qa = response.data.is_qa
 
+          this.order_details.payment_status == 'PAID' ? this.check_partial_payment = true : this.check_partial_payment = false ;
 
+          this.order_details.payment_status == 'PAID' ? this.check_partial_payment = true : this.check_partial_payment = false ;
+          
+          var maxLength = 200;
+          this.new_additional_notes =  this.order_details.additional_notes;
+          this.new_notes =this.order_details.notes;
+          var notes_var = this.order_details.notes.split(" ");
+          var additional_var = this.order_details.additional_notes ? this.order_details.additional_notes.split(" ") : '';
+          this.check_notes_words(notes_var);
+          this.check_additional_notes_words(additional_var);
+          // if(notes_var.length >= 25){
+          //   this.new_notes = "";
+          //   for(var i = 0;i < notes_var.length;i++){
+          //       if(i <= 50){
+          //         this.new_notes += notes_var[i]+" ";
+          //       }
+          //   }
+          //   this.new_notes_read = true;
+          // }
+        
+          if(additional_var.length >= 25){
+            this.new_additional_notes = "";
+            for(var i = 0;i < additional_var.length;i++){
+                if(i <= 50){
+                  this.new_additional_notes += additional_var[i]+" ";
+                }
+            }
+            this.new_additional_notes_read = true;
+          }
+
+          
+          if(this.order_details.payment_status == 'UNPAID'){
+  
+              this.remaining_amount = this.order_details.dollar_amount;
+              this.order_payment.payment = this.remaining_amount;
+          }else if(this.order_details.payment_status == 'PARTIALLY PAID'){
+              this.remaining_amount = this.order_details.amount_received;
+              this.order_payment.payment = this.remaining_amount;
+          }
+          
           this.fetch_writers();
+
         });
     },
  
@@ -1151,18 +1330,29 @@ export default {
 
     }
 
-    if( this.myFailedModal == false){
+    if(this.form.title == 'Delivered' && this.check_partial_payment == false){
+     
+      this.myPartialModal=true;
+      e.target.value = 'QA Approved';
+      return false;
+
+    }
+
+
+    if( this.myFailedModal == false &&  this.myPartialModal == false){
 
           this.form.status = true;
 
           const headers = {
+
             "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
 
-            "Content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data"
+
           };
 
 
-          if (this.form.title == 'QA Approved') {
+          if (this.form.title == 'QA Approved' || this.form.title == 'Document Sending') {
 
             if (this.form.select_files.length <= 0) {
 
@@ -1183,24 +1373,35 @@ export default {
             })
             .then((response) => {
 
-              if (response.data.stop_reload == false) {
-                swal(
-                  response.data.alert_message,
-                  response.data.message,
-                  "success"
-                );
-                this.show_task_details();
-              } else {
+              // if (response.data.stop_reload == false) {
+                // console.log(response);
+                if(response.data.status == 'error'){
+                   e.target.value = this.selected;
+                }
+                // alert(response.data.message[2]);return false;
+                if(response.data.message[1] == 'ratings_error'){
+                  console.log(response);
+                  // console.log()
+                  // this.modalShow(response.data.message[2],this.task_id);
+                }else{
+                  swal(
+                    response.data.alert_message,
+                    response.data.message[0],
+                    response.data.status
+                  );                 
+                  this.show_task_details();
+                }
+              // } else {
 
-                e.target.value = response.data.title;
+              //   e.target.value = response.data.title;
 
-                swal(
-                  response.data.alert_message,
-                  response.data.message,
-                  "error"
-                );
+                // swal(
+                //   response.data.alert_message,
+                //   response.data.message,
+                //   task_status_update.status
+                // );
 
-              }
+              // }
 
             });
     }
@@ -1244,25 +1445,51 @@ export default {
           }
         }
       }
+
+      
+
+
     },
 
     async assign_task_update(e, user_id) {
+
       this.task_update_form.status = e.target.value;
-      // this.task_update_form.status = e.target.value;
+    
       this.task_update_form.user_id = user_id;
 
-      const headers = {
-        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-
-        "Content-Type": "multipart/form-data",
-      };
-      if (e.target.value == 'QA Approved') {
-
+   
+      if (e.target.value == 'Ready to QA' ) {
 
         this.ratings.user_id = user_id;
 
       }
 
+      if(e.target.value  == 'QA Approved'){
+
+        e.target.value  = 'Ready to QA';
+
+        this.modalShow(this.ratings.user_id);
+
+        return false;
+
+      }
+      
+      // this.user_task_details_update();
+
+  },
+
+
+    async assign_task_update(e, user_id) {
+      this.task_update_form.status = e.target.value;
+      // this.task_update_form.status = e.target.value;
+      this.task_update_form.user_id = user_id;
+      const headers = {
+        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        "Content-Type": "multipart/form-data",
+      };
+      if (e.target.value == 'QA Approved') {
+        this.ratings.user_id = user_id;
+      }
       await this.task_update_form
         .post(
           this.$hostname + "writers/user_task_details_update/" + this.task_id,
@@ -1270,30 +1497,63 @@ export default {
           { headers }
         )
         .then((response) => {
-
           if (response.data.status == 'error') {
-
             e.target.value = response.data.status_id;
-
             swal('Oops!', response.data.message, 'error');
-
           }
-
           this.edit_status = false;
-
           this.status_id = user_id;
-
           for (let i = 0; i < this.order_assigns.length; i++) {
-
             if (this.order_assigns[i].user_id == user_id) {
-
               this.order_assigns[i].status_id = e.target.value;
-
             }
           }
-
         });
     },
+
+
+  // async user_task_details_update(){
+    
+  //     const headers = {
+  //       "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+
+  //       "Content-Type": "multipart/form-data",
+  //     };
+  //     await this.task_update_form
+  //       .post(
+  //         this.$hostname + "writers/user_task_details_update/" + this.task_id,
+  //         null,
+  //         { headers }
+  //       )
+  //       .then((response) => {
+          
+  //         if (response.data.status == 'error') {
+
+  //           e.target.value = response.data.status_id;
+
+  //           swal('Oops!', response.data.message, 'error');
+
+  //         }
+
+  //         this.edit_status = false;
+
+  //         this.status_id = user_id;
+
+  //         for (let i = 0; i < this.order_assigns.length; i++) {
+
+  //           if (this.order_assigns[i].user_id == user_id) {
+
+  //             this.order_assigns[i].status_id = e.target.value;
+
+  //           }
+  //         }
+
+     
+
+  //       });
+  //       // this.show_task_details();
+  // },
+
     async delete_assigned_user(assigned_id) {
       const __this = this;
       swal({
@@ -1400,7 +1660,7 @@ export default {
 
     this.show_task_details();
 
-    this.interval = setInterval(() => this.show_task_details(), 10000);
+    // this.interv  al = setInterval(() => this.show_task_details(), 30000);
     
     // this.show_task_details();
 

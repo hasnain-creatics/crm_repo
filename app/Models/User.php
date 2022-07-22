@@ -60,4 +60,8 @@ class User extends Authenticatable
     public function user_ratings(){
         return $this->hasMany(UserRatings::class,'user_id');
     }
+
+    public function leads(){
+        return $this->hasMany(Leads::class,'created_by')->groupBy('leads.created_by');
+    }
 }

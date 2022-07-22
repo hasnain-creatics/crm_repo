@@ -10,12 +10,11 @@
    
         <div class="btn-list">
             @can('noticeboard-add')
-            @if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type == 'manager' || Auth::user()->is_lead == 1)
-            <a href="{{route('noticeboard.add')}}" class="btn btn-primary btn-pill" >
-                <i class="fa fa-plus"></i> Add New
-            </a>
-
-            @endif
+                @if(Auth::user()->roles[0]->type == 'web' || Auth::user()->roles[0]->type == 'manager' || Auth::user()->is_lead == 1)
+                <a href="{{route('noticeboard.add')}}" class="btn btn-primary btn-pill" >
+                    <i class="fa fa-plus"></i> Add New
+                </a>
+                @endif
             @endcan
 
         </div>

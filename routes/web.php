@@ -13,7 +13,10 @@ use App\Http\Controllers\WriterController;
 use App\Http\Controllers\NoticeBoardController;
 use App\Http\Controllers\KnowledgeController;
 use App\Http\Controllers\OrderMessageController;
-
+use App\Http\Controllers\InternalNotificationsController;
+use App\Http\Controllers\DepartmentsController;
+use App\Events\NotificationEvent;
+use Pusher\Pusher;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,6 +27,7 @@ use App\Http\Controllers\OrderMessageController;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 Route::fallback(function () {
 
     return redirect('admin/home');
@@ -40,7 +44,6 @@ Auth::routes();
 Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
     
     Route::get('/chat', [App\Http\Controllers\ChatsController::class, 'index']);
-
 
     Route::get('/messages', [App\Http\Controllers\ChatsController::class, 'fetchMessages']);
     
@@ -66,12 +69,26 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
     Route::get('/dashboard/writer_feedback_tasks', [App\Http\Controllers\HomeController::class, 'writer_feedback_tasks'])->name('dashboard.writer_feedback_tasks');
 
     Route::get('/dashboard/sale_urgent_orders', [App\Http\Controllers\HomeController::class, 'sale_urgent_orders'])->name('dashboard.sale_urgent_orders');
+    
+    Route::get('/dashboard/sale_pending_orders', [App\Http\Controllers\HomeController::class, 'sale_pending_orders'])->name('dashboard.sale_pending_orders');
+    
+    Route::get('/dashboard/sale_qa_approved_orders', [App\Http\Controllers\HomeController::class, 'sale_qa_approved_orders'])->name('dashboard.sale_qa_approved_orders');
+    
+    Route::get('/dashboard/sale_qa_rejected_orders', [App\Http\Controllers\HomeController::class, 'sale_qa_rejected_orders'])->name('dashboard.sale_qa_rejected_orders');
 
     Route::get('/dashboard/today_deliverable', [App\Http\Controllers\HomeController::class, 'today_deliverable'])->name('dashboard.today_deliverable');
 
     Route::get('/dashboard/monthly_deliverable', [App\Http\Controllers\HomeController::class, 'monthly_deliverable'])->name('dashboard.monthly_deliverable');
 
     Route::get('/dashboard/rating_details', [App\Http\Controllers\HomeController::class, 'rating_details'])->name('dashboard.rating_details');
+
+    Route::get('/dashboard/todays_leads', [App\Http\Controllers\HomeController::class, 'todays_leads'])->name('dashboard.todays_leads');
+
+    Route::get('/dashboard/monthly_leads', [App\Http\Controllers\HomeController::class, 'monthly_leads'])->name('dashboard.monthly_leads');
+
+    Route::get('/dashboard/todays_orders', [App\Http\Controllers\HomeController::class, 'todays_orders'])->name('dashboard.todays_orders');
+    
+    Route::get('/dashboard/monthly_orders', [App\Http\Controllers\HomeController::class, 'monthly_orders'])->name('dashboard.monthly_orders');
     
     Route::group(['prefix'=>'roles'],function(){
 
@@ -101,6 +118,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
 
     Route::group(['prefix'=>'user'],function(){
 
+
+
+
+
         Route::get('/',[UserController::class,'index'])->name('user.index');
 
         Route::get('/get_users',[UserController::class,'get_users']);
@@ -109,6 +130,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
 
         Route::get('/fetch_all_active_users',[UserController::class,'fetch_all_active_users']);
         
+        // fetch_all_sales_agent
+
+        Route::get('/fetch_all_sales_agent',[UserController::class,'fetch_all_sales_agent'])->name('roles.sales_agents');
+
         Route::post('/check_email_exists',[UserController::class,'check_email_exists'])->name('check_email_exists');
 
         Route::get('/add',[UserController::class,'create'])->name('user.add');
@@ -133,7 +158,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
 
         Route::get('/profile',[UserController::class,'profile']);
         
-        Route::post('/profile_update}',[UserController::class,'profile_update'])->name('user.profile_update');
+        Route::post('/profile_update',[UserController::class,'profile_update'])->name('user.profile_update');
 
     });
 
@@ -141,6 +166,10 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
 
         Route::get('/',[OrdersController::class,'index'])->name('orders.home');
 
+        Route::get('/all_docs/{id}',[OrdersController::class,'all_docs'])->name('orders.all_docs');
+
+        Route::get('/delete_doc/{id}',[OrdersController::class,'delete_doc'])->name('orders.delete_doc');
+  
         Route::get('/add',[OrdersController::class,'create'])->name('orders.add');
 
         Route::get('/add/{id}',[OrdersController::class,'edit'])->name('orders.edit');
@@ -159,6 +188,8 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
 
         Route::get('/add_feedback/{id}',[OrdersController::class,'add_feedback'])->name('orders.add_feedback');
 
+        Route::get('/fetch_all_feedback/{id}',[OrdersController::class,'fetch_all_feedback'])->name('orders.fetch_all_feedback');
+
         Route::post('/add_feedback',[OrdersController::class,'store_feedback'])->name('orders.store_feedback');
 
         Route::get('/order_full_details/{id}',[OrdersController::class,'order_full_details'])->name('orders.order_full_details');
@@ -166,7 +197,11 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
         Route::get('/order_status_details/{id}',[OrdersController::class,'order_status_details'])->name('orders.order_status_details');
 
         Route::post('/failed_reason/{id}',[OrdersController::class,'failed_reason'])->name('orders.failed_reason');
+
+        Route::post('/update_payment_status/{id}',[OrdersController::class,'update_payment_status'])->name('orders.update_payment_status');
         // failed_reason
+        
+        Route::get('/add/{id}/upsell',[OrdersController::class,'order_upsell'])->name('orders.order_upsell');
 
     });
 
@@ -180,7 +215,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
     Route::group(['prefix'=>'leads'],function(){
 
         Route::get('/',[LeadsController::class,'index'])->name('leads.home');
-
+        Route::post('/search_leads',[LeadsController::class,'search_leads'])->name('leads.search_leads');
         Route::get('/add',[LeadsController::class,'create'])->name('leads.add');
 
         Route::get('/view/{id}',[LeadsController::class,'show'])->name('leads.view');
@@ -322,7 +357,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
 
         Route::get('/upload/{id}', [KnowledgeController::class, 'upload'])->name('knowledge.upload');
         Route::get('/video_listing/{id}', [KnowledgeController::class, 'video_listing'])->name('knowledge.video_listing');
-        Route::get('/video_listing', [KnowledgeController::class, 'video_listing'])->name('knowledge.video_listing');
+        Route::get('/video_listing', [KnowledgeController::class, 'video_listing'])->name('knowledge.video_listings');
         Route::get('/play_video/{id}', [KnowledgeController::class, 'play_video'])->name('knowledge.play_video');
 
         Route::post('/',[KnowledgeController::class,'store'])->name('knowledge.add');
@@ -342,7 +377,7 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
 
         Route::post('/check_user_assignments/{id}',[WriterController::class,'check_user_assignments'])->name('writers.check_user_assignments');
 
-        Route::post('/assigned_user/{id}',[WriterController::class,'assigned_user'])->name('writers.change_status');
+        Route::post('/assigned_user/{id}',[WriterController::class,'assigned_user'])->name('writers.change_statuses');
       
         Route::get('/task_details/{id}',[WriterController::class,'task_details'])->name('writers.task_details');
         
@@ -359,6 +394,9 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
         Route::post('/delete_assigned_user',[WriterController::class,'delete_assigned_user'])->name('writers.delete_assigned_user');
         
         Route::get('/user_ratings/{user_id}/{order_id}',[WriterController::class,'user_ratings'])->name('writers.user_ratings');
+   
+        Route::get('/delete_doc/{id}',[WriterController::class,'delete_doc'])->name('writers.delete_doc');
+
 
         Route::post('/submit_ratings',[WriterController::class,'submit_ratings'])->name('writers.submit_ratings');
 
@@ -367,9 +405,34 @@ Route::group(['prefix'=>'admin','middleware'=>['auth','logs']],function(){
 
 
      Route::group(['prefix'=>'order_message'],function(){
+
         Route::get('/order_message_list/{id}',[OrderMessageController::class,'order_message_list'])->name('order_message.order_message_list');
+
         Route::post('/send',[OrderMessageController::class,'store'])->name('order_message.add');
+
         Route::get('/fetch_messages/{id}',[OrderMessageController::class,'fetch_messages'])->name('order_message.fetch_messages');
+
+     });
+
+     Route::group(['prefix'=>'notifications'],function(){
+
+        Route::get('/notification_list',[InternalNotificationsController::class,'notification_list'])->name('notifications.notification_list');
+
+        Route::get('/fetch_new_notifications',[InternalNotificationsController::class,'fetch_new_notifications'])->name('notifications.fetch_new_notifications');       
+        
+        Route::get('/check_some_notifications',[InternalNotificationsController::class,'check_some_notifications'])->name('notifications.check_some_notifications');    
+        
+        Route::get('/notify_notification',[InternalNotificationsController::class,'notify_notification'])->name('notifications.notify_all');   
+            
+        Route::get('/notify_notification/{id}',[InternalNotificationsController::class,'notify_notification'])->name('notifications.notify_notification');       
+        
+        
+     });
+
+     Route::group(['prefix'=>'departments'],function(){
+
+        Route::get('/active_departments',[DepartmentsController::class,'fetch_active_department'])->name('departments.active_departments');
+
      });
 
 });

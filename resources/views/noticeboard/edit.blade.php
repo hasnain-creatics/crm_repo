@@ -61,8 +61,9 @@
                                                         <label for="" class="form-label">Send Type</label>
                                                         <select  name="sent_type" id="sent_type" class="form-control input-text" aria-label="Recipient's username" aria-describedby="basic-addon2">
                                                             <option value="" >Select Send Type</option>
+                                                            <option value="department" {{$result->sent_type == 'department' ? 'selected' : ''}}>Departments</option>
                                                             @if(Auth::user()->roles[0]->type == 'manager'){
-                                                           
+                                                            <option {{$result->sent_type == 'all' ? 'selected' : ''}}  value="all">All</option>
                                                             <option {{$result->sent_type == 'Individually' ? 'selected' : ''}} value="Individually">Individually</option>
                                                             <option {{$result->sent_type == 'lead' ? 'selected' : ''}} value="lead">Team Lead</option>
                                                             
@@ -86,13 +87,20 @@
                                                     <div class="sentTo_all form-group col-md-3 d-none" >
                                                         <label for="" class="form-label">Select Users</label>
                                                         
-                                                        <select name="Individually_users[]"   class="form-control custom-select select2 select2-hidden-accessible all_users"  id="Individually_users"   multiple  aria-hidden="true">
+                                                        <select name="Individually_users[]" class="form-control custom-select all_users"  id="Individually_users"   multiple  aria-hidden="true">
                                                             
                                                         </select>
                                                     </div> 
                                                     
                                                    
-                                                    	
+                                                    <div class="send_to_department form-group col-md-3 d-none" >
+
+                                                    <label for="" class="form-label">Select Departments</label>
+                                                    <select name="departments[]" class="form-control custom-select departments" id="department_id" multiple aria-hidden="true">
+                                                        
+                                                    </select>
+                                                    </div> 
+
 															
 												  
                                             <div class="col-lg-4">
@@ -143,14 +151,12 @@
 
 $(document).ready(function(){
 
-
-
-
-
-    var sent_type_value = $('#sent_type').val();
+var sent_type_value = $('#sent_type').val();
 
 if(sent_type_value =='Individually')
 {
+    
+    $('.send_to_department').removeClass('d-block').addClass('d-none');
    
     $('.sentTo_all').removeClass('d-none').addClass('d-block');
 
@@ -179,6 +185,7 @@ $.ajax({
 
 else{
             $('.sentTo_all').removeClass('d-block').addClass('d-none');
+            $('.send_to_department').removeClass('d-block').addClass('d-none');
         }
 
 
@@ -305,7 +312,9 @@ $.ajax({
 
 
 }
-
+else if(){
+    
+}
 
 
 

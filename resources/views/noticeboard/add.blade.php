@@ -49,35 +49,29 @@
                                                 </div>
 
                                                 <div class="form-group col-md-12">
-                                                                <label for="" class="form-label">Notice</label>
-                                                               <textarea name="description" class="ckeditor" id="" ></textarea>
-                                                                @error('editor')
-                                                                    <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
+                                                    <label for="" class="form-label">Notice</label>
+                                                    <textarea name="description" class="ckeditor" id="" ></textarea>
+                                                    @error('editor')
+                                                        <span class="text-danger">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
 															
 											<div class="form-group col-md-3">
                                                         <label for="" class="form-label">Send Type</label>
                                                         <select  name="sent_type" id="sent_type" class="form-control input-text" aria-label="Recipient's username" aria-describedby="basic-addon2">
                                                             <option value="" >Select Send Type</option>
-                                                            @if(Auth::user()->roles[0]->type == 'manager'){
-                                                           
-                                                            <option value="Individually">Individually</option>
-                                                            <option value="lead">Team Lead</option>
-                                                            
-                                                            @elseif(Auth::user()->is_lead == '1'){
-                                                         
-                                                           
-                                                           <option value="Individually">Individually</option>
-                                                           <option value="Individually" data-option="all_team">All Team Members</option>
-                                                          
-
-                                                            @else{
-                                                            <option value="all">All</option>
-                                                            <option value="Individually">Individually</option>
-                                                            <option value="managers">Only Managers</option>
-                                                              }
-                                                              @endif        
+                                                                <option value="department">Departments</option>
+                                                            @if(Auth::user()->roles[0]->type == 'manager')
+                                                                <option value="Individually">Individually</option>
+                                                                <option value="lead">Team Lead</option>
+                                                            @elseif(Auth::user()->is_lead == '1')
+                                                                <option value="Individually">Individually</option>
+                                                                <option value="Individually" data-option="all_team">All Team Members</option>
+                                                            @else
+                                                                <option value="all">All</option>
+                                                                <option value="Individually">Individually</option>
+                                                                <option value="managers">Only Managers</option>
+                                                            @endif        
 
                                                         </select>
                                                         <span class="arrow "><label id="sent_type-error" class="error" for="sent_type" style="display:none">This field is required.</label></span>
@@ -85,7 +79,15 @@
                                                     <div class="sentTo_all form-group col-md-3 d-none" >
                                                         <label for="" class="form-label">Select Users</label>
                                                         
-                                                        <select name="Individually_users[]"   class="form-control custom-select select2 select2-hidden-accessible all_users"  id="Individually_users"   multiple  aria-hidden="true">
+                                                        <select name="Individually_users[]"   class="form-control custom-select  all_users"  id="Individually_users"   multiple  aria-hidden="true">
+                                                            
+                                                        </select>
+                                                    </div> 
+                                                    
+                                                    <div class="send_to_department form-group col-md-3 d-none" >
+
+                                                        <label for="" class="form-label">Select Departments</label>
+                                                        <select name="departments[]" class="form-control custom-select departments" id="department_id" multiple aria-hidden="true">
                                                             
                                                         </select>
                                                     </div> 
@@ -171,8 +173,17 @@ $(document).ready(function(){
 $(document).on('change','#sent_type',function(){
   var sent_type_value = $('#sent_type').val();
 
-if(sent_type_value =='Individually')
-{
+
+  if(sent_type_value == 'department'){
+    $('.sentTo_all').removeClass('d-block').addClass('d-none');
+    $('.send_to_department').removeClass('d-none').addClass('d-block');
+    fetch_departments("{{route('departments.active_departments')}}");
+    $("#department_id").select2();
+      
+  }else if(sent_type_value =='Individually'){
+
+    $('.send_to_department').removeClass('d-block').addClass('d-none');
+
     if($('option:selected', this).attr('data-option')!='all_team'){
 
         $('.sentTo_all').removeClass('d-none').addClass('d-block');
@@ -181,10 +192,7 @@ if(sent_type_value =='Individually')
 
     }
 
-    $("#Individually_users").select2({
- 
-  
-});
+    $("#Individually_users").select2({});
       
 
          $.ajax({
@@ -214,18 +222,14 @@ if(sent_type_value =='Individually')
 
 
 
-}
-
-
-
-
-else{
+    }else{      
+            $('.send_to_department').removeClass('d-block').addClass('d-none');
             $('.sentTo_all').removeClass('d-block').addClass('d-none');
-        }
+    }
 
 
- 
-});
+    
+    });
 
 
 $(document).on('change',"input[name='email']",function(){

@@ -1,4 +1,22 @@
+<style>
 
+.media-body-relative{
+position:relative;
+}
+
+.user-chat-name{
+    top: -20px;
+    position: absolute;
+    left: 18px;
+}
+
+.own-chat-name {
+    top: -20px;
+    position: absolute;
+    right: 0;
+}
+
+</style>
 <div class="modal fade" id="order_message_modal">
 			<div class="modal-dialog  modal-lg" role="document">
 				<div class="modal-content">
@@ -37,7 +55,6 @@
                                     <div class="form-group col-md-12">
                                         
                                         <label for="" class="form-label" >Documents</label>
-
                                         <input name="files[]" type="file" class="form-control" multiple><br/>
                                         <span class="arrow files-error d-none"><label id="file-error" class="error " for="message" ></label></span>
                                     </div>
@@ -59,9 +76,6 @@
                                         </div>
 							
                                     </div>
-                                 
-
-
 
                                 </div>
                             </form>
@@ -91,70 +105,72 @@
                     // console.log('wait....');
                 },
                 success:function(response){
-                   
-                    var html =  "";
-                    var result = response.result;
-                    for(i  = 0;i < result.length;i++){
-                        if(result[i].sender_id == current_user){
-                            if(result[i].users){
-                                html +="<div class='float-end' style='width:100%';>";
-                                    html +='<div class="message-feed right float-end">';
-                                    html +='<div class="float-end ps-2">';
-                                    if(result[i].users.profile_image_id){
-                                        html +='<img src="'+site_url+'/storage/app/'+result[i].users.profile_image_id+'" alt="" class="avatar avatar-md brround">';
-                                    }else{
-                                        html +='<img src="'+public_url+'/assets/images/no_image.jpg" alt="" class="avatar avatar-md brround">';
-                                    }
-                                    html +='</div>';
-                                    if(result[i].order_message_documents){
-                                        html +='<div class="media-body">';
-                                        html +='<div class="mf-content" style="width:100%">'+result[i].message+'</div>';
-                                        html +='<small sclass="mf-date">';
-                                        for(j = 0;j<result[i].order_message_documents.length;j++){
+                         
+            var html =  "";
+            var result = response.result;
+            for(i  = 0;i < result.length;i++){
+                if(result[i].sender_id == current_user){
+                    if(result[i].users){
+                        html +="<div class='float-end' style='width:100%';>";
+                            html +='<div class="message-feed right float-end">';
+                            html +='<div class="float-end ps-2">';
+                            if(result[i].users.profile_image_id){
+                                html +='<img src="'+site_url+'/storage/app/'+result[i].users.profile_image_id+'" alt="" class="avatar avatar-md brround">';
+                            }else{
+                                html +='<img src="'+public_url+'/assets/images/no_image.jpg" alt="" class="avatar avatar-md brround">';
+                            }
+                            html +='</div>';
+                            if(result[i].order_message_documents){
+                                html +='<div class="media-body media-body-relative"><div class="own-chat-name">'+result[i].users.first_name+'</div><div class="mf-content" style="width:100%">'+result[i].message+'</div>';
+                                html +='<small sclass="mf-date">';
+                                for(j = 0;j<result[i].order_message_documents.length;j++){
 
-                                           html +=' <a href="'+result[i].order_message_documents[j].file_id+'"  target="_blank">'+result[i].order_message_documents[j].file_name+'</a>';
-                                        }
-                                        html +='</small>';
-                                        html+='<small class="mf-date">'+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
-                                    }else{
-                                        html +='<div class="media-body"><div class="mf-content">'+result[i].message+'</div><small class="mf-date">'+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
-                                    }
-                                    html +='</div>';
-                                html +='</div>';
+                                   html +='<i class="fa fa-file"></i> <a href="'+result[i].order_message_documents[j].file_id+'"  target="_blank">'+result[i].order_message_documents[j].file_name+'</a>';
+                                }
+                                html +='</small>';
+                                html+='<small class="mf-date"><i class="fa fa-clock-o"></i> '+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
+                            }else{
+                                html +='<div class="media-body">Name<div class="mf-content">'+result[i].message+'</div><small class="mf-date"><i class="fa fa-clock-o"></i> '+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
                             }
-                        }else{
-                            if(result[i].users){
-                                html +="<div class='float-start' style='width:100%';>";
-                                    html +='<div class="message-feed media receivers float-start" >';
-                                    html +='<div class="float-end ps-2">';
-                                    if(result[i].users.profile_image_id){
-                                        html +='<img src="'+site_url+'/storage/app/'+result[i].users.profile_image_id+'" alt="" class="avatar avatar-md brround">';
-                                    }else{
-                                        html +='<img src="'+public_url+'/assets/images/no_image.jpg" alt="" class="avatar avatar-md brround">';
-                                    }
-                                    html +='</div>';
-                                    if(result[i].order_message_documents){
-                                        html +='<div class="media-body"><div class="mf-content" style="width:100%">'+result[i].message+'</div>';
-                                        html +='<small sclass="mf-date">';
-                                        for(j = 0;j<result[i].order_message_documents.length;j++){
-                                           html +=' <a href="'+result[i].order_message_documents[j].file_id+'" target="_blank">'+result[i].order_message_documents[j].file_name+'</a>';
-                                        }
-                                        html +='</small>';
-                                        html+='<small class="mf-date">'+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
-                                    }else{
-                                        html +='<div class="media-body"><div class="mf-content">'+result[i].message+'</div><small class="mf-date">'+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
-                                    }
-                                    html +='</div>';
-                                html +="</div>";
-                            }
-                        }
+                            html +='</div>';
+                        html +='</div>';
                     }
-                    $('#ChatBody').html(html);
-                    // $("#ChatBody").animate({ scrollTop: $('#ChatBody').height()}, 1000);
-                    // $('#ChatBody').scrollTop($('#ChatBody').height())
-                    $("#ChatBody").animate({
-                        scrollTop: $('#ChatBody')[0].scrollHeight - $('#ChatBody')[0].clientHeight
-                    }, 1000);
+                }else{
+                    if(result[i].users){
+                        html +="<div class='float-start' style='width:100%';>";
+                            html +='<div class="message-feed media receivers float-start" >';
+                            html +='<div class="float-end ps-2">';
+                            if(result[i].users.profile_image_id){
+                                html +='<img src="'+site_url+'/storage/app/'+result[i].users.profile_image_id+'" alt="" class="avatar avatar-md brround">';
+                            }else{
+                                html +='<img src="'+public_url+'/assets/images/no_image.jpg" alt="" class="avatar avatar-md brround">';
+                            }
+                            html +='</div>';
+                            if(result[i].order_message_documents){
+                                html +='<div class="media-body media-body-relative"><div class="user-chat-name">'+result[i].users.first_name+'</div><div class="mf-content" style="width:100%">'+result[i].message+'</div>';
+                                html +='<small sclass="mf-date">';
+                                for(j = 0;j<result[i].order_message_documents.length;j++){
+                                   html +='<i class="fa fa-file"></i>  <a href="'+result[i].order_message_documents[j].file_id+'" target="_blank">'+result[i].order_message_documents[j].file_name+'</a>';
+                                }
+                                html +='</small>';
+                                html+='<small class="mf-date"><i class="fa fa-clock-o"></i> '+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
+                            }else{
+                                html +='<div class="media-body">Name<div class="mf-content">'+result[i].message+'</div><small class="mf-date"><i class="fa fa-clock-o"></i> '+moment(result[i].created_at).format('dddd, MMMM Do YYYY, h:mm:ss a')+'</small></div>';
+                            }
+                            html +='</div>';
+                        html +="</div>";
+                    }
+                }
+            }
+            $('#ChatBody').html(html);
+               $("#ChatBody").animate({
+                    scrollTop: $('#ChatBody')[0].scrollHeight - $('#ChatBody')[0].clientHeight
+                }, 100);
+          
+            // $('#ChatBody').scrollTop($('#ChatBody').height())
+            // $("#ChatBody").animate({
+            //     scrollTop: $('#ChatBody')[0].scrollHeight - $('#ChatBody')[0].clientHeight
+            //   }, 1000);
                 }
 
                 });

@@ -442,12 +442,7 @@ this.filter.status = this.filter_array.status;
                   { data: "amount", name: "amount" },
                   { data: "payment_status", name: "payment_status" },
                   { data: "order_status", render: function ( data, type, row ) {
-
-                    //  return clmn_visible == false ? data : "<i class='fa fa-eye' style='cursor:pointer' onClick='assigned_users_details("+row.id+")'></i>";
-                      //  row.order_status.replace(/\s+/g, '-').toLowerCase();
-              
-                    return "<span class='"+(row.order_status.replace(/\s+/g, '-').toLowerCase())+"'>"+row.order_status+"</span>";
-  
+                      return "<span class='"+(row.order_status.replace(/\s+/g, '-').toLowerCase())+"'  onClick='order_status_details("+row.id+")'>"+row.order_status+"</span>";
                   }},
                   { data: "amount_received", name: "amount_received" },
                   { data: "first_name", name: "first_name" },

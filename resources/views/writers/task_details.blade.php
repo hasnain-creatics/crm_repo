@@ -8,10 +8,11 @@
     </div>
     <div class="page-rightheader">
                     <div class="btn-list">
-                          <button class="btn btn-secondary" onclick='orderMessages("{{$id}}")' style='cursor:pointer' title='Order Messages'>Messages</button>
+                          <button class="btn btn-secondary" onclick='orderMessages("{{$id}}")' style='cursor:pointer' title='Order Messages'>Order Chats</button>
+                          <button class="btn btn-primary" onclick='add_feedback("{{$id}}")' style='cursor:pointer' title='Order Feedbacks'>Order Feedbacks</button>
                     </div>
                 </div>
-               
+          
 </div>
     <div class="row">
         <div class="col-12">
